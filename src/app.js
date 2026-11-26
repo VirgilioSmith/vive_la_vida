@@ -202,17 +202,22 @@ function accountDetail(a){
 function loanDetail(l){
   let b=loanBundle(l),a=b.actual,status=a.settled?'Liquidado':diffDays(a.next,today())<0?'Cuota vencida':'Activo',next=a.settled?'Sin cuotas pendientes':prettyDate(a.next);
   let tabs=[['vision','Visión general'],['amort','Amortización'],['payments','Historial real'],['simulate','Simulador de abonos']];
-  let tab=isMobileViewport()?'vision':loanWorkspace.tab;
+  let tab=loanWorkspace.tab||'vision';
   let body=tab==='vision'?loanVision(l,b)+loanConditions(l):tab==='amort'?loanAmortView(l,b):tab==='payments'?loanPaymentHistory(l,b):loanSimulator(l,b);
   const pct=num(l.principal)>0?Math.max(0,Math.min(100,a.paidPrincipal/num(l.principal)*100)):0,dis=a.settled||l.archived?'disabled':'';
-  const stat=(k,v,sub)=>`<div class="v1246-stat"><small>${k}</small><strong>${v}</strong>${sub?`<em>${sub}</em>`:''}</div>`;
-  return `<section class="loan-workspace v1246" id="loan-workspace"><div class="v1246-top"><button class="loan-back" data-act="closeLoanDetails">${icon('arrow')} Volver a mi cartera</button><div class="v1246-actions"><button class="btn sm loan-primary" data-act="payLoan" data-id="${l.id}" ${dis}>Registrar cuota</button><button class="btn sm soft" data-act="extraLoan" data-id="${l.id}" ${dis}>Abono extraordinario</button><details class="v1246-more"><summary aria-label="Más acciones">···</summary><div><button class="btn sm ghost" data-act="editLoan" data-id="${l.id}">Editar ficha</button><button class="btn sm ghost" data-act="productArchive" data-kind="loan" data-id="${l.id}">${l.archived?'Reactivar':'Cancelar'}</button></div></details></div></div>
-    <section class="v1246-hero" aria-label="Resumen del préstamo"><div class="v1246-lead"><div class="v1246-micro">${sanitize(bankOf(l))} <span>·</span> ${sanitize(l.currency)} <span class="v1246-chip ${status==='Cuota vencida'?'is-late':a.settled?'is-done':''}">${status}</span></div><h2>${sanitize(l.name)}</h2><p>Capital original ${money(l.principal,l.currency,2)} · ${num(l.rate).toFixed(2)}% anual · ${v49LoanPeriodCount(l)} ${v49LoanPeriodsPerMonth(l)===2?'quincenas':'cuotas mensuales'}${l.originationDate?' · desde '+prettyDate(l.originationDate):''}</p>
-    <div class="v1246-balance"><div class="v1246-ring" role="progressbar" aria-label="Capital amortizado" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct.toFixed(1)}" style="--p:${pct.toFixed(2)}"><div><b>${pct.toFixed(1)}%</b><small>pagado</small></div></div><div><small>SALDO PENDIENTE</small><strong>${money(a.balance,l.currency,2)}</strong><em>Capital reducido ${money(a.paidPrincipal,l.currency)}</em></div></div></div>
-    <div class="v1246-stats">${stat('PRÓXIMO VENCIMIENTO',next,a.settled?'':whenTxt(a.next))}${stat('CUOTA CONTRACTUAL',money(loanStatus(l).installment,l.currency,2))}${stat('CUOTAS',a.periods+' <i>/ '+v49LoanPeriodCount(l)+'</i>','registradas / pactadas')}${stat('INTERESES Y CARGOS A LA FECHA',money(a.interest+a.insurance+a.fees+a.estimatedHistoricInterest+a.estimatedHistoricInsurance+a.estimatedHistoricFees,l.currency,2),'Confirmados '+money(a.interest,l.currency,2))}${stat('INTERESES FUTUROS ESTIMADOS',money(l.archived?0:b.baseline.interest,l.currency,2))}${stat('ABONOS EXTRAORDINARIOS',money(a.extras,l.currency,2),'Reducen capital')}</div></section>
-    <nav class="loan-tabs v1267-tabs" aria-label="Detalle de préstamo">${tabs.map(([key,title])=>`<button class="loan-tab ${key===tab?'on':''}" data-act="loanTab" data-id="${key}">${title}</button>`).join('')}</nav>
-    <div class="loan-tab-content">${body}</div>
-    ${num(l.reportedBalance)>0?`<div class="loan-alert"><span>${icon('shield')}</span><div><strong>Saldo confirmado por banco (${prettyDate(l.balanceAsOf||today())}): ${money(l.reportedBalance,l.currency,2)}. Diferencia frente al registro: ${money(a.balance-num(l.reportedBalance),l.currency,2)}.</strong></div></div>`:''}</section>`;
+  const stat=(k,v,sub)=>`<div class="vbd-stat"><small>${k}</small><strong>${v}</strong>${sub?`<em>${sub}</em>`:''}</div>`;
+  const late=status==='Cuota vencida';
+   return `<section class="loan-workspace vbd vbd-loan" id="loan-workspace">
+    <div class="vbd-top"><button type="button" class="vbd-back" data-act="closeLoanDetails">${icon('arrow')}<span>Volver a mi cartera</span></button>
+     <div class="vbd-top-actions"><button type="button" class="vbd-btn is-primary" data-act="payLoan" data-id="${l.id}" ${dis}><span>Registrar cuota</span></button><button type="button" class="vbd-btn" data-act="extraLoan" data-id="${l.id}" ${dis}><span>Abono extraordinario</span></button>
+      <details class="vbd-menu"><summary aria-label="Más acciones">···</summary><div><button type="button" data-act="editLoan" data-id="${l.id}">Editar ficha</button><button type="button" data-act="productArchive" data-kind="loan" data-id="${l.id}">${l.archived?'Reactivar':'Cancelar'}</button></div></details></div></div>
+    <div class="vbd-loan-hero">
+     <article class="vbd-face"><span class="vbd-kicker">${sanitize(bankOf(l))} · ${sanitize(l.currency)}<em class="vbd-chip${late?' is-late':a.settled?' is-done':''}">${status}</em></span><h2>${sanitize(l.name)}</h2><p>Capital original ${money(l.principal,l.currency,2)} · ${num(l.rate).toFixed(2)}% anual · ${v49LoanPeriodCount(l)} ${v49LoanPeriodsPerMonth(l)===2?'quincenas':'cuotas mensuales'}${l.originationDate?' · desde '+prettyDate(l.originationDate):''}</p>
+      <div class="vbd-loan-bal"><div class="vbd-ring" role="progressbar" aria-label="Capital amortizado" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct.toFixed(1)}" style="--p:${pct.toFixed(2)}"><div><b>${pct.toFixed(1)}%</b><small>pagado</small></div></div><div class="vbd-amt"><small>SALDO PENDIENTE</small><strong>${money(a.balance,l.currency,2)}</strong><span>Capital reducido ${money(a.paidPrincipal,l.currency)}</span></div></div></article>
+     <div class="vbd-statgrid">${stat('PRÓXIMO VENCIMIENTO',next,a.settled?'':whenTxt(a.next))}${stat('CUOTA CONTRACTUAL',money(loanStatus(l).installment,l.currency,2))}${stat('CUOTAS',a.periods+' <i>/ '+v49LoanPeriodCount(l)+'</i>','registradas / pactadas')}${stat('INTERESES Y CARGOS A LA FECHA',money(a.interest+a.insurance+a.fees+a.estimatedHistoricInterest+a.estimatedHistoricInsurance+a.estimatedHistoricFees,l.currency,2),'Confirmados '+money(a.interest,l.currency,2))}${stat('INTERESES FUTUROS ESTIMADOS',money(l.archived?0:b.baseline.interest,l.currency,2))}${stat('ABONOS EXTRAORDINARIOS',money(a.extras,l.currency,2),'Reducen capital')}</div></div>
+    <nav class="vbd-tabs" role="tablist" aria-label="Detalle de préstamo">${tabs.map(([key,title])=>`<button type="button" role="tab" aria-selected="${key===tab}" class="loan-tab vbd-tab ${key===tab?'on':''}" data-act="loanTab" data-id="${key}">${title}</button>`).join('')}</nav>
+    <div class="loan-tab-content vbd-loan-body">${body}</div>
+    ${num(l.reportedBalance)>0?`<div class="vbd-note-card"><span>${icon('shield')}</span><strong>Saldo confirmado por banco (${prettyDate(l.balanceAsOf||today())}): ${money(l.reportedBalance,l.currency,2)}. Diferencia frente al registro: ${money(a.balance-num(l.reportedBalance),l.currency,2)}.</strong></div>`:''}</section>`;
 }
 function originalAccountDetail(a){let t=recentTx().filter(t=>t.accountId===a.id||t.toAccountId===a.id).slice(0,12);return `<div class="panel section"><div class="panel-head"><h3>Detalle · ${sanitize(a.name)} (${a.currency})</h3><div class="hstack">${a.kind==='cash'?'':productControls('account',a.id,a.archived)}<button class="btn sm soft" data-act="editAccount" data-id="${a.id}">Editar cuenta</button><button class="btn sm ghost" data-act="closeAccountDetails">Cerrar</button></div></div><div class="stats-inline"><div class="stat-box"><span class="small-label">SALDO INICIAL</span><div class="val">${money(a.opening,a.currency,2)}</div><span class="tiny muted">Desde ${prettyDate(a.opened)}</span></div><div class="stat-box"><span class="small-label">SALDO ACTUAL</span><div class="val">${money(getAccountBalance(a),a.currency,2)}</div><span class="tiny muted">Incluye todas las operaciones</span></div><div class="stat-box"><span class="small-label">INTERÉS POTENCIAL / MES</span><div class="val">${money(Math.max(0,getAccountBalance(a))*num(a.annualRate)/1200,a.currency,2)}</div><span class="tiny muted">Estimación simple; para cobros reales registra un ingreso.</span></div><div class="stat-box"><span class="small-label">MOVIMIENTOS</span><div class="val">${t.length}${t.length>=12?'+':''}</div><span class="tiny muted">Últimos 12 visibles</span></div></div><div class="gap"></div>${smallTxTable(t)}</div>`}
 function loanVision(l,b){
@@ -627,7 +632,6 @@ const NAV_FAMILIES=[
  ]}
 ];
 const NAV_SECTIONS={
- banks:{title:'Bancos y productos',hint:'Cada producto mantiene su mundo y su detalle financiero.',tabs:[['banks','Instituciones','landmark'],['accounts','Cuentas','wallet'],['cards','Tarjetas','card'],['loans','Préstamos','receipt'],['certificates','Certificados','analytics']]},
  register:{title:'Movimientos',hint:'Historial, conciliación y análisis financiero; usa Registrar para crear operaciones.',tabs:[['register','Movimientos','cycle'],['flow','Flujo','analytics'],['budget','Presupuestos','chart'],['categories','Categorías','receipt']]},
 };
 function navFamilyForPage(page){if(['flow','income','expenses'].includes(page))return 'register';if(['recurring','personal'].includes(page))return 'overview';if(page==='patrimony')return 'overview';if(['overview','analytics','kpis','advanced','projection'].includes(page))return 'overview';for(const g of NAV_FAMILIES)for(const item of g.items)if(item.id===page||item.children.some(c=>c[0]===page))return item.id;return page}
@@ -2963,22 +2967,7 @@ function v176CardInsight(cardList=db.cards,currency,pendingOnly=false){
 document.addEventListener('click',e=>{if(e.target.closest?.('[data-v176-card-insight]')){e.preventDefault();v176CardInsight()}},true);
 document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.closest?.('[data-v176-card-insight]')){e.preventDefault();v176CardInsight()}},true);
 
-function originalCards(){
- let dop=db.cards.reduce((v,c)=>v+cardStatus(c,'DOP').debt,0),usd=db.cards.reduce((v,c)=>v+cardStatus(c,'USD').debt,0);
- let dueD=db.cards.reduce((v,c)=>v+(num(c.annualFeeAmount)>0&&c.annualFeeCurrency!=='USD'?num(c.annualFeeAmount):num(c.annualFeeDOP)),0),dueU=db.cards.reduce((v,c)=>v+(num(c.annualFeeAmount)>0&&c.annualFeeCurrency==='USD'?num(c.annualFeeAmount):num(c.annualFeeUSD)),0),year=nowYear();
- let benefitD=db.cards.reduce((v,c)=>v+benefitBreakdown(c,'DOP').credited,0),benefitU=db.cards.reduce((v,c)=>v+benefitBreakdown(c,'USD').credited,0);
- let netD=db.cards.reduce((v,c)=>v+v144CardStats(c,false).net,0),netU=0;
- let fxLabel=db.settings.fxAcknowledged?'Tipo de cambio configurado':'Tipo de cambio referencial · verificar';
- return `<div class="v256-cards-list-head"><div><span class="v256-cards-kicker">TUS PRODUCTOS</span><h2>Mis tarjetas <small>${db.cards.filter(c=>ui.showHidden||!isHidden(c)).length}</small></h2><p>Selecciona una tarjeta para consultar sus saldos, cortes, pagos y beneficios.</p></div></div><div class="grid cards-grid section v256-cards-grid">${db.cards.filter(c=>ui.showHidden||!isHidden(c)).length?db.cards.filter(c=>ui.showHidden||!isHidden(c)).map(c=>{let a=cardStatus(c,'DOP'),b=cardStatus(c,'USD');let closest=[{...a,ccy:'DOP'},{...b,ccy:'USD'}].filter(x=>x.nextDue&&x.billed>0).sort((x,y)=>x.nextDue.localeCompare(y.nextDue))[0],z=v144CardStats(c);return `<div class="bank-card v149-card-shell"><details class="v149-card-disclosure"><summary class="v149-card-toggle" aria-label="Abrir detalles de ${sanitize(c.name)}"><div class="card-visual v28-card-face tier-${cardTierKey(c)}"><div class="v28-card-top"><span class="v28-card-bank">${bankLogoInline(c.bankId)}<span>${sanitize(bankOf(c))}</span></span>${cardNetworkMark(c)}</div><div class="v28-card-middle"><strong>${sanitize(c.name)}</strong><span>${CARD_TIER_NAMES[cardTierKey(c)]}</span></div><div class="v28-card-bottom"><span class="chip" aria-hidden="true"></span><span class="last4">•••• ${sanitize(c.last4||'••••')}</span><small>CRÉDITO · RD$ / US$</small></div></div><span class="v149-card-cue">${icon('arrow')} <span>Explorar tarjeta</span></span></summary><div class="v149-card-reveal"><section class="v148-card-essentials" aria-label="Deuda y beneficios de ${sanitize(c.name)}">
- <div class="v148-owed" aria-label="Deudas por moneda">
-  <div class="v148-owed-part"><small>DEUDA EN PESOS</small><strong>${money(a.debt)}</strong><button type="button" data-v85-action="card" data-id="${c.id}" aria-label="Ver utilización de crédito en pesos">Uso ${a.limit?a.util.toFixed(1)+'%':'—'} ${icon('arrow')}</button></div>
-  <div class="v148-owed-part"><small>DEUDA EN DÓLARES</small><strong>${money(b.debt,'USD',2)}</strong><button type="button" data-v85-action="card" data-id="${c.id}" aria-label="Ver utilización de crédito en dólares">Uso ${b.limit?b.util.toFixed(1)+'%':'—'} ${icon('arrow')}</button></div>
- </div>
- <div class="v148-benefit-hero ${z.net<0?'is-negative':'is-positive'}"><div><small>BENEFICIO NETO REALIZADO</small><strong>${money(z.net,'DOP',2)}</strong></div><button type="button" data-v144-action="open-benefits" data-id="${sanitize(c.id)}" aria-label="Ver beneficios y costos de ${sanitize(c.name)}">Ver beneficio ${icon('arrow')}</button></div>
- <div class="v148-benefit-detail"><span>Cashback recibido <b>${money(z.realizedCashback,'DOP',2)}</b></span><span>Costo pagado <b>${money(z.paidAmount,'DOP',2)}</b></span></div>
- <div class="v148-meta"><span>Rentabilidad <strong>${v144RoiText(z.roi)}</strong></span>${z.billedAmount>0?`<span class="v148-pending">Por conciliar <strong>${money(z.billedAmount,'DOP',2)}</strong></span>`:''}</div>
- <div class="v148-card-due"><span>Corte: día ${c.cutDay} · Pago: día ${c.dueDay}</span>${closest?dueChip(closest.nextDue):'<span class="pill green">Sin pago facturado</span>'}</div>
- </section><div class="product-mini-actions">${productControls('card',c.id,c.archived)}</div><div class="card-footer"><button class="btn sm ghost" data-act="cardDetails" data-id="${c.id}">${icon('chart')} Explorar el ciclo</button><button class="btn sm soft" data-act="payCard" data-id="${c.id}">Registrar pago</button></div></div></details></div>`}).join(''):`<div class="panel"><div class="empty"><span class="empty-icon">▣</span>No hay tarjetas registradas.<br/><button class="btn sm soft" data-act="addCard">Agregar tarjeta</button></div></div>`}</div>${ui.cardId&&card(ui.cardId)?cardDetail(card(ui.cardId)):''}<details class="v256-cards-methodology"><summary>${icon('shield')} Cómo se calculan las cifras y los beneficios <span aria-hidden="true">⌄</span></summary><p>Las anualidades son costos pactados anuales; se contabilizan como gasto solo cuando el banco realiza el cargo. Los beneficios monetarios reflejan únicamente cashback confirmado. Los beneficios se registran manualmente y solo el cashback realmente cobrado se considera monetario.</p><p>Los cortes se calculan a partir de las fechas de cada tarjeta y sus movimientos. Los importes y mínimos son estimaciones y pueden diferir de los confirmados por el banco.</p></details>`}
+
 
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -4306,16 +4295,7 @@ function cashWalletForm(){
 
 
 
-function cards(){
- // V182: restore the actual executive portfolio hero, not a duplicate KPI strip.
- // In V144 pages.cards was reassigned, bypassing the legacy innerWrap hook that
- // previously inserted the V57 hero. Render it directly on the Cards overview.
- // Every amount is derived afresh from real card statuses and limits.
- const portfolio=originalCards();
- const hero=typeof window.v182CardsExecutiveHero==='function'
-  ?window.v182CardsExecutiveHero():'';
- return `<div class="v182-cards-workspace">${hero}${portfolio}</div>`;
-}
+
 
 
 /* V208 · Referentes internacionales: Monarch, Copilot y dashboards de finanzas
@@ -4993,7 +4973,7 @@ document.addEventListener('change', event=>{
 });
 
 const vwmHead=t=>window.matchMedia&&window.matchMedia('(max-width:790px)').matches?`<header class="vwm-head"><h1>${t}</h1></header>`:'';
-const pages={score:()=>vwmHead('Vive Score')+(window.ViveScoreHost?window.ViveScoreHost.pageHtml():''),pressure:v360PressurePage,wallet:v68Wallet,projection:patrimonyWorld,patrimony:v134WealthWorld,register:moneyRegister,income:()=>'',expenses:()=>'',banks,overview,cards,benefits,personal,payments,advanced,transactions,annual,analytics,settings};
+const pages={score:()=>vwmHead('Vive Score')+(window.ViveScoreHost?window.ViveScoreHost.pageHtml():''),pressure:v360PressurePage,wallet:v68Wallet,projection:patrimonyWorld,patrimony:v134WealthWorld,register:moneyRegister,income:()=>'',expenses:()=>'',banks,overview,benefits,personal,payments,advanced,transactions,annual,analytics,settings};
 const formItem=(name,label,value='',type='text',attrs='')=>`<label><span class="filter-label">${label}</span><input class="field" type="${type}" name="${name}" value="${sanitize(value)}" ${attrs}/></label>`;
 const formSelect=(name,label,opts,val='',attrs='')=>`<label><span class="filter-label">${label}</span><select class="field" name="${name}" ${attrs}>${opts.map(o=>{let [v,l]=Array.isArray(o)?o:[o,o];return `<option value="${sanitize(v)}" ${String(v)===String(val)?'selected':''}>${sanitize(l)}</option>`}).join('')}</select></label>`;
 const para=(s)=>`<p class="form-note form-full">${s}</p>`;
@@ -11874,102 +11854,22 @@ function deletePersonalLoan(id){
 })();
 
 
-/* ──────────────────────────────────────────────────────────────────────
- * V57 · CABECERAS EJECUTIVAS POR PRODUCTO
- * No modifica saldos ni transacciones. Lee el modelo vigente en cada render.
- * El monto consolidado RD$ incluye US$ según el tipo de cambio configurado.
- * ────────────────────────────────────────────────────────────────────── */
+/* Bancos · cabecera de Beneficios (componente `vbd`). Sustituye a las antiguas cabeceras ejecutivas v57/v46 de Cuentas, Tarjetas, Préstamos y Certificados. */
 (function(){
  'use strict';
- const target=new Set(['accounts','cards','benefits','loans','certificates']);
- const nf=(n)=>new Intl.NumberFormat('es-DO',{maximumFractionDigits:1}).format(n);
  const currency=(n,cur='DOP')=>money(n,cur,cur==='USD'?2:0);
- const label=(name,value)=>`<div><span>${name}</span><strong>${value}</strong></div>`;
- const action=(name,act,ic='plus',extra='')=>`<button type="button" class="btn light" data-act="${act}" ${extra}>${icon(ic)} ${name}</button>`;
- const link=(name,page)=>`<button type="button" class="btn outline-light" data-act="navigate" data-id="${page}">${name} ${icon('arrow')}</button>`;
  const fxNote=()=>db.settings.fxAcknowledged?'US$ convertido a RD$ al tipo de cambio configurado.':'US$ convertido al tipo de cambio de referencia: confirma la tasa en Configuración.';
- function hero({page,kicker,title,subtitle,mainTitle,main,mainNote,items,foot,buttons,mini}){
-  return `<section class="bank-hero v46-bank-hero v57-product-hero v57-${page}" aria-label="Resumen ejecutivo de ${page}">
-   <div class="v46-bank-intro">
-    <div class="hero-eyebrow">${kicker}</div>
-    <h2>${title}</h2><p>${subtitle}</p>
-    <div class="hero-actions">${buttons}</div>
-    <div class="v46-hero-foot">${mini.map(t=>`<span>${t}</span>`).join('')}</div>
-   </div>
-   <div class="v46-global-financials"><div class="v46-global-main"><span>${mainTitle}</span><strong>${main}</strong><small>${mainNote}</small></div>
-    <div class="v46-global-secondary">${items.map(x=>label(x[0],x[1])).join('')}</div>
-    <div class="v46-global-note">${foot}</div>
-   </div>
-  </section>`;
- }
- function accountsHero(){
-  const all=db.accounts||[], bankAccounts=all.filter(a=>a.kind!=='cash');
-  const sum=(list,cur)=>list.filter(a=>a.currency===cur).reduce((s,a)=>s+getAccountBalance(a),0);
-  const dop=sum(all,'DOP'),usd=sum(all,'USD'),bD=sum(bankAccounts,'DOP'),bU=sum(bankAccounts,'USD'),cash=all.filter(a=>a.kind==='cash'),cD=sum(cash,'DOP'),cU=sum(cash,'USD');
-  // V237: los accesos de cuentas/efectivo ya están en este KPI. Archivar conserva el control original.
-  const archivedCount=[...db.banks,...db.accounts,...db.cards,...db.loans,...db.certificates].filter(x=>x.archived).length;
-  const archivedAction=`<button type="button" class="btn outline-light" data-act="toggleHidden" aria-pressed="${!!ui.showHidden}">${icon('receipt')} ${ui.showHidden?'Ocultar archivados':'Archivados'} · ${archivedCount}</button>`;
-  return hero({page:'accounts',kicker:'CUENTAS / LIQUIDEZ Y EFECTIVO',title:'Tu dinero disponible,<br><em>saldo por saldo.</em>',subtitle:'Visualiza cuánto tienes entre cuentas bancarias y efectivo, manteniendo los pesos y los dólares en sus respectivos productos.',mainTitle:'SALDO TOTAL',main:currency(dop+fx(usd,'USD')),mainNote:'Cuentas + efectivo · pesos y dólares consolidados',items:[['CUENTAS EN PESOS',currency(bD)],['CUENTAS EN DÓLARES',currency(bU,'USD')],['EFECTIVO RD$',currency(cD)],['EFECTIVO US$',currency(cU,'USD')]],foot:fxNote()+' Los saldos no se convierten dentro de cada cuenta.',buttons:action('Nueva cuenta','addAccount','plus'),mini:[`${bankAccounts.length} cuentas bancarias`,'2 monedas separadas']});
- }
- function cardsHero(){
-  const list=db.cards||[];
-  const archivedCards=list.filter(c=>c.archived).length;
-  const archiveButton=`<button type="button" class="btn outline-light v256-hero-archive" data-act="toggleHidden" aria-pressed="${!!ui.showHidden}">${icon('receipt')} ${ui.showHidden?'Ocultar archivados':'Archivados'} · ${archivedCards}</button>`;
-  const benefitsButton=`<button type="button" class="btn outline-light v256-hero-benefits" data-act="openBenefitComparison">${icon('chart')} Comparar beneficios</button>`;const limitD=list.reduce((s,c)=>s+num(c.limitDOP),0),limitU=list.reduce((s,c)=>s+num(c.limitUSD),0);
-  const debtD=list.reduce((s,c)=>s+cardStatus(c,'DOP').debt,0),debtU=list.reduce((s,c)=>s+cardStatus(c,'USD').debt,0);
-  const limit=limitD+fx(limitU,'USD'),used=debtD+fx(debtU,'USD'),available=Math.max(0,limit-used),pct=limit>0?used/limit*100:null;
-  return hero({page:'cards',kicker:'CRÉDITO / CARTERA DE TARJETAS',title:'Tus tarjetas.<br><em>Tu capacidad de consumo.</em>',subtitle:'Un vistazo al límite contractual conjunto, la utilización y lo que aún queda disponible, con RD$ y US$ siempre identificados.',mainTitle:'LÍMITE DE CONSUMO',main:currency(limit),mainNote:'Suma de límites en pesos y dólares · sin sobregiro autorizado',items:[['UTILIZACIÓN DEL LÍMITE',pct===null?'Sin límite':nf(pct)+'%'],['DEUDA UTILIZADA',currency(used)],['CRÉDITO DISPONIBLE',currency(available)],['LÍMITES POR MONEDA',currency(limitD)+' · '+currency(limitU,'USD')]],foot:`Utilización ordinaria: ${pct===null?'Sin límite configurado':nf(pct)+'%'}. Se excluye todo sobregiro autorizado; el disponible equivale a límite menos deuda registrada (mínimo cero). ${fxNote()}`,buttons:action('Nueva tarjeta','addCard','plus')+benefitsButton,mini:[`${list.length} tarjetas registradas`,`${pct===null?'Sin capacidad definida':nf(pct)+'% utilizado'}`]});
- }
  function benefitsHero(scope=null){
   const cards=(scope||db.cards||[]).filter(c=>ui.showHidden||!isHidden(c));
   const year=Number(ui.v144BenefitYear)||nowYear();
   const y=v183YearBenefitMetrics(cards,year);
-  const fees=y.feeConfigured;
-  const mainBtn=cards.length?`<button type="button" class="btn light" data-v144-action="new-cashback" data-id="${sanitize(cards[0].id)}">${icon('plus')} Registrar beneficio</button>`:action('Añadir tarjeta','addCard');
-  return hero({page:'benefits',kicker:`BENEFICIOS / RESULTADO DEL AÑO ${year}`,title:'Lo que recibes.<br><em>Lo que te cuesta.</em>',subtitle:'Cada tarjeta tiene un rendimiento real: distingue cashback acreditado, anualidad y costos efectivamente pagados.',
-   mainTitle:`BENEFICIO NETO REALIZADO · ${year} · RD$`,main:currency(y.net),
-   mainNote:'Cashback + beneficios monetarios cobrados − costos efectivamente pagados',
-   items:[['BENEFICIOS RECIBIDOS',currency(y.earned)],['COSTO REAL PAGADO',currency(y.paid)],['ANUALIDAD CONFIGURADA',currency(fees)],['TARJETAS ANALIZADAS',String(cards.length)]],
-   foot:`La anualidad configurada es informativa, no un gasto realizado hasta que se registre y pague. Los cargos aún sin conciliar aparecen en la tabla sin duplicar pagos. ${fxNote()}`,
-   buttons:mainBtn+vBanksAnnualBenefitsAction(cards,true),mini:[`${cards.length} tarjetas`,'Enero · diciembre']});
+  const mainBtn=cards.length?`<button type="button" class="btn light" data-v144-action="new-cashback" data-id="${sanitize(cards[0].id)}">${icon('plus')} Registrar beneficio</button>`:`<button type="button" class="btn light" data-act="addCard">${icon('plus')} Añadir tarjeta</button>`;
+  const stat=(k,v)=>`<div class="vbd-stat"><small>${k}</small><strong>${v}</strong></div>`;
+  return `<section class="vbd vbd-benefits" aria-label="Resumen de beneficios"><div class="vbd-loan-hero"><article class="vbd-face"><span class="vbd-kicker">BENEFICIOS · RESULTADO DEL AÑO ${year}</span><h2>Lo que recibes. Lo que te cuesta.</h2><p>Cashback acreditado, anualidad y costos efectivamente pagados, tarjeta por tarjeta.</p><div class="vbd-amt"><small>BENEFICIO NETO REALIZADO · ${year} · RD$</small><strong>${currency(y.net)}</strong></div><footer><span>${cards.length} tarjetas</span><span>Enero · diciembre</span></footer><div class="vbd-face-actions">${mainBtn}${vBanksAnnualBenefitsAction(cards,true)}</div></article>
+   <div class="vbd-statgrid">${stat('BENEFICIOS RECIBIDOS',currency(y.earned))}${stat('COSTO REAL PAGADO',currency(y.paid))}${stat('ANUALIDAD CONFIGURADA',currency(y.feeConfigured))}${stat('TARJETAS ANALIZADAS',String(cards.length))}</div></div>
+   <p class="vbd-note">La anualidad configurada es informativa, no un gasto realizado hasta que se registre y pague. Los cargos aún sin conciliar aparecen en la tabla sin duplicar pagos. ${fxNote()}</p></section>`;
  }
- function loansHero(){
-  const list=db.loans||[];const stat=list.map(l=>({l,a:loanAccounting(l)}));
-  const due=stat.reduce((s,x)=>s+fx(x.a.balance,x.l.currency),0),orig=stat.reduce((s,x)=>s+fx(x.l.principal,x.l.currency),0),paid=stat.reduce((s,x)=>s+fx(x.a.paidPrincipal,x.l.currency),0),interest=stat.reduce((s,x)=>s+fx(x.a.interest,x.l.currency),0);
-  const active=stat.filter(x=>!x.a.settled).length;
-  const historicEstimated=stat.reduce((sum,x)=>sum+fx(x.a.estimatedHistoricInterest,x.l.currency),0);
-  const soon=upcoming().filter(o=>o.kind==='loan').sort((a,b)=>String(a.date).localeCompare(String(b.date)))[0];
-  return hero({page:'loans',kicker:'PRÉSTAMOS / CAPITAL Y AMORTIZACIÓN',title:'Cada préstamo,<br><em>bajo control.</em>',subtitle:'Consulta el capital pendiente, lo amortizado y los intereses estimados sin confundirlos con pagos confirmados',mainTitle:'CAPITAL PENDIENTE',main:currency(due),mainNote:'Solo saldo de capital no amortizado · no suma intereses futuros',items:[['CAPITAL ORIGINAL',currency(orig)],['CAPITAL AMORTIZADO',currency(paid)],['INTERESES PREVIOS ESTIMADOS',currency(historicEstimated)]],foot:soon?`Próxima cuota: ${currency(fx(soon.amount,soon.currency))} · ${prettyDate(soon.date)} (programada, no pagada). Los intereses estimados no son pagos confirmados. ${fxNote()}`:`Sin cuotas futuras pendientes. Los intereses estimados no son pagos confirmados. ${fxNote()}`,buttons:action('Nuevo préstamo','addLoan','plus'),mini:[`${list.length} contratos`,`${active} activos`]});
- }
- function certificatesHero(){
-  const list=db.certificates||[];
-  const archivedCount=list.filter(c=>c.archived).length;
-  const archivedAction=`<button type="button" class="btn outline-light v257-cert-archive" data-act="toggleHidden" aria-pressed="${!!ui.showHidden}">${icon('receipt')} ${ui.showHidden?'Ocultar archivados':'Archivados'} · ${archivedCount}</button>`;const gross=list.reduce((s,c)=>s+fx(certProjection(c).gross,c.currency),0);
-  const net=list.reduce((s,c)=>s+fx(certProjection(c).net,c.currency),0);
-  const interest=db.transactions.filter(t=>t.type==='income'&&t.certificateId).reduce((s,t)=>s+txDop(t),0);
-  const current=list.reduce((s,c)=>s+fx(certificateCapital(c),c.currency),0);
-  const maturities=list.filter(c=>c.maturityDate>=today()).slice().sort((a,b)=>cDate(a).localeCompare(cDate(b)));
-  function cDate(x){return String(x.maturityDate||'9999-12-31')}
-  const next=maturities[0];
-  return hero({page:'certificates',kicker:'INVERSIÓN / CERTIFICADOS FINANCIEROS',title:'Tu capital invertido,<br><em>con fecha y rendimiento.</em>',subtitle:'Distingue el dinero invertido, las ganancias estimadas y los intereses que ya recibiste de verdad.',mainTitle:'CAPITAL INVERTIDO',main:currency(current),mainNote:'Capital registrado en certificados financieros · fuera del efectivo líquido',items:[['INTERÉS BRUTO ESTIMADO',currency(gross)],['GANANCIA NETA ESTIMADA',currency(net)],['INTERESES COBRADOS',currency(interest)],['PRÓXIMO VENCIMIENTO',next?prettyDate(next.maturityDate):'Sin fecha']],foot:`Las proyecciones no se contabilizan como ingresos hasta cobrarse. ${fxNote()}`,buttons:action('Nuevo certificado','addCertificate','plus'),mini:[`${list.length} certificados registrados`,next?'Vence '+prettyDate(next.maturityDate):'Sin vencimientos futuros']});
- }
- // Reuse the same executive summary builder even if other versions replace
- // pages.cards after the inner navigation wrappers have been installed.
- window.v182CardsExecutiveHero = cardsHero;
  window.v180BenefitsHero = benefitsHero;
- const builder={accounts:accountsHero,cards:cardsHero,benefits:benefitsHero,loans:loansHero,certificates:certificatesHero};
- const previousInnerWrap=innerWrap;
- innerWrap=function(page,view){
-  const html=previousInnerWrap(page,view);
-  if(!target.has(page))return html;
-  // V60: la cabecera ejecutiva vive exclusivamente en la pestaña principal.
-  // Resumen / Portafolio / Mi cartera / Posiciones comparten el ID overview.
-  const activeView=ui.innerViews?.[page]||'overview';
-  if(activeView!=='overview'||(page==='loans'&&ui.loanId))return html;
-  const banner=builder[page]();
-  const marker='<div class="v26-body" role="tabpanel">';
-  return html.includes(marker)?html.replace(marker,marker+banner):banner+html;
- };
 })();
 
 
@@ -13819,15 +13719,12 @@ function v144EnhanceWallet(){const original=v144BaseWallet();if(!db.cards.length
 }
 const v144BaseWallet=v68Wallet;
 v68Wallet=function(){return v144EnhanceWallet()};
-const v144BaseCards=cards;
-cards=function(){return v144BaseCards()}; // V148: tarjetas inferiores únicas, sin duplicar el carrusel gigante de escritorio.
 const v144BaseDetail=cardDetail;
 cardDetail=function(c){const html=v144BaseDetail(c);return html.replace(cardBenefitsBlock(c),v144CardExecutive(c)+`<div class="v144-legacy-reward"><details><summary>Consultar registro anterior de beneficios y programas</summary>${cardBenefitsBlock(c)}</details></div>`)};
 const v144BaseChoose=v139WalletChooseCard;
 v139WalletChooseCard=function(id){ui.v144WalletExpanded=true;return v144BaseChoose(id)};
 // No se sobrescriben las referencias financieras; solo cambia la vista renderizada.
 pages.benefits=v144BenefitsPage;
-pages.cards=cards;
 pages.wallet=v68Wallet;
 document.addEventListener('click',function(event){const el=event.target.closest?.('[data-v144-action]');if(!el)return;event.preventDefault();event.stopImmediatePropagation();v144RunAction(el.dataset.v144Action,el)},true);
 document.addEventListener('change',function(event){const select=event.target.closest?.('[data-v144-filter]');if(!select)return;const k=select.dataset.v144Filter;if(k==='card')ui.v144BenefitsCard=select.value;else if(k==='year')ui.v144BenefitYear=Number(select.value);else if(k==='month')ui.v144BenefitMonth=select.value;render()},true);
@@ -15339,7 +15236,6 @@ setInterval(()=>{
 
 /* V230 — Beneficios pertenece a Tarjetas como vista interna completa.
    Reutiliza v144BenefitsPage, sin cambiar métricas, registros ni formularios. */
-const v230OriginalCardsPage = pages.cards;
 function v230BenefitsWorkspace(scope=null,back=null,action='closeBenefitComparison'){
   return `<div class="v230-benefits-page" id="v230BenefitsWorkspace" aria-label="Tarjetas, comparar beneficios"${back?' tabindex="-1"':''}>
     <header class="v230-benefits-header">
@@ -15351,7 +15247,6 @@ function v230BenefitsWorkspace(scope=null,back=null,action='closeBenefitComparis
     ${v144BenefitsPage(scope)}
   </div>`;
 }
-pages.cards=function(){return ui.v230BenefitComparison?v230BenefitsWorkspace():v230OriginalCardsPage()};
 // Legacy deep links: do not present Beneficios as an independent destination.
 const v230OldBenefitsPage=pages.benefits;
 pages.benefits=function(){ui.v230BenefitComparison=true;return v230BenefitsWorkspace()};
@@ -16550,23 +16445,6 @@ document.addEventListener('click',event=>{
 },true);
 
 
-/* V243 · Uniform card workspace inspired by Bancos. The bank portfolio, card
-   details, controls and the standalone Wallet are rendered without mutation. */
-const v243CardsOriginal=pages.cards;
-pages.cards=function(){
- const body=v243CardsOriginal();
- if(ui.v230BenefitComparison)return body;
- if(!isMobileViewport())return `<div class="v243-cards-workspace v256-desktop-cards" aria-label="Bancos · Tarjetas">${body}</div>`;
- const visible=(db.cards||[]).filter(c=>ui.showHidden||!isHidden(c)).length;
- return `<div class="v243-cards-workspace" aria-label="Bancos · Tarjetas">
-  <header class="v243-cards-heading"><div class="v243-cards-heading-main">
-   <span class="v243-module-kicker">BANCOS · TU PORTAFOLIO</span>
-   <h2>Tarjetas</h2>
-   <p>Crédito, cortes, pagos y beneficios en un solo lugar.</p>
-  </div><div class="v243-cards-heading-actions"><span class="v243-cards-total">${visible} ${visible===1?'tarjeta':'tarjetas'}</span></div></header>
-  <nav class="v243-bank-breadcrumb" aria-label="Navegación de productos bancarios"><button type="button" data-act="navigate" data-id="banks">${icon('arrow')} Bancos</button><span aria-hidden="true">/</span><strong>Tarjetas</strong></nav>
-  ${body}</div>`;
-};
 
 /* V243 · Restrict origin tracking to actual Explore links. Do not modify bottom
    navigation or global route actions. */
@@ -16755,53 +16633,9 @@ window.addEventListener('focus',v246RefreshAfterResume,{passive:true});
 /* V244 · Tarjetas móvil limpio + refinamiento transversal de módulos.
    Objetivo: igualar la claridad de Cuentas y efectivo en iPhone sin tocar los cálculos. */
 (function(){
-  const v244DesktopCards = pages.cards;
-  function v244CardsTx(tx){
-    return tx.length ? `<div class="v244-history">${tx.slice(0,10).map(t=>{
-      const incoming = ['card_payment','card_refund','card_reward'].includes(t.type);
-      return `<div class="v244-history-row"><span class="v244-history-mark ${incoming?'positive':''}">${icon(incoming?'up':'down')}</span><span class="v244-history-copy"><strong>${sanitize(transactionTitle(t))}</strong><small>${prettyDate(t.date)} · ${sanitize(TRANSL[t.type]||t.type)}</small></span><b class="${incoming?'positive':''}">${incoming?'+':'−'}${money(num(t.amount),t.currency,2)}</b></div>`;
-    }).join('')}</div>` : '<p class="v244-no-data">Aún no hay movimientos registrados en esta tarjeta.</p>';
-  }
-  function v244CardsMobile(){
-    const selected = ui.cardId ? card(ui.cardId) : null;
-    if(selected&&ui.cardDetailTab==='history')return `<div class="v244-mobile-root v244-cards v244-detail-mode v1003-history">${cardHistoricalView(selected)}</div>`;
-    if(selected){
-      const dop = cardStatus(selected,'DOP');
-      const usd = cardStatus(selected,'USD');
-      const limit = num(selected.limitDOP) + fx(num(selected.limitUSD),'USD');
-      const debt = num(dop.debt) + fx(num(usd.debt),'USD');
-      const avail = Math.max(0,num(dop.availableWithOverdraft)) + Math.max(0,fx(Math.max(0,num(usd.availableWithOverdraft)),'USD'));
-      const utilization = limit>0 ? (debt/limit)*100 : null;
-      const tx = recentTx().filter(t=>t.cardId===selected.id);
-      const benefitD = benefitBreakdown(selected,'DOP');
-      const benefitU = benefitBreakdown(selected,'USD');
-      const upcomingCuts = [
-        {ccy:'RD$', cut:dop.cut, due:dop.nextDue, billed:dop.billed, debt:dop.debt},
-        {ccy:'US$', cut:usd.cut, due:usd.nextDue, billed:usd.billed, debt:usd.debt, currency:'USD'}
-      ].filter(x=>num(x.debt)||num(x.billed)||x.cut||x.due);
-      return `<div class="v244-mobile-root v244-cards v244-detail-mode">
-        <button class="v244-back" data-act="closeCardDetails" aria-label="Volver a Wallet"><span class="v373-back-glyph">${icon('arrow')}</span><span>Volver a Wallet</span></button>
-        <section class="v244-hero v244-detail-hero"><span class="v244-hero-label">CRÉDITO PERSONAL · ${sanitize(bankOf(selected))}</span><h2>${sanitize(selected.name)}</h2><p>${sanitize(CARD_TIER_NAMES[cardTierKey(selected)]||'Tarjeta')} · •••• ${sanitize(selected.last4||'—')}</p><small>DEUDA UTILIZADA</small><strong>${money(debt)}</strong><div class="v244-hero-bottom"><span>${utilization===null?'Sin límite definido':utilization.toFixed(1)+'% del límite'}</span><span>${selected.network?sanitize(selected.network):'Crédito registrado'}</span></div></section>
-        <div class="v244-actions"><button class="v244-action-primary" data-act="payCard" data-id="${sanitize(selected.id)}">${icon('card')} Registrar pago</button><button class="v244-action" data-act="cardHistory" data-id="${sanitize(selected.id)}">${icon('chart')} Ver histórico</button></div>
-        <section class="v244-sheet"><h3>Resumen de crédito</h3><div class="v244-facts">${['Límite total|'+money(limit),'Disponible|'+money(Math.max(0,avail)),'Deuda RD$|'+money(dop.debt,'DOP',2),'Deuda US$|'+money(usd.debt,'USD',2)].map(x=>{const p=x.split('|');return `<div class="v244-fact"><span>${p[0]}</span><strong>${p[1]}</strong></div>`;}).join('')}</div><p class="v244-disclaimer">La deuda utilizada se calcula con tus movimientos registrados. Los montos en US$ se convierten a RD$ según la tasa configurada.</p></section>
-        <section class="v244-sheet"><div class="v244-sheet-head"><h3>Cortes y próximos pagos</h3><span>${upcomingCuts.length}</span></div>${upcomingCuts.length?`<div class="v244-cut-list">${upcomingCuts.map(x=>`<article class="v244-cut-item"><strong>${x.ccy}</strong><div><small>Saldo actual</small><b>${money(x.debt,x.currency||'DOP',2)}</b></div><div><small>Facturado</small><b>${money(x.billed||0,x.currency||'DOP',2)}</b></div><div><small>Próximo pago</small><b>${x.due?prettyDate(x.due):'Sin fecha'}</b></div></article>`).join('')}</div>`:'<p class="v244-no-data">No hay cortes calculados todavía para esta tarjeta.</p>'}</section>
-        <section class="v244-sheet"><div class="v244-sheet-head"><h3>Beneficios acreditados</h3><span>${money(num(benefitD.credited)+fx(num(benefitU.credited),'USD'))}</span></div><div class="v244-facts"><div class="v244-fact"><span>Cashback en RD$</span><strong>${money(benefitD.credited,'DOP',2)}</strong></div><div class="v244-fact"><span>Cashback en US$</span><strong>${money(benefitU.credited,'USD',2)}</strong></div></div></section>
-        <section class="v244-sheet v373-card-information" aria-label="Información de la tarjeta">
-          <div class="v244-sheet-head"><h3>Información de la tarjeta</h3><span class="v373-section-symbol">${icon('card')}</span></div>
-          <div class="v244-facts v373-info-facts">
-            <div class="v244-fact"><span>Institución</span><strong>${sanitize(bankOf(selected))}</strong></div>
-            <div class="v244-fact"><span>Categoría</span><strong>${sanitize(CARD_TIER_NAMES[cardTierKey(selected)]||'Tarjeta')}</strong></div>
-            <div class="v244-fact"><span>Terminación</span><strong>•••• ${sanitize(selected.last4||'—')}</strong></div>
-            <div class="v244-fact"><span>Red</span><strong>${selected.network?sanitize(selected.network):'No especificada'}</strong></div>
-          </div>
-        </section>
-        <section class="v244-sheet v373-card-activity"><div class="v244-sheet-head"><h3>Actividad reciente</h3><span>${tx.length} ${tx.length===1?'movimiento':'movimientos'}</span></div>${v244CardsTx(tx)}</section>
-        <details class="v244-more v373-card-manage"><summary><span class="v373-manage-mark">${icon('settings')}</span><span>Administrar esta tarjeta</span><span class="v373-manage-chevron">${icon('arrow')}</span></summary><div class="v244-more-body">${productControls('card',selected.id,selected.archived)}</div></details>
-      </div>`;
-    }
-    return v68Wallet();
-  }
-  pages.cards = () => isMobileViewport() ? (ui.v230BenefitComparison?v230BenefitsWorkspace():v244CardsMobile()) : v244DesktopCards();
+  
+  
+  pages.cards = () => v230BenefitsWorkspace();
 })();
 
 (function(){
@@ -20485,6 +20319,12 @@ render=function(...args){
   ui.vBanksProductDetail=did?{kind:t,id:did}:null;   // «adentrarse» en un producto = detalle dentro de Bancos
   if(t==='loans'&&did)loanWorkspace.tab=loanWorkspace.tab||'vision';
   if(window.matchMedia('(max-width:790px)').matches)ui.vBanksMobileProducts=true;
+ }
+ /* Tarjetas: la lista vieja desaparece (la lista vive en Wallet). La página `cards` solo sirve ya para «adentrarse» en una tarjeta o, en móvil, comparar beneficios. */
+ if(ui.page==='benefits'){ui.page='cards';ui.v230BenefitComparison=true}
+ if(ui.page==='cards'&&!ui.cardId){
+  const mob=window.matchMedia('(max-width:790px)').matches;
+  if(!(mob&&ui.v230BenefitComparison)){if(ui.v230BenefitComparison&&!mob)ui.vWalletPcBenefits=true;ui.v230BenefitComparison=false;ui.page='wallet'}
  }
  return vLegacyBanksRender.apply(this,args);
 };

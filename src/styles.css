@@ -177,64 +177,6 @@ display:block;
 margin-bottom:9px;
 opacity:.65}
 .cards-grid{grid-template-columns:repeat(auto-fill,minmax(270px,1fr))}
-.bank-card{border:1px solid var(--line);
-padding:18px;
-background:white;
-box-shadow:var(--shadow);
-min-width:0}
-.bank-card .name{font-weight:700;
-font-size:14px}
-.bank-card .type{font-size:12px;
-color:var(--muted);
-margin-top:5px}
-.bank-card .big{font-size:24px;
-letter-spacing:-.8px;
-font-weight:700;
-margin-top:22px}
-.bank-card .bottom{display:flex;
-align-items:center;
-justify-content:space-between;
-gap:10px;
-margin-top:18px}
-.card-visual{padding:20px;
-border-radius:17px;
-min-height:183px;
-color:#fff;
-background:linear-gradient(128deg,#152a4b 0%,#273e74 65%,#4774ce 120%);
-position:relative;
-overflow:hidden;
-box-shadow:0 10px 25px #20396624}
-.card-visual:before{content:'';
-position:absolute;
-width:235px;
-height:235px;
-border:1px solid #ffffff17;
-border-radius:50%;
-right:-75px;
-top:-90px}
-.card-visual:after{content:'';
-position:absolute;
-width:170px;
-height:170px;
-border:1px solid #ffffff19;
-border-radius:50%;
-right:-55px;
-top:-45px}
-.card-visual .chip{margin-top:28px;
-display:block;
-width:28px;
-height:19px;
-border:1px solid #e79ca9;
-border-radius:4px;
-background:linear-gradient(90deg,#d98290,#efadb8)}
-.card-visual .last4{font-size:20px;
-letter-spacing:3px;
-margin-top:10px;
-position:relative}
-.card-visual .bottom{font-size:12px;
-color:#c1d5f5;
-position:relative;
-margin-top:14px}
 .dual{display:grid;
 grid-template-columns:1fr 1fr;
 gap:12px}
@@ -562,52 +504,16 @@ box-shadow:0 7px 30px rgba(33,52,87,.04)}
 color:#5873c8}
 .section-title h2{
 letter-spacing:-.45px}
-.bank-hero{display:flex;
-justify-content:space-between;
-gap:30px;
-align-items:stretch;
-background:linear-gradient(125deg,#132c55 0%,#172b4d 48%,#263d65 100%);
-border:1px solid #254165;
-border-radius:23px;
-color:white;
-padding:36px 38px;
-position:relative;
-overflow:hidden;
-isolation:isolate}
-.bank-hero:after{content:'';
-position:absolute;
-width:420px;
-height:420px;
-border:1px solid rgba(153,185,242,.17);
-border-radius:50%;
-right:-155px;
-top:-250px;
-box-shadow:0 0 0 54px rgba(108,153,228,.034),0 0 0 120px rgba(108,153,228,.026);
-z-index:-1}
 .hero-eyebrow{font-size:12px;
 font-weight:700;
 letter-spacing:2px;
 color:#a4c1ec;
 margin-bottom:15px}
-.bank-hero h2{font-size:clamp(27px,3.2vw,40px);
-line-height:1.12;
-font-weight:700;
-letter-spacing:-1.6px;
-margin:0}
-.bank-hero h2 em{font-style:normal;
-color:#8aaffd}
-.bank-hero p{font-size:12.8px;
-line-height:1.8;
-max-width:560px;
-margin:18px 0 22px}
 .hero-actions{display:flex;
 gap:9px;
 flex-wrap:wrap}
 .btn.light{background:#fff;
 color:#183258}
-.btn.outline-light{background:transparent;
-border-color:#6f87a5;
-color:#e9f0fa}
 .institution-logo{width:44px;
 height:44px;
 display:grid;
@@ -661,18 +567,14 @@ outline-offset:1px}
 .modal-head{border-bottom:1px solid #ebeff5}
 @media(max-width:1350px){
 .product-columns{grid-template-columns:1fr}
-.bank-hero{padding:30px}
 }
 @media(max-width:790px){
-.bank-hero{flex-direction:column;
-padding:28px}
 .workspace-title{align-items:flex-start;
 flex-direction:column}
 .bank-workspace{padding:15px}
 }
 @media(max-width:420px){
 .bank-workspace .grid.kpis{grid-template-columns:1fr}
-.bank-hero h2{font-size:28px}
 }
 
 @media(max-width:790px){
@@ -768,7 +670,6 @@ line-height:1.5}
 .section{margin-top:24px}
 .section-title h2{font-size:19px}
 .panel-head h3{font-size:14px}
-.bank-card{border-radius:22px}
 .field,.filter-select{background:rgba(255,255,255,.86);
 border:1px solid rgba(205,216,234,.88)}
 .field:focus,.filter-select:focus{outline:none;
@@ -795,7 +696,6 @@ td{border-color:rgba(226,234,242,.8)}
 .world-transactions{--blue:#27918e}
 .world-settings{--blue:#617da0}
 .world-cards .card-visual{background:linear-gradient(130deg,#222341,#4b387f 58%,#8060ae 120%)}
-.world-banks .bank-hero{background:linear-gradient(112deg,#1b3459,#386ba5)}
 .world-recurring .section-title h2,.world-categories .section-title h2{color:#5f5788}
 .world-analytics .panel{background:rgba(255,255,255,.73)}
 /* Dedicated, intentionally spare daily summary */
@@ -1239,7 +1139,6 @@ margin-top:16px}
 .matrix-scroll::-webkit-scrollbar{height:7px}
 .matrix-scroll::-webkit-scrollbar-thumb{background:#bfd0e5;
 border-radius:30px}
-.world-banks .bank-hero{gap:24px}
 .world-banks .bank-workspace .grid.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}
 .world-banks .product-columns{grid-template-columns:repeat(4,minmax(0,1fr))}
 .advanced-hero{border-radius:28px;
@@ -3161,8 +3060,6 @@ overscroll-behavior-x:contain}
  /* wallet ya contiene las métricas principales */
  /* evita el doble resumen de escritorio */
  .world-cards .cards-grid{gap:10px}
- .world-banks .bank-hero,.world-accounts .bank-hero{max-width:100%;
-overflow:hidden}
  .world-banks .bank-card,.world-accounts .bank-card{padding:13px}
  .v55-two,.v55-origin-row,.v55-source-card{min-width:0}
  .v55-metric{padding:11px;
@@ -3994,7 +3891,6 @@ body[data-menu-layout="top"] .rail-tooltip{background:#1b2b44!important}
 .kpi-value{color:#1e3154!important;font-size:clamp(21px,2.1vw,30px)!important;font-variant-numeric:tabular-nums!important;margin-top:10px!important}
 .kpi-foot,.panel p,.subtle,.tiny.muted{color:var(--ff-readable-muted)!important}
 .panel{padding:18px 20px!important}.panel-head h3,.section-title h2{color:#243956!important}
-.bank-card{transition:transform .2s,box-shadow .2s}.bank-card:hover{transform:translateY(-2px);box-shadow:0 14px 30px #375b9421!important}
 .btn{border-radius:12px!important;box-shadow:none!important;font-weight:600!important}
 .btn.soft,.btn.ghost,.pill,.filter-select,.field,.stat-box{background:#eaf1f9bb!important;border-color:#ffffffd2!important;color:color-mix(in srgb,var(--vx-accent-ink) 16%,#3b4556)!important}
 .field,.filter-select{border-radius:12px!important;min-height:40px!important}
@@ -4076,8 +3972,6 @@ body.theme-dark .kpi-value,body.theme-dark .panel-head h3,body.theme-dark .secti
 .settings-hero .summary-tag{color:#bcd7ff!important}.settings-hero p{color:#e3edff!important;font-size:12px!important;line-height:1.55!important}
 body.theme-dark .settings-hero{background:linear-gradient(110deg,#294e88,#315e9d)!important;border-color:#5678ad!important}
 /* Restore contrast in themed modules. Never put white hero copy on a near-white card. */
-.bank-hero{box-shadow:0 13px 30px #17366510!important}
-.bank-hero h2{color:#fff!important}.bank-hero p{color:#bcd0eb!important}
 /* Slightly bolder active styling to match reference navigation at a glance. */
 /* Mobile: one clear brand header and scrollable tabs rather than stacked pills. */
 @media (max-width:790px){
@@ -5318,9 +5212,6 @@ body.vision-mode .settings-layout .settings-group-title h3{color:#f5f7ff!importa
 @media (min-width:1000px) and (max-height:830px){
  .vision-ledger-row:nth-child(n+4),.vision-cat-item:nth-last-child(2){display:none}
 }
-body.vision-mode .bank-card{background:#1b2b43!important;border:1px solid #2c4461!important}
-body.vision-mode .bank-card .card-visual{background:radial-gradient(ellipse at 18% 0%,#439bda6b,transparent 69%),linear-gradient(135deg,#246fb0 0%,#0b3e78 49%,#0b2448 100%)!important;border:1px solid #3a83bd!important;box-shadow:inset 0 1px #9ad2ff55!important}
-body.vision-mode .bank-card .last4,body.vision-mode .bank-card .bottom{color:#eef7ff!important}
 body.vision-mode .settings-group-title{color:#edf3ff!important}
 body.vision-mode .theme-choice{color:#b5c8e3!important}
 /* Search bar and final card information density. */
@@ -5970,15 +5861,6 @@ body.theme-dark #page .v27-budget-last strong{color:#8fe0c6!important}
 .world-cards .bank-card .v28-card-face.tier-diamond{background:linear-gradient(123deg,#244768,#5989a1 65%,#86b9c7)!important}
 .world-cards .bank-card .v28-card-face.tier-business{background:linear-gradient(125deg,#243d45,#366470 60%,#799f9c)!important}
 .world-cards .bank-card .v28-card-face.tier-titanium{background:linear-gradient(125deg,#424b57,#677584 66%,#929da6)!important}
-.v28-card-top,.v28-card-bottom{display:flex;justify-content:space-between;align-items:center;gap:10px;position:relative;z-index:2}
-.v28-card-bank{display:inline-flex;align-items:center;gap:9px;max-width:70%;color:#ffffffeb;font-size:12px;font-weight:700;line-height:1.3}
-.v28-card-bank>span:last-child{max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.v28-card-middle{display:flex;flex-direction:column;align-items:flex-start;gap:8px;z-index:2;position:relative}
-.v28-card-middle strong{font-size:18px;font-weight:700;letter-spacing:-.45px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
-.v28-card-middle>span{font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#ffffffce}
-.v28-card-bottom .chip{margin:0!important;width:27px;height:20px;border-radius:5px;background:linear-gradient(110deg,#efb8c1,#c86d7c)}
-.v28-card-bottom .last4{font-size:12px;letter-spacing:1.8px;margin:0!important;font-weight:700}
-.v28-card-bottom small{font-size:12px;font-weight:600;color:#ffffffb5;white-space:nowrap}
 .credit-network{position:relative;z-index:2;flex:none;color:white;line-height:1;display:inline-flex;align-items:center;justify-content:center}
 .credit-network-visa{font-family:Arial,sans-serif;font-style:italic;font-weight:700;letter-spacing:-1.8px;font-size:25px;transform:skew(-8deg)}
 .credit-network-mastercard{display:flex;flex-direction:column;align-items:center;gap:2px}
@@ -5990,7 +5872,7 @@ body.theme-dark #page .v27-budget-last strong{color:#8fe0c6!important}
 .credit-network-discover{font-weight:700;font-size:12px;letter-spacing:-.35px}
 .credit-network-generic{font-size:12px;opacity:.8;font-weight:700;letter-spacing:.6px}
 /* Las gestiones especiales se integran al mismo registro rápido, sin tarjetas azules pesadas. */
-@media(max-width:580px){.v28-card-identifiers{grid-template-columns:1fr}.v28-bank-upload{align-items:flex-start;padding:13px;gap:11px}.v28-bank-upload #bankLogoPreview .bank-photo-mark{width:59px;height:59px}.v28-card-bottom small{display:none}}
+@media(max-width:580px){.v28-card-identifiers{grid-template-columns:1fr}.v28-bank-upload{align-items:flex-start;padding:13px;gap:11px}.v28-bank-upload #bankLogoPreview .bank-photo-mark{width:59px;height:59px}}
 
 /* V59 · Tarjetas móviles estilo wallet */
 
@@ -6362,13 +6244,10 @@ body.theme-dark .rail-top .vive-p-brand{color:#fff!important}
 /* V70 · Registro móvil express */
 /* ==== v46-restored-financial-design ==== */
 /* V46 · Global debt hero, compact institution bank cards, crisp subscription grid, floating brand ornament. */.vive-mobile-brand{display:inline-flex!important;align-items:center!important;gap:5px!important}
-.bank-hero.v46-bank-hero{display:grid!important;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr)!important;gap:clamp(16px,3vw,42px)!important;align-items:stretch!important;background:linear-gradient(120deg,#142a4d 0%,#254978 57%,#36669c 100%)!important;border:1px solid #567aa4;border-radius:26px;padding:32px 34px;box-shadow:0 16px 40px #193d7725;min-width:0}
-.v46-bank-intro{min-width:0;align-self:center}.v46-bank-intro h2{font-size:clamp(28px,3vw,42px)!important}.v46-bank-intro p{font-size:13px!important;max-width:510px!important}.v46-bank-intro .hero-actions{margin-top:18px}.v46-hero-foot{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;font-size:12px;color:#c8d7eb}.v46-hero-foot span+span:before{content:'·';margin-right:10px}
-.v46-global-financials{min-width:0;border-left:1px solid #b4cce43d;padding:12px 0 5px 27px;align-self:stretch;display:flex;flex-direction:column;justify-content:center;gap:17px}
 .v46-global-main{display:flex;flex-direction:column;gap:7px}.v46-global-main>span{font-size:12px;font-weight:700;color:#bed6f5;letter-spacing:1.5px}.v46-global-main>strong{color:white;font-size:clamp(31px,4.3vw,57px);letter-spacing:-2.4px;line-height:1.05;font-weight:700;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}.v46-global-main>small{font-size:12px;color:#c9daef}
-.v46-global-secondary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.v46-global-secondary>div{padding:12px 12px 10px;border:1px solid #ffffff25;background:#ffffff0c;border-radius:13px;min-width:0;display:grid;gap:7px}.v46-global-secondary span{font-size:12px;color:#c0d5f0;letter-spacing:1px;font-weight:700}.v46-global-secondary strong{font-size:clamp(14px,1.55vw,21px);font-weight:700;color:white;letter-spacing:-.55px;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}.v46-global-note{font-size:12px;line-height:1.55;color:#bbd1ec}
-@media(max-width:1120px){.bank-hero.v46-bank-hero{grid-template-columns:1fr!important}.v46-global-financials{border-left:0;border-top:1px solid #ffffff40;padding:20px 0 0}.v46-global-main>strong{font-size:38px}}
-@media(max-width:680px){.bank-hero.v46-bank-hero{padding:23px 17px!important;border-radius:20px!important;gap:14px!important}.v46-bank-intro h2{font-size:29px!important}.v46-bank-intro p{font-size:12px!important;line-height:1.6!important}.v46-global-financials{gap:13px;padding-top:17px}.v46-global-main>strong{font-size:clamp(29px,8vw,38px)!important}.v46-global-secondary{gap:8px}.v46-global-secondary>div{padding:10px 9px}.v46-global-secondary strong{font-size:14px}.v46-global-secondary span{font-size:12px}}
+.v46-global-secondary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.v46-global-secondary>div{padding:12px 12px 10px;border:1px solid #ffffff25;background:#ffffff0c;border-radius:13px;min-width:0;display:grid;gap:7px}.v46-global-secondary span{font-size:12px;color:#c0d5f0;letter-spacing:1px;font-weight:700}.v46-global-secondary strong{font-size:clamp(14px,1.55vw,21px);font-weight:700;color:white;letter-spacing:-.55px;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+@media(max-width:1120px){.v46-global-main>strong{font-size:38px}}
+@media(max-width:680px){.v46-global-main>strong{font-size:clamp(29px,8vw,38px)!important}.v46-global-secondary{gap:8px}.v46-global-secondary>div{padding:10px 9px}.v46-global-secondary strong{font-size:14px}.v46-global-secondary span{font-size:12px}}
 
 /* V59 · Tarjetas móviles estilo wallet */
 
@@ -6689,19 +6568,13 @@ body.theme-dark .v54-permadelete{background:#412937;border-color:#754253;color:#
 .v26-internal:is([data-module="accounts"],[data-module="cards"],[data-module="benefits"],[data-module="loans"],[data-module="certificates"])>.v26-nav{margin-bottom:14px!important}
 .v57-product-hero{margin:0 0 19px!important;position:relative;isolation:isolate;overflow:hidden;min-height:0!important}
 .v57-product-hero:before{content:"";position:absolute;width:450px;height:450px;right:-205px;top:-330px;border:1px solid rgba(255,255,255,.14);border-radius:50%;pointer-events:none}
-.v57-product-hero .v46-bank-intro h2{font-size:clamp(28px,3vw,42px)!important;line-height:1.13!important;letter-spacing:-1.35px!important}
-.v57-product-hero .v46-bank-intro h2 em{color:#8fb7ff!important;font-style:normal!important}
-.v57-product-hero .v46-bank-intro p{line-height:1.7!important}
 .v57-product-hero .v46-global-main>strong{font-size:clamp(28px,4vw,55px)!important;white-space:normal;word-break:normal;overflow-wrap:anywhere}
 .v57-product-hero .v46-global-secondary>div{align-content:center;min-height:74px}
 .v57-product-hero .v46-global-secondary strong{font-size:clamp(14px,1.55vw,20px)!important}
 .v57-product-hero .hero-actions{display:flex!important;flex-wrap:wrap!important;gap:9px!important}
 .v57-product-hero button{max-width:100%;white-space:normal!important;text-align:center;justify-content:center}
-.v57-product-hero .v46-global-note{max-width:650px}
-.v57-product-hero .v46-bank-intro,.v57-product-hero .v46-global-financials{position:relative;z-index:1}
-@media(min-width:1320px){.v57-product-hero{padding:28px 32px!important}.v57-product-hero .v46-bank-intro h2{font-size:38px!important}}
-@media(max-width:1120px){.v57-product-hero .v46-global-financials{padding-top:16px!important}}
-@media(max-width:680px){.v57-product-hero{padding:19px 16px!important;border-radius:20px!important;margin-bottom:14px!important}.v57-product-hero .v46-bank-intro h2{font-size:26px!important;letter-spacing:-1px!important}.v57-product-hero .v46-global-main>strong{font-size:clamp(28px,8.5vw,36px)!important}.v57-product-hero .v46-global-secondary{gap:7px!important}.v57-product-hero .v46-global-secondary>div{padding:11px 9px!important;min-height:72px}.v57-product-hero .v46-global-secondary>div span{font-size:12px!important;letter-spacing:.65px!important}.v57-product-hero .v46-global-secondary>div strong{font-size:clamp(12px,3.5vw,17px)!important}.v57-product-hero .v46-global-note{font-size:12px!important}.v57-product-hero .hero-actions>.btn{font-size:12px!important;padding:9px 11px!important}.v57-product-hero .v46-hero-foot{gap:5px!important;margin-top:13px!important;font-size:12px!important}}
+@media(min-width:1320px){.v57-product-hero{padding:28px 32px!important}}
+@media(max-width:680px){.v57-product-hero{padding:19px 16px!important;border-radius:20px!important;margin-bottom:14px!important}.v57-product-hero .v46-global-main>strong{font-size:clamp(28px,8.5vw,36px)!important}.v57-product-hero .v46-global-secondary{gap:7px!important}.v57-product-hero .v46-global-secondary>div{padding:11px 9px!important;min-height:72px}.v57-product-hero .v46-global-secondary>div span{font-size:12px!important;letter-spacing:.65px!important}.v57-product-hero .v46-global-secondary>div strong{font-size:clamp(12px,3.5vw,17px)!important}.v57-product-hero .hero-actions>.btn{font-size:12px!important;padding:9px 11px!important}}
 @media(max-width:380px){.v57-product-hero .v46-global-secondary{grid-template-columns:repeat(2,minmax(0,1fr))!important}.v57-product-hero .v46-global-secondary strong{font-size:12px!important}}
 /* Mantener blancos intensos y sin transparencias impuestas en tarjetas internas. */
 body.theme-dark .v57-product-hero .v46-global-secondary>div{border-color:#ffffff29!important;background:#ffffff0a!important}
@@ -7674,41 +7547,6 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .theme-dark #modal-root .v147-rec-form .v160-rec-status-icon{background:#31486a;color:#bad5ff}
 /* ==== vive-v148-card-benefit-compact ==== */
 /* V148: SOLO fichas de tarjetas del portafolio. No toca Wallet móvil ni Resumen. */
-.cards-grid .bank-card:has(.v148-card-essentials){display:flex;flex-direction:column;gap:0;min-width:0}
-.cards-grid .v148-card-essentials{padding:13px 2px 11px;margin-top:8px;border:0;border-top:1px solid rgba(118,147,196,.18);background:transparent;box-shadow:none;color:var(--text,#21365a)}
-.cards-grid .v148-owed{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:0 2px 11px;border-bottom:1px solid rgba(118,147,196,.16)}
-.cards-grid .v148-owed-part{display:grid;align-content:start;min-width:0;gap:4px}
-.cards-grid .v148-owed-part small{font-size:12px;font-weight:700;letter-spacing:.075em;color:#7588a6;line-height:1.3}
-.cards-grid .v148-owed-part strong{font-size:clamp(14px,1.55vw,19px);font-weight:700;letter-spacing:-.04em;line-height:1.1;white-space:nowrap;font-variant-numeric:tabular-nums}
-.cards-grid .v148-owed-part button{justify-self:start;display:inline-flex;align-items:center;gap:3px;background:transparent;border:0;box-shadow:none;color:#4f71ab;font-size:12px;font-weight:700;padding:3px 0;cursor:pointer;min-height:27px}
-.cards-grid .v148-owed-part button:hover{text-decoration:underline}
-.cards-grid .v148-benefit-hero{margin:10px 0 7px;padding:10px 11px;border:1px solid rgba(88,151,135,.2);background:linear-gradient(115deg,rgba(231,249,244,.76),rgba(246,252,255,.66));border-radius:13px;display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0}
-.cards-grid .v148-benefit-hero.is-negative{background:linear-gradient(115deg,rgba(255,240,239,.8),rgba(252,247,250,.7));border-color:rgba(199,106,99,.16)}
-.cards-grid .v148-benefit-hero>div{display:grid;gap:3px;min-width:0}
-.cards-grid .v148-benefit-hero small{font-size:12px;color:#527b70;font-weight:700;letter-spacing:.065em;line-height:1.3}
-.cards-grid .v148-benefit-hero.is-negative small{color:#9a5e63}
-.cards-grid .v148-benefit-hero strong{font-weight:700;font-size:clamp(17px,1.8vw,22px);letter-spacing:-.055em;color:#167a65;line-height:1.12;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
-.cards-grid .v148-benefit-hero.is-negative strong{color:#bd5159}
-.cards-grid .v148-benefit-hero button{flex-shrink:0;border:1px solid rgba(100,139,197,.28);border-radius:999px;padding:7px 8px;background:rgba(255,255,255,.65);color:#37629a;font-size:12px;font-weight:700;display:inline-flex;gap:4px;align-items:center;cursor:pointer}
-.cards-grid .v148-benefit-detail{display:grid;gap:6px;padding:4px 3px 8px}
-.cards-grid .v148-benefit-detail>span,.cards-grid .v148-meta>span{display:flex;align-items:center;justify-content:space-between;gap:6px;min-width:0;font-size:12px;color:#617491}
-.cards-grid .v148-benefit-detail b,.cards-grid .v148-meta strong{font-weight:700;color:#263d63;font-size:12px;font-variant-numeric:tabular-nums}
-.cards-grid .v148-meta{padding:8px 3px;border-top:1px solid rgba(118,147,196,.14);display:grid;gap:6px}
-.cards-grid .v148-meta .v148-pending strong{color:#ab2f44}
-.cards-grid .v148-card-due{border-top:1px solid rgba(118,147,196,.13);display:flex;align-items:center;justify-content:space-between;gap:7px;min-height:30px;margin-top:5px;padding:8px 2px 0}
-.cards-grid .v148-card-due>span:first-child{font-size:12px;color:#7788a1;line-height:1.3}
-.cards-grid .v148-card-due .pill{font-size:12px;white-space:nowrap}
-.cards-grid .bank-card:has(.v148-card-essentials)>.product-mini-actions{margin-top:4px}
-.cards-grid .bank-card:has(.v148-card-essentials)>.card-footer:last-child{display:flex;justify-content:center;flex-wrap:wrap;gap:5px;margin-top:auto;padding-top:10px}
-.cards-grid .bank-card:has(.v148-card-essentials)>.card-footer:last-child .btn{flex:0 1 auto;min-width:0;font-size:12px;padding:7px 8px}
-body.theme-dark .cards-grid .v148-card-essentials{color:#e6efff}
-body.theme-dark .cards-grid .v148-benefit-hero{background:rgba(35,78,74,.54);border-color:rgba(128,198,180,.3)}
-body.theme-dark .cards-grid .v148-benefit-hero.is-negative{background:rgba(92,45,56,.47)}
-body.theme-dark .cards-grid .v148-owed-part strong,body.theme-dark .cards-grid .v148-benefit-detail b,body.theme-dark .cards-grid .v148-meta strong{color:#f4f8ff}
-body.theme-dark .cards-grid .v148-benefit-hero strong{color:#91e3ca}
-body.theme-dark .cards-grid .v148-benefit-hero.is-negative strong{color:#ffafb4}
-@media (max-width:790px){.cards-grid .v148-benefit-hero{padding:10px}.cards-grid .v148-benefit-hero strong{font-size:19px}.cards-grid .v148-owed-part strong{font-size:16px}}
-@media (prefers-reduced-motion:reduce){.cards-grid .v148-benefit-hero button{transition:none!important}}
 /* ==== vive-v159-premium-search-strategic ==== */
 /* V159 · Desktop: one primary search pill, one decision icon. All other tools live inside Spotlight. */
 .v159-spotlight-identity{display:flex;gap:8px;align-items:center;padding:16px 25px 0;color:#5b6e95;font-size:12px;font-weight:700;letter-spacing:-.015em}
@@ -8673,154 +8511,6 @@ body.theme-black .v235-register-layer>.v235-register-dialog{background:#10141e!i
 }
 body.theme-black .v243-explore-return strong {
   color: #eaf0fa;
-}
-.v243-cards-workspace {
-  max-width: 1320px;
-  margin: 0 auto;
-}
-.v243-cards-heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  background: linear-gradient(150deg,rgba(255,255,255,.83),rgba(226,236,252,.61));
-  border: 1px solid rgba(130,165,210,.18);
-  padding: 20px 23px;
-  border-radius: 23px;
-  margin: 0 0 12px;
-}
-.v243-module-kicker {
-  display: block;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: .14em;
-  color: #6786b5;
-  margin-bottom: 6px;
-}
-.v243-cards-heading h2 {
-  font-size: clamp(24px,2.3vw,31px);
-  line-height: 1.1;
-  letter-spacing: -.045em;
-  margin: 0;
-}
-.v243-cards-heading p {
-  font-size: 12px;
-  line-height: 1.5;
-  color: var(--muted);
-  margin: 6px 0 0;
-}
-.v243-cards-heading-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-shrink: 0;
-}
-.v243-cards-total {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--muted);
-}
-.v243-bank-breadcrumb {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  margin: 0 0 18px;
-  color: var(--muted);
-  font-size: 12px;
-  padding-left: 4px;
-}
-.v243-bank-breadcrumb button {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 4px 2px;
-  background: none;
-  border: 0;
-  color: inherit;
-  font-weight: 700;
-}
-.v243-bank-breadcrumb button svg {
-  width: 13px;
-  height: 13px;
-  transform: rotate(180deg);
-}
-.v243-bank-breadcrumb strong {
-  color: var(--ink);
-}
-@media (min-width:791px) {
-  .v243-cards-workspace .section-title {
-    padding: 15px 17px;
-    margin: 0 0 13px;
-    background: rgba(255,255,255,.72);
-    border-radius: 20px;
-    border: 1px solid rgba(139,168,210,.18);
-  }
-  .v243-cards-workspace .cards-grid {
-    gap: 15px;
-    grid-template-columns: repeat(auto-fit,minmax(min(100%,325px),1fr));
-  }
-  .v243-cards-workspace .v149-card-shell {
-    border-radius: 22px;
-    overflow: hidden;
-    border: 1px solid rgba(132,163,204,.22);
-    background: linear-gradient(155deg,rgba(255,255,255,.96),rgba(235,243,255,.74));
-    box-shadow: 0 10px 30px rgba(21,48,88,.08),inset 0 1px 0 rgba(255,255,255,.8);
-    transition: transform .2s ease,box-shadow .2s ease;
-  }
-  .v243-cards-workspace .v149-card-shell:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 18px 38px rgba(21,48,88,.12);
-  }
-  .v243-cards-workspace .v149-card-cue {
-    padding-top: 10px;
-  }
-  .v243-cards-workspace .v149-card-reveal {
-    border-top: 1px solid rgba(128,163,210,.13);
-  }
-}
-@media (max-width:790px) {
-  .v243-cards-heading {
-    padding: 15px 14px;
-    border-radius: 20px;
-    margin: 0 0 10px;
-    gap: 8px;
-  }
-  .v243-cards-heading h2 {
-    font-size: 24px;
-  }
-  .v243-cards-heading p {
-    font-size: 12px;
-    max-width: 230px;
-  }
-  .v243-cards-heading-actions {
-    flex-direction: column;
-    gap: 6px;
-    align-items: flex-end;
-  }
-  .v243-cards-total {
-    font-size: 12px;
-  }
-  .v243-bank-breadcrumb {
-    margin: 0 0 14px;
-  }
-  .v243-cards-workspace .v149-card-shell {
-    border-radius: 21px;
-  }
-}
-body.theme-black .v243-cards-heading {
-  background: linear-gradient(150deg,#141920,#1b2330);
-  border-color: #2c3746;
-}
-body.theme-black .v243-cards-heading h2,body.theme-black .v243-bank-breadcrumb strong {
-  color: #edf2fc;
-}
-body.theme-black .v243-cards-workspace .section-title {
-  background: #131922;
-  border-color: #293447;
-}
-body.theme-black .v243-cards-workspace .v149-card-shell {
-  background: #131923;
-  border-color: #30394b;
 }
 /*Four notification reports — all styles scoped to their modal.*/
 .v243-report {
@@ -10264,48 +9954,6 @@ body .main.world-recurring #page .v26-internal > .v26-body {
 @media(min-width:791px){#page .v266-wallet .v371-card-return{display:none}}
 /* ==== v373-card-details-cohesion ==== */
 /* V373: coherencia Tarjetas / Cuentas en móvil. No altera datos o funciones. */
-@media (max-width:790px){
- .main .v244-mobile-root.v244-detail-mode {min-width:0;max-width:100%;overflow:visible;padding-inline:0;}
- .main .v244-detail-mode .v244-back {display:inline-flex;gap:9px;align-items:center;justify-content:flex-start;max-width:100%;margin:0 0 13px;padding:8px 2px!important;min-height:40px;font-size:13px;font-weight:700;line-height:1.3;text-decoration:none;white-space:normal;}
- .main .v244-detail-mode .v244-back .v373-back-glyph{display:grid;place-items:center;transform:rotate(180deg);width:18px;height:18px;flex:none;}
- .main .v244-detail-mode .v244-back svg,.main .v244-detail-mode .v244-back svg * {max-width:18px;max-height:18px;}
- .main .v244-detail-mode .v244-hero{border-radius:24px;padding:19px 18px;min-width:0;}
- .main .v244-detail-mode .v244-detail-hero h2{font-size:clamp(24px,7.2vw,32px);line-height:1.12;overflow-wrap:anywhere;}
- .main .v244-detail-mode .v244-detail-hero>strong{font-size:clamp(32px,9vw,43px);overflow-wrap:anywhere;}
- .main .v244-detail-mode .v244-actions{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin:12px 0 13px;}
- .main .v244-detail-mode .v244-actions button{min-width:0;min-height:48px;padding:9px 10px;border-radius:15px;white-space:normal;font-size:12px;line-height:1.25;}
- .main .v244-detail-mode .v244-actions button svg{width:17px;height:17px;flex:none;}
- .main .v244-detail-mode .v244-sheet{margin-top:11px;border-radius:22px;padding:17px 16px;overflow:hidden;min-width:0;}
- .main .v244-detail-mode .v244-sheet-head{display:flex;align-items:center;justify-content:space-between;min-width:0;gap:8px;}
- .main .v244-detail-mode .v244-sheet-head h3,.main .v244-detail-mode .v244-sheet>h3{font-size:17px;letter-spacing:-.035em;line-height:1.25;margin:0;}
- .main .v244-detail-mode .v244-sheet-head>span{flex:none;font-size:12px;white-space:nowrap;}
- .main .v244-detail-mode .v373-section-symbol{display:grid;place-items:center;width:30px;height:30px;border-radius:10px;background:rgba(96,136,194,.12);}
- .main .v244-detail-mode .v373-section-symbol svg{width:17px;height:17px;}
- .main .v244-detail-mode .v244-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:12px;}
- .main .v244-detail-mode .v244-fact{min-width:0;padding:12px;border-radius:14px;}
- .main .v244-detail-mode .v244-fact span{font-size:12px;letter-spacing:.05em;line-height:1.35;}
- .main .v244-detail-mode .v244-fact strong{font-size:clamp(12px,3.7vw,16px);line-height:1.3;letter-spacing:-.025em;overflow-wrap:anywhere;word-break:normal;}
- .main .v244-detail-mode .v244-history{gap:8px;margin-top:12px;}
- .main .v244-detail-mode .v244-history-row{grid-template-columns:34px minmax(0,1fr) auto;gap:8px;padding:10px;border-radius:14px;max-width:100%;}
- .main .v244-detail-mode .v244-history-mark{width:32px;height:32px;min-width:32px;border-radius:11px;}
- .main .v244-detail-mode .v244-history-mark svg{width:16px;height:16px;}
- .main .v244-detail-mode .v244-history-copy strong{font-size:12px;}
- .main .v244-detail-mode .v244-history-copy small{font-size:12px;}
- .main .v244-detail-mode .v244-history-row b{font-size:12px;white-space:nowrap;max-width:104px;text-align:right;overflow:hidden;text-overflow:ellipsis;}
- .main .v244-detail-mode .v373-card-manage{display:block;min-height:0!important;margin:11px 0 0!important;padding:0 15px!important;max-width:100%;border-radius:19px;overflow:hidden;}
- .main .v244-detail-mode .v373-card-manage>summary{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:10px!important;min-height:55px!important;height:auto!important;margin:0!important;padding:12px 0!important;border:0!important;line-height:1.3!important;font-size:13px!important;font-weight:700!important;cursor:pointer;list-style:none;}
- .main .v244-detail-mode .v373-card-manage>summary::-webkit-details-marker{display:none;}
- .main .v244-detail-mode .v373-card-manage .v373-manage-mark{display:grid;place-items:center;flex:none;width:32px;height:32px;border-radius:11px;background:rgba(98,128,179,.12);}
- .main .v244-detail-mode .v373-card-manage .v373-manage-chevron{display:grid;place-items:center;flex:none;margin-left:auto;transition:transform .2s ease;transform:rotate(90deg);}
- .main .v244-detail-mode .v373-card-manage[open] .v373-manage-chevron{transform:rotate(270deg);}
- .main .v244-detail-mode .v373-card-manage>summary svg{display:block!important;width:18px!important;height:18px!important;min-width:18px!important;min-height:18px!important;max-width:18px!important;max-height:18px!important;flex:none!important;transform:none!important;position:static!important;}
- .main .v244-detail-mode .v373-card-manage .v244-more-body{padding:5px 0 14px;min-width:0;overflow-wrap:anywhere;}
- .main .v244-detail-mode .v373-card-manage:not([open]) .v244-more-body{display:none;}
-}
-body:is(.theme-black,.theme-dark) .main .v244-detail-mode :is(.v244-sheet,.v373-card-manage){background:#0b0b0b!important;background-image:none!important;color:#f1f1f1!important;border-color:#2c2c2c!important;}
-body:is(.theme-black,.theme-dark) .main .v244-detail-mode :is(.v244-fact,.v244-history-row){background:#141414!important;background-image:none!important;border-color:#2d2d2d!important;}
-body:is(.theme-black,.theme-dark) .main .v244-detail-mode .v373-card-manage summary{color:#f1f1f1!important;}
-@media(prefers-reduced-motion:reduce){.main .v244-detail-mode .v373-manage-chevron{transition:none!important;}}
 /* ==== v374-mobile-cards-luxury ==== */
 /* V374 · Wallet, edición y pago de tarjetas · ajuste visual móvil exclusivamente. */
 @media(max-width:790px){
@@ -15918,22 +15566,6 @@ body.theme-dark .v144-section-head h3 {
 @media(min-width:1050px) and (max-width:1290px){.ff-dashboard.summary-space .ff-balance{min-height:360px}.ff-dashboard.summary-space .ff-bubble{width:clamp(126px,12.2vw,166px);height:clamp(126px,12.2vw,166px)}}
 @media(max-width:790px){.ff-dashboard.summary-space .ff-dashboard-grid{min-width:0}.ff-dashboard.summary-space .ff-balance{min-width:0}}
 /* Desktop physical credit cards: only the physical face is shown until expansion. */
-.cards-grid .v149-card-shell{padding:13px!important;align-self:start;min-width:0;overflow:hidden;transition:box-shadow .26s ease,transform .26s ease}
-.cards-grid .v149-card-shell:hover{box-shadow:0 22px 52px rgba(60,88,146,.13)}
-.cards-grid .v149-card-disclosure{width:100%;display:block;min-width:0}
-.cards-grid .v149-card-toggle{display:block;list-style:none;position:relative;cursor:pointer;border-radius:19px;outline-offset:4px}
-.cards-grid .v149-card-toggle::-webkit-details-marker{display:none}
-.cards-grid .v149-card-toggle .card-visual{width:100%;margin:0;transition:transform .35s cubic-bezier(.2,.8,.2,1),filter .35s;pointer-events:none}
-.cards-grid .v149-card-toggle:hover .card-visual{transform:translateY(-3px);filter:brightness(1.06)}
-.cards-grid .v149-card-toggle:focus-visible{outline:3px solid #7c90ee}
-.cards-grid .v149-card-cue{position:absolute;right:13px;bottom:11px;display:flex;align-items:center;gap:6px;background:rgba(22,35,60,.61);color:white;font-weight:700;font-size:12px;padding:7px 11px;border:1px solid #fff3;border-radius:999px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);opacity:0;transform:translateY(4px);transition:opacity .24s,transform .24s;pointer-events:none}
-.cards-grid .v149-card-cue svg{width:13px;height:13px}
-.cards-grid .v149-card-shell:hover .v149-card-cue,.cards-grid .v149-card-toggle:focus-visible .v149-card-cue,.cards-grid .v149-card-disclosure[open] .v149-card-cue{opacity:1;transform:translateY(0)}
-.cards-grid .v149-card-disclosure[open] .v149-card-cue{background:rgba(44,70,134,.8)}
-.cards-grid .v149-card-reveal{padding:7px 2px 0;animation:v149-unfold .3s cubic-bezier(.2,.8,.2,1)}
-.cards-grid .v149-card-reveal .v148-card-essentials{margin-top:7px}
-.cards-grid .v149-card-reveal .card-footer{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding-top:9px}
-.cards-grid .v149-card-reveal .product-mini-actions{margin-top:6px}
 
 
 @keyframes v149-unfold{from{opacity:0;transform:translateY(-9px)}to{opacity:1;transform:translateY(0)}}
@@ -15975,9 +15607,8 @@ body.theme-dark .v149-lifecycle .v149-life-stat{background:#223956;border-color:
  .v149-spotlight-footer{padding:9px 13px calc(env(safe-area-inset-bottom) + 10px)}
  .v149-spotlight-footer .v149-desktop-hint{display:none}
  .v149-life-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
- .cards-grid .v149-card-cue{opacity:1;transform:none}
 }
-@media(prefers-reduced-motion:reduce){.v149-spotlight,.v149-spotlight .v71-search-dialog,.cards-grid .v149-card-reveal{animation:none!important}.cards-grid .v149-card-toggle .card-visual,.cards-grid .v149-card-cue{transition:none!important}}
+@media(prefers-reduced-motion:reduce){.v149-spotlight,.v149-spotlight .v71-search-dialog,.cards-grid .v149-card-reveal{animation:none!important}}
 /* ==== vive-v149-icon-selector ==== */
 .v149-icon-tabs{display:flex;gap:5px;margin:0 0 11px;flex-wrap:wrap}
 .v149-icon-tabs button{border:1px solid #dce6f4;background:rgba(255,255,255,.6);color:#6b7e9b;padding:7px 11px;border-radius:999px;cursor:pointer;font-size:12px;font-weight:700}
@@ -17014,17 +16645,6 @@ body .main.world-overview .ff-dashboard.summary-space .v152-position-reference .
   /* BANCOS: el hero no monopoliza la primera pantalla de 844px. */
   body .world-banks #page .v61-profile-switch{padding:4px!important}
   body .world-banks #page .v61-profile-option{min-height:38px!important;padding:7px 4px!important;font-size:12px!important}
-  body .world-banks #page .bank-hero.v46-bank-hero{display:flex!important;flex-direction:column!important;
-    gap:10px!important;min-height:0!important;height:auto!important;margin-top:8px!important;
-    padding:16px!important;border-radius:23px!important}
-  body .world-banks #page .v46-bank-intro{min-width:0!important;max-width:none!important;padding:0!important}
-  body .world-banks #page .v46-bank-intro .hero-eyebrow{font-size:12px!important;letter-spacing:.16em!important;margin:0 0 7px!important}
-  body .world-banks #page .v46-bank-intro h2{font-size:clamp(22px,5.8vw,26px)!important;letter-spacing:-.055em!important;line-height:1.08!important;margin:0 0 7px!important}
-  body .world-banks #page .v46-bank-intro p{font-size:12px!important;line-height:1.42!important;margin:0!important;max-width:100%!important}
-  body .world-banks #page .v46-bank-hero .hero-actions{display:grid!important;grid-template-columns:1fr 1fr!important;gap:7px!important;margin:11px 0 0!important}
-  body .world-banks #page .v46-bank-hero .hero-actions .btn{min-width:0!important;width:100%!important;min-height:39px!important;font-size:12px!important;padding:7px!important;line-height:1.22!important}
-  body .world-banks #page .v46-hero-foot{margin:8px 0 0!important;padding:0!important;font-size:12px!important}
-  body .world-banks #page .v46-global-financials{padding:10px 0 0!important;margin:0!important;min-width:0!important;max-width:100%!important;border-top:1px solid rgba(255,255,255,.18)}
   body .world-banks #page .v46-global-main{padding:0!important;min-height:0!important}
   body .world-banks #page .v46-global-main span,body .world-banks #page .v46-global-main small{font-size:12px!important;line-height:1.25!important}
   body .world-banks #page .v46-global-main strong{font-size:clamp(22px,7vw,29px)!important;line-height:1.14!important;margin:3px 0!important}
@@ -17032,7 +16652,6 @@ body .main.world-overview .ff-dashboard.summary-space .v152-position-reference .
   body .world-banks #page .v46-global-secondary>div{min-height:0!important;padding:8px!important}
   body .world-banks #page .v46-global-secondary span{font-size:12px!important}
   body .world-banks #page .v46-global-secondary strong{font-size:clamp(12px,3.6vw,14px)!important;overflow-wrap:anywhere!important}
-  body .world-banks #page .v46-global-note{font-size:12px!important;line-height:1.32!important;margin-top:5px!important}
   body .world-banks #page .bank-workspace .workspace-title{display:flex!important;flex-wrap:wrap!important;gap:10px!important}
   body .world-banks #page .bank-workspace .product-columns{display:grid!important;grid-template-columns:1fr!important;gap:9px!important}
   /* MOVIMIENTOS: comprimir el encabezado, no sus operaciones. */
@@ -17109,7 +16728,6 @@ body .main.world-overview .ff-dashboard.summary-space .v152-position-reference .
 }
 @media(max-width:355px){
   body .main .module-switch-tabs{grid-template-columns:repeat(2,minmax(0,1fr))!important}
-  body .world-banks #page .v46-bank-hero .hero-actions{grid-template-columns:1fr!important}
   body .main .ledger-controls{grid-template-columns:1fr!important}
 }
 @media (max-width:790px) and (prefers-reduced-motion:reduce){
@@ -17701,23 +17319,6 @@ body .main.world-overview .ff-dashboard.summary-space .ff-obligations .v82-total
 /* ==== vive-v182-resumen-ejecutivo-tarjetas ==== */
 /* V182: A single complete, clearly prioritized credit portfolio summary.
    Compatible with the existing V57 visual system and the original Wallet. */
-.world-cards #page .v182-cards-workspace{width:100%;min-width:0;display:flex;flex-direction:column;gap:0}
-.world-cards #page .v182-cards-workspace .section-title{
- display:flex;justify-content:space-between;align-items:center;gap:14px;min-width:0;
-}
-.world-cards #page .v182-cards-workspace .v46-global-secondary{min-width:0}
-.world-cards #page .v182-cards-workspace .v46-global-secondary>div{min-width:0}
-.world-cards #page .v182-cards-workspace .v46-global-secondary>div strong{overflow-wrap:anywhere}
-@media(max-width:790px){
- .world-cards #page .v182-cards-workspace .v46-global-secondary{
-  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important;
- }
- .world-cards #page .v182-cards-workspace .v46-global-main>strong{
-  font-size:clamp(28px,8.7vw,39px)!important;line-height:1.06!important;
- }
- .world-cards #page .v182-cards-workspace .section-title{align-items:flex-start;flex-wrap:wrap}
- .world-cards #page .v182-cards-workspace .section-title .hstack{justify-content:flex-start;max-width:100%}
-}
 /* ==== vive-v183-beneficios-y-decisions ==== */
 /* Un informe anual: un KPI ejecutivo, tabla consolidada y una gráfica acumulada.
    No modifica el motor financiero ni los valores registrados. */
@@ -17745,12 +17346,9 @@ body .main.world-overview .ff-dashboard.summary-space .ff-obligations .v82-total
  body .main .module-switch-tabs{display:flex!important;flex-wrap:nowrap!important;overflow-x:auto!important;gap:8px!important;-webkit-overflow-scrolling:touch}
  body .main .module-switch-tab{flex:0 0 auto!important;white-space:nowrap!important}
 }
-.v144-benefit-world .v46-bank-intro>p{display:none!important}
 .v144-benefit-world .v57-product-hero{min-height:0!important;padding-block:20px!important;gap:20px!important}
-.v144-benefit-world .v46-bank-intro h2{font-size:clamp(24px,3vw,34px)!important;line-height:1.1!important;margin:6px 0 12px!important}
 .v144-benefit-world .v46-global-secondary{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:8px!important}
 .v144-benefit-world .v46-global-secondary>div{min-height:0!important;padding:10px 12px!important}
-.v144-benefit-world .v46-global-note{font-size:12px!important;line-height:1.35!important;margin-top:8px!important}
 .v144-benefit-world .v144-filter-row{flex-wrap:nowrap!important;gap:10px!important}
 @media(max-width:760px){
  .v144-benefit-world .v57-product-hero{padding-block:16px!important;gap:12px!important}
@@ -17759,7 +17357,6 @@ body .main.world-overview .ff-dashboard.summary-space .ff-obligations .v82-total
  .v144-benefit-world .v46-global-main strong{font-size:30px!important}
  .v144-benefit-world .v144-filter-row{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important}
  .v144-benefit-world .v144-filter-row>*:first-child{grid-column:1/-1}
- .v144-benefit-world .v46-global-note{font-size:12px!important}
  body .main .module-switch-tab{width:auto!important;min-width:max-content!important;max-width:none!important}
 }
 /* ==== vive-v186-ux-final ==== */
@@ -19464,24 +19061,11 @@ body.theme-dark .world-register .vr-guidance.amber :is(h4,p),body.theme-black .w
  :is(.world-accounts,.world-cards,.world-loans,.world-certificates,.world-benefits) .v57-product-hero{
    min-height:0!important;height:auto!important;display:flex!important;flex-direction:column!important;margin-bottom:15px!important;box-shadow:none!important;
  }
- :is(.world-accounts,.world-cards,.world-loans,.world-certificates,.world-benefits) .v57-product-hero .v46-bank-intro{
-   width:100%!important;min-width:0!important;max-width:100%!important;padding:0!important;
- }
- :is(.world-accounts,.world-cards,.world-loans,.world-certificates,.world-benefits) .v57-product-hero .v46-bank-intro h2{
-   font-size:clamp(21px,6.1vw,27px)!important;line-height:1.12!important;letter-spacing:-.05em!important;margin:6px 0!important;
- }
- :is(.world-accounts,.world-cards,.world-loans,.world-certificates,.world-benefits) .v57-product-hero .v46-bank-intro>p{
-   font-size:12px!important;line-height:1.45!important;max-width:100%!important;margin:7px 0!important;
- }
  :is(.world-accounts,.world-cards,.world-loans,.world-certificates,.world-benefits) .v57-product-hero .hero-actions{
    display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));margin:10px 0 0!important;
  }
  :is(.world-accounts,.world-cards,.world-loans,.world-certificates,.world-benefits) .v57-product-hero .hero-actions .btn{
    width:100%!important;min-width:0!important;margin:0!important;padding:9px 7px!important;white-space:normal!important;font-size:12px!important;justify-content:center!important;
- }
- :is(.world-accounts,.world-cards,.world-loans,.world-certificates,.world-benefits) .v57-product-hero .v46-global-financials{
-   width:100%!important;max-width:100%!important;min-width:0!important;display:block!important;
-   padding:12px 0 0!important;border-top:1px solid rgba(255,255,255,.22)!important;border-left:0!important;
  }
  :is(.world-accounts,.world-cards,.world-loans,.world-certificates,.world-benefits) .v57-product-hero .v46-global-main{
    padding:0!important;margin:0 0 9px!important;min-width:0!important;
@@ -19517,8 +19101,6 @@ body.theme-dark .world-register .vr-guidance.amber :is(h4,p),body.theme-black .w
  .world-accounts .account-product-card{border-radius:21px!important;padding:17px!important;min-width:0!important}
  .world-accounts .account-product-card .account-balance-link{font-size:clamp(23px,7vw,30px)!important;line-height:1.1!important;margin:10px 0!important}
  .world-accounts .account-product-card .bottom{margin-top:10px!important}
- .world-cards .v182-cards-workspace .v57-product-hero{margin-bottom:14px!important}
- .world-cards .v182-cards-workspace .grid.cards-grid{grid-template-columns:1fr!important;gap:12px!important;margin-top:5px!important}
  .world-cards .v149-card-shell{width:100%!important;min-width:0!important;padding:12px!important;border-radius:24px!important}
  .world-cards .v149-card-toggle{border-radius:17px!important;overflow:hidden!important}
  .world-cards .v149-card-reveal{padding:13px 3px 7px!important}
@@ -20707,40 +20289,7 @@ body.theme-black .v242-ios-settings .v212-setup,body.theme-dark .v242-ios-settin
 /* ==== style ==== */
 /* V244 · Limpieza general inspirada por Cuentas y efectivo. */
 @media(max-width:790px){
-  .v244-mobile-root{display:block;max-width:100%;padding:0 0 calc(104px + env(safe-area-inset-bottom,0px));}
-  .v244-sheet h3{margin:0;color:#203a5c;letter-spacing:-.05em;}
-  .v244-hero,.v244-sheet{background:linear-gradient(135deg,rgba(59,98,207,.96),rgba(84,120,221,.92));border:1px solid rgba(255,255,255,.16);border-radius:28px;color:#fff;box-shadow:0 14px 34px rgba(29,57,112,.14);padding:20px;overflow:hidden;position:relative;}
-  .v244-sheet{background:linear-gradient(145deg,rgba(255,255,255,.83),rgba(240,247,255,.72));border:1px solid rgba(223,233,247,.95);box-shadow:0 10px 30px rgba(31,63,110,.06);color:#223b5b;padding:18px;}
-  .v244-sheet-head,.v244-hero-bottom,.v244-facts,.v244-actions,.v244-cut-list{display:flex;gap:12px;}
-  .v244-sheet-head,.v244-hero-bottom{justify-content:space-between;align-items:center;}
-  .v244-hero-label{font-size:12px;letter-spacing:.17em;font-weight:700;opacity:.9;}
-  .v244-fact,.v244-cut-item{min-width:0;}
-  .v244-fact span,.v244-cut-item small{display:block;font-size:12px;letter-spacing:.12em;font-weight:700;text-transform:uppercase;opacity:.82;}
-  .v244-fact strong,.v244-cut-item b{display:block;margin-top:6px;font-size:clamp(18px,5vw,28px);line-height:1.08;letter-spacing:-.04em;}
-  .v244-disclaimer,.v244-no-data{margin:14px 0 0;font-size:12px;line-height:1.5;color:inherit;opacity:.86;}
-  .v244-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0 18px;}
-  .v244-action,.v244-action-primary{display:flex;align-items:center;justify-content:center;gap:10px;min-height:56px;padding:0 16px;border-radius:18px;border:1px solid rgba(225,234,247,.95);background:#fff;color:#223b5c;font-weight:700;box-shadow:0 8px 18px rgba(37,67,109,.06);}
-  .v244-action-primary{background:linear-gradient(135deg,#416ae1,#5b81e6);color:#fff;border-color:transparent;box-shadow:0 14px 28px rgba(64,95,191,.22);}
   .v244-product-value{margin:16px 0 14px;}.v244-product-value small{display:block;font-size:12px;letter-spacing:.13em;font-weight:700;color:#7086a6;}.v244-product-value strong{display:block;margin-top:6px;font-size:clamp(27px,7vw,42px);line-height:1;letter-spacing:-.06em;color:#264265;}
-  .v244-back{display:inline-flex;align-items:center;gap:8px;border:0;background:transparent;color:#3c67b4;font-weight:700;padding:0;}
-  .v244-back{margin:0 0 14px;font-size:13px;}
-  .v244-detail-hero h2{margin:8px 0 5px;font-size:30px;letter-spacing:-.055em;color:#fff;}
-  .v244-detail-hero p{margin:0;color:rgba(255,255,255,.83);font-size:12px;}
-  .v244-detail-hero small{display:block;margin-top:20px;font-size:12px;letter-spacing:.14em;font-weight:700;opacity:.82;}
-  .v244-detail-hero strong{display:block;margin-top:8px;font-size:44px;letter-spacing:-.07em;line-height:1;}
-  .v244-sheet{margin-top:12px;}.v244-sheet-head h3{font-size:18px;}.v244-sheet-head span{font-size:12px;color:#6c84a6;font-weight:700;}
-  .v244-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px;}
-  .v244-fact{padding:14px;border-radius:18px;background:rgba(103,133,183,.06);border:1px solid rgba(214,224,241,.82);}
-  .v244-cut-list{display:grid;grid-template-columns:1fr;gap:10px;margin-top:14px;}.v244-cut-item{padding:14px;border-radius:18px;background:rgba(103,133,183,.06);border:1px solid rgba(214,224,241,.82);} .v244-cut-item strong{display:block;margin-bottom:10px;color:#27446b;letter-spacing:-.02em;}
-  .v244-history{display:grid;gap:9px;margin-top:14px;}
-  .v244-history-row{display:grid;grid-template-columns:34px minmax(0,1fr) auto;align-items:center;gap:10px;padding:11px 12px;border-radius:16px;background:rgba(103,133,183,.06);border:1px solid rgba(214,224,241,.82);}
-  .v244-history-mark{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:rgba(73,116,194,.12);color:#4c76c4;}.v244-history-mark.positive{background:rgba(24,157,112,.14);color:#168b67;}
-  .v244-history-copy{min-width:0;display:flex;flex-direction:column;gap:2px;}.v244-history-copy strong{font-size:13px;color:#1f3856;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.v244-history-copy small{font-size:12px;color:#71849d;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .v244-history-row b{font-size:13px;color:#223c5d;}.v244-history-row b.positive{color:#168b67;}
-  .v244-more{margin-top:12px;border-radius:20px;background:rgba(255,255,255,.72);border:1px solid rgba(223,233,247,.95);padding:4px 16px 14px;box-shadow:0 8px 24px rgba(31,63,110,.05);}
-  .v244-more summary{list-style:none;display:flex;justify-content:space-between;align-items:center;cursor:pointer;padding:14px 0;font-weight:700;color:#27446b;}
-  .v244-more summary::-webkit-details-marker{display:none;}
-  .v244-more-body{padding-top:4px;}
   /* limpieza para submódulos abiertos desde Explorar */
   .v26-internal[data-module="payments"],.v26-internal[data-module="recurring"],.v26-internal[data-module="personal"],.v26-internal[data-module="budget"],.v26-internal[data-module="categories"],.v26-internal[data-module="cards"],.v26-internal[data-module="accounts"]{background:transparent!important;}
   .v26-internal .v26-head{padding:4px 2px 0!important;margin-bottom:14px!important;gap:14px!important;align-items:flex-start!important;}
@@ -20760,12 +20309,7 @@ body.theme-black .v242-ios-settings .v212-setup,body.theme-dark .v242-ios-settin
   .v26-internal .inner-view-card{border-radius:24px!important;box-shadow:0 10px 28px rgba(26,54,96,.05)!important;}
   .v26-internal .v26-head h2{letter-spacing:-.045em!important;}
 }
-body.theme-black .v244-sheet,body.theme-dark .v244-sheet{background:linear-gradient(145deg,#222b39,#171d28)!important;border-color:#344151!important;color:#eaf1ff!important;box-shadow:0 10px 24px rgba(0,0,0,.28)!important;}
-body.theme-black .v244-hero,body.theme-dark .v244-hero{background:linear-gradient(145deg,#223660,#1b2d56)!important;border-color:#3d5180!important;}
-body.theme-black .v244-sheet h3,body.theme-dark .v244-sheet h3{color:#eef4ff!important;}
-body.theme-black .v244-history-copy small,body.theme-dark .v244-history-copy small{color:#a6b5c8!important;}
 body.theme-black .v244-product-value strong,body.theme-black .v244-fact strong,body.theme-black .v244-history-row b,body.theme-dark .v244-product-value strong,body.theme-dark .v244-fact strong,body.theme-dark .v244-history-row b{color:#eef4ff!important;}
-body.theme-black .v244-fact,body.theme-black .v244-cut-item,body.theme-black .v244-history-row,body.theme-dark .v244-fact,body.theme-dark .v244-cut-item,body.theme-dark .v244-history-row{background:rgba(255,255,255,.04)!important;border-color:#344151!important;}
 /* ==== v245-refinamiento-explorar-modulos ==== */
 /* Explorar vuelve a ser un directorio, sin panel doble de ingresos/egresos. */
 .v243-explore .v205-explore-group:first-of-type{margin-top:0!important;}
@@ -20858,7 +20402,6 @@ body.theme-black .world-personal .v189-table tbody tr,body.theme-dark .world-per
  .world-personal .v189-person-hero .v189-payable-inline span{color:rgba(255,255,255,.83)!important;font-size:12px!important;font-weight:700!important;letter-spacing:.14em!important;}
  .world-personal .v189-person-hero .v189-payable-inline strong{color:#fff!important;font-size:clamp(18px,5vw,25px)!important;font-weight:700!important;letter-spacing:-.035em!important;}
  .v245-pay-extra>summary svg{width:17px!important;height:17px!important;max-width:17px!important;flex:0 0 17px!important;transform:none!important;}
- .v244-mobile-root .v244-actions svg{width:19px!important;height:19px!important;max-width:19px!important;flex:0 0 19px!important;transform:none!important;}
  .v245-pay-extra>summary{justify-content:flex-start!important;}
  .v245-pay-extra>summary svg:last-child{margin-left:auto!important;}
 }
@@ -22084,34 +21627,6 @@ body.theme-black .ant-weekly-total,body.theme-dark .ant-weekly-total {
 }
 /* ==== vive-v256-tarjetas-web-limpias ==== */
 /* V256: desktop only; preserve Wallet and the dedicated mobile Cards view. */
-@media (min-width:791px){
- .world-cards #page .v256-desktop-cards{width:100%;max-width:100%;margin-inline:auto;display:block;}
- .world-cards #page .v256-desktop-cards .v57-product-hero .hero-actions{display:flex!important;align-items:center!important;flex-wrap:wrap!important;gap:9px!important;}
- .world-cards #page .v256-desktop-cards .v57-product-hero .hero-actions>button{min-height:41px!important;}
- .world-cards #page .v256-desktop-cards .v256-hero-archive{opacity:.9;border-color:rgba(233,243,255,.35)!important;}
- .world-cards #page .v256-desktop-cards .v256-hero-benefits{background:rgba(255,255,255,.11)!important;border-color:rgba(235,245,255,.48)!important;}
- .world-cards #page .v256-cards-list-head{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:1px 0 14px;min-width:0;}
- .world-cards #page .v256-cards-kicker{font-size:12px;font-weight:700;letter-spacing:.16em;color:#738daf;}
- .world-cards #page .v256-cards-list-head h2{font-size:clamp(20px,1.8vw,27px);line-height:1.1;letter-spacing:-.04em;color:#2a466b;margin:5px 0 4px;display:flex;align-items:baseline;gap:9px;}
- .world-cards #page .v256-cards-list-head h2 small{font-size:13px;color:#7e91ac;font-weight:700;}
- .world-cards #page .v256-cards-list-head p{margin:0;font-size:12px;line-height:1.45;color:#7a8ca4;}
- .world-cards #page .v256-cards-grid{margin-top:0!important;gap:15px!important;grid-template-columns:repeat(auto-fill,minmax(min(100%,310px),1fr))!important;}
- .world-cards #page .v256-cards-grid>.v149-card-shell{min-width:0;overflow:hidden;border-radius:22px;}
- .world-cards #page .v256-cards-grid .v149-card-toggle{display:block;max-width:100%;}
- .world-cards #page .v256-cards-grid .v149-card-reveal{min-width:0;}
- .world-cards #page .v256-cards-methodology{margin:18px 0 4px;padding:13px 17px;border-radius:17px;background:rgba(246,250,255,.7);border:1px solid rgba(139,164,202,.22);color:#607694;}
- .world-cards #page .v256-cards-methodology summary{list-style:none;display:flex;align-items:center;gap:8px;font-weight:700;font-size:12px;cursor:pointer;}
- .world-cards #page .v256-cards-methodology summary::-webkit-details-marker{display:none;}
- .world-cards #page .v256-cards-methodology summary>span{margin-left:auto;}
- .world-cards #page .v256-cards-methodology summary svg{width:16px;height:16px;}
- .world-cards #page .v256-cards-methodology p{font-size:12px;line-height:1.65;margin:11px 0 0;max-width:100ch;}
- .theme-black .world-cards #page .v256-cards-list-head h2,.theme-dark .world-cards #page .v256-cards-list-head h2{color:#edf3ff;}
- .theme-black .world-cards #page .v256-cards-methodology,.theme-dark .world-cards #page .v256-cards-methodology{background:#161e29;border-color:#354052;color:#b5c6e1;}
-}
-@media(min-width:791px) and (max-width:1190px){
- .world-cards #page .v256-cards-grid{grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr))!important;}
-}
-@media(max-width:790px){.world-cards #page .v256-cards-list-head{display:none}}
 /* ==== vive-v257-prestamos-certificados-web ==== */
 @media(min-width:791px){
  /* KPI main is the single summary. The white duplicate cards are removed from markup. */
@@ -31796,9 +31311,6 @@ html body #app :is(.analytics-world .analytic-hero,.v57-product-hero.v57-account
 html body #app :is(.v57-product-hero.v57-accounts,.v57-product-hero.v57-cards) .v46-global-secondary>div{
  background:rgba(255,255,255,.095)!important;border-color:rgba(255,255,255,.18)!important;
 }
-html body #app :is(.v57-product-hero.v57-accounts,.v57-product-hero.v57-cards) .btn.outline-light{
- border-color:rgba(255,255,255,.42)!important;color:#fff!important;background:rgba(255,255,255,.055)!important;
-}
 /* Modo Black: superficies oscuras y un tinte ligero, nunca un fondo luminoso que arruine el contraste. */
 html body:is(.theme-black,.theme-dark) #app :is(
  .analytics-world>.analytic-hero,
@@ -34071,11 +33583,6 @@ body.v705-detail-open{overflow:hidden!important}
  html body #app .world-personal .v189-table tbody td:nth-child(6) button{min-width:0!important;flex:0 1 auto!important;min-height:38px!important;padding:8px 10px!important}
 }
 /* Tarjetas de crédito: densidad pareja con cuentas móviles, sin ocultar métricas. */
-@media(max-width:790px){
- html body #app .v244-mobile-root.v244-cards .v244-product-value{margin:13px 0 12px!important;padding:0!important}
- html body #app .v244-mobile-root.v244-cards .v244-product-value small{font-size:12px!important;letter-spacing:.095em!important}
- html body #app .v244-mobile-root.v244-cards .v244-product-value strong{font-size:clamp(25px,7vw,31px)!important;line-height:1.18!important;letter-spacing:-.045em!important;white-space:normal!important;overflow-wrap:anywhere!important}
-}
 /* Negro OLED: superficie y contraste coherentes en TODO el grupo Bancos y sus productos. */
 html body.theme-black #app .main:is(.world-banks,.world-accounts,.world-cards,.world-loans,.world-certificates){background:#000!important;background-image:none!important}
 html body.theme-black #app .main:is(.world-banks,.world-accounts,.world-cards,.world-loans,.world-certificates) #page{background:#000!important;background-image:none!important;color:#f5f5f7!important}
@@ -46533,10 +46040,6 @@ html body:is(.theme-black,.theme-dark) #app#app .v985-matrix .v985-mini strong{c
 /* ==== v997-cards-tidy ==== */
 /* V997 · Tarjetas (lista) organizadas como Cuentas, con logo del banco; detalle de tarjeta, Categorías, Wallet y Visión global en acento; sin fondo tras los botones de acciones */
 /* Detalle de tarjeta */
-html body #app#app .v244-back,html body #app#app .v244-back span{color:var(--vx-accent-ink)!important;-webkit-text-fill-color:var(--v424-accent-strong,#5b57d6)!important}
-html body #app#app .v244-hero.v244-detail-hero{background:radial-gradient(ellipse at 108% -12%,rgba(255,255,255,.2),transparent 42%),linear-gradient(115deg,var(--v440-ink,#2b2870) 0%,var(--v440-deep,#4b46c9) 48%,var(--v440-glow,#6d69f1) 122%)!important;border-color:rgba(255,255,255,.18)!important}
-html body #app#app .v244-action-primary{background:linear-gradient(180deg,var(--v440-glow,#6d69f1),var(--v440-deep,#4b46c9))!important;color:#fff!important;border-color:transparent!important;box-shadow:0 12px 24px -14px var(--v424-accent-shadow,rgba(75,70,201,.6))!important}
-html body #app#app .v244-action-primary *{color:#fff!important}
 /* Categorías */
 html body #app#app :is(.world-categories) .pill{background:color-mix(in srgb,var(--v424-accent-strong,#5b57d6) 10%,#fff)!important;color:var(--vx-accent-ink)!important}
 /* Wallet · Estado de tu tarjeta */
@@ -48976,12 +48479,6 @@ html body #app#app #page .v252-person-ledger .v189-table{display:block!important
 
 
 /* v1132 · Préstamos: reglas restauradas (una limpieza de CSS las consideró sin uso) */
-.loan-tabs{display:flex;
-gap:7px;
-border-bottom:1px solid rgba(153,167,191,.23);
-overflow-x:auto;
-padding-bottom:8px;
-margin:27px 0 19px}
 .loan-tab{white-space:nowrap;
 border:1px solid transparent;
 border-radius:12px;
@@ -49071,21 +48568,6 @@ line-height:1.6}
 gap:8px;
 align-items:center;
 flex-wrap:wrap}
-.loan-alert{border:1px solid #dfe8f6;
-border-radius:19px;
-background:rgba(235,244,255,.62);
-display:flex;
-align-items:flex-start;
-gap:13px;
-color:#7286a2;
-font-size:12px;
-line-height:1.8;
-padding:18px 21px;
-margin-top:20px}
-.loan-alert svg{height:17px;
-width:17px;
-color:#6e90c8}
-.loan-alert strong{color:#435775}
 .loan-with-actions{display:flex;
 justify-content:space-between;
 gap:12px;
@@ -49748,8 +49230,6 @@ html body #app#app #page .v1200-adm button.danger{color:#d6283d}
 
 /* Instituciones (web): misma distribución de antes, más compacta y alineada */
 @media(min-width:791px){
- html body #app#app #page .bank-hero.v46-bank-hero{min-height:0!important;padding-top:22px!important;padding-bottom:22px!important}
- html body #app#app #page .v46-bank-intro h2{font-size:30px!important;line-height:1.08!important}
  html body #app#app #page .bank-workspace{margin-top:6px}
 }
 /* v1220 · Instituciones: detalle del banco ordenado (web y móvil) */
@@ -50070,52 +49550,6 @@ html body #app#app .v1244-ccy i{font-style:normal;font-size:12px;font-weight:700
 /* V1245 · Préstamos móvil rediseñado */
 
 /* V1246 · Detalle de préstamo rediseñado (web y móvil) */
-html body #app#app .v1246{display:grid;gap:14px}
-html body #app#app .v1246-top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
-html body #app#app .v1246-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-html body #app#app .v1246-more{position:relative}
-html body #app#app .v1246-more summary{list-style:none;cursor:pointer;width:38px;height:38px;display:grid;place-items:center;border-radius:50%;font-weight:700;letter-spacing:1px;background:color-mix(in srgb,var(--v424-accent-strong) 10%,transparent)}
-html body #app#app .v1246-more summary::-webkit-details-marker{display:none}
-html body #app#app .v1246-more>div{position:absolute;right:0;top:44px;z-index:5;display:grid;gap:6px;padding:10px;border-radius:16px;background:var(--v1246-pop,#fff);box-shadow:0 14px 34px rgba(0,0,0,.16);min-width:150px}
-html body.theme-black #app#app .v1246-more>div,html body.theme-dark #app#app .v1246-more>div{--v1246-pop:#16161a}
-html body #app#app .v1246-hero{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:22px;padding:24px 26px;border-radius:28px;color:#fff;background:linear-gradient(120deg,color-mix(in srgb,var(--v424-accent-strong) 58%,#0a0a1f),var(--v424-accent-strong));box-shadow:0 16px 36px color-mix(in srgb,var(--v424-accent-strong) 26%,transparent)}
-html body #app#app .v1246-hero *{color:inherit}
-html body #app#app .v1246-micro{font-size:12.5px;font-weight:700;opacity:.85;display:flex;gap:7px;align-items:center;flex-wrap:wrap}
-html body #app#app .v1246-chip{padding:3px 10px;border-radius:999px;background:rgba(255,255,255,.2);font-size:12px;font-weight:700}
-html body #app#app .v1246-chip.is-late{background:#d4525e}
-html body #app#app .v1246-lead h2{margin:6px 0 4px;font-size:clamp(26px,3vw,34px);letter-spacing:-.045em;line-height:1.05}
-html body #app#app .v1246-lead p{margin:0;font-size:13px;opacity:.85}
-html body #app#app .v1246-balance{display:flex;gap:18px;align-items:center;margin-top:18px}
-html body #app#app .v1246-ring{flex:none;width:104px;height:104px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(#fff calc(var(--p)*1%),rgba(255,255,255,.22) 0)}
-html body #app#app .v1246-ring>div{width:80px;height:80px;border-radius:50%;display:grid;place-content:center;text-align:center;background:color-mix(in srgb,var(--v424-accent-strong) 78%,#0a0a1f)}
-html body #app#app .v1246-ring b{font-size:19px;font-weight:700;letter-spacing:-.04em;line-height:1}
-html body #app#app .v1246-ring small{font-size:12px;opacity:.8;margin-top:2px}
-html body #app#app .v1246-balance small{font-size:12px;font-weight:700;letter-spacing:.14em;opacity:.8}
-html body #app#app .v1246-balance strong{display:block;font-size:clamp(28px,3.4vw,40px);font-weight:700;letter-spacing:-.05em;line-height:1.05;margin:2px 0}
-html body #app#app .v1246-balance em{font-style:normal;font-size:12.5px;opacity:.85}
-html body #app#app .v1246-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-content:center}
-html body #app#app .v1246-stat{padding:12px 14px;border-radius:18px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.2);min-width:0}
-html body #app#app .v1246-stat small{display:block;font-size:12px;font-weight:700;letter-spacing:.12em;opacity:.8}
-html body #app#app .v1246-stat strong{display:block;font-size:16px;font-weight:700;letter-spacing:-.03em;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-html body #app#app .v1246-stat strong i{font-style:normal;opacity:.7;font-weight:700}
-html body #app#app .v1246-stat em{display:block;font-style:normal;font-size:12px;opacity:.8;margin-top:2px}
-html body #app#app .v1246 .loan-tabs{position:sticky;top:0;z-index:4}
-@media(max-width:1100px){html body #app#app .v1246-hero{grid-template-columns:1fr}}
-@media(max-width:790px){
-html body #app#app .v1246-hero{padding:18px 16px;border-radius:24px;gap:16px}
-html body #app#app .v1246-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-html body #app#app .v1246-ring{width:88px;height:88px}html body #app#app .v1246-ring>div{width:66px;height:66px}
-html body #app#app .v1246-balance{gap:14px;margin-top:14px}
-html body #app#app .v1246-actions{width:100%}html body #app#app .v1246-actions .btn{flex:1}
-html body #app#app .v1246-actions .loan-primary{flex:1.4}
-}
-html body #app#app .v1246 .v1246-actions .loan-primary{background:var(--v424-accent-strong)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border-color:transparent!important;font-weight:700}
-@media(max-width:790px){
-html body #app#app .v1246-stat{padding:9px 11px;border-radius:15px}
-html body #app#app .v1246-stat strong{font-size:15px;margin-top:2px}
-html body #app#app .v1246-stat small{font-size:12px}
-html body #app#app .v1246-stat em{font-size:12px}
-}
 
 /* V1247 · Suscripciones móvil (Cartera): resumen estratégico + peso de cada categoría */
 html body #app#app .v1247-hero{display:grid;gap:12px;padding:18px 18px 14px;border-radius:26px;color:#fff;background:linear-gradient(120deg,color-mix(in srgb,var(--v424-accent-strong) 58%,#0a0a1f),var(--v424-accent-strong));box-shadow:0 14px 32px color-mix(in srgb,var(--v424-accent-strong) 24%,transparent)}
@@ -50443,40 +49877,8 @@ html body #app#app .v212-panel>.v975-tabs{margin:0 0 12px}
 }
 /* V1261 · Banners de Bancos (web): mismo formato en las 5 vistas, con toda la información.
    Izquierda: etiqueta, título, NÚMERO GRANDE, descripción, botones y conteos. Derecha: recuadros de datos y nota. */
-@media(min-width:791px){
-html body #app#app #page .bank-hero.v46-bank-hero{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr)!important;column-gap:40px!important;row-gap:0!important;align-items:start!important;padding:26px 32px!important;min-height:0!important;height:auto!important}
-html body #app#app #page .bank-hero .v46-bank-intro,html body #app#app #page .bank-hero .v46-global-financials{display:contents!important}
-html body #app#app #page .bank-hero .hero-eyebrow{grid-column:1;grid-row:1;margin:0 0 6px!important}
-html body #app#app #page .bank-hero .v61-profile-switch{grid-column:1;grid-row:2;justify-self:start;margin:0 0 8px!important}
-html body #app#app #page .bank-hero .v46-bank-intro>h2{grid-column:1;grid-row:3;margin:0 0 10px!important;font-size:clamp(20px,2vw,26px)!important;line-height:1.1!important}
-html body #app#app #page .bank-hero .v46-global-main{grid-column:1;grid-row:4;margin:0 0 10px!important;padding:0!important;background:none!important;border:0!important;box-shadow:none!important}
-html body #app#app #page .bank-hero .v46-global-main>strong{display:block;font-size:clamp(40px,4.6vw,64px)!important;line-height:1.02!important;letter-spacing:-.05em;margin:2px 0!important}
-html body #app#app #page .bank-hero .v46-global-main>span{display:block;font-size:12px!important;letter-spacing:.14em}
-html body #app#app #page .bank-hero .v46-bank-intro>p{grid-column:1;grid-row:5;margin:0 0 14px!important;max-width:520px}
-html body #app#app #page .bank-hero .hero-actions{grid-column:1;grid-row:6;margin:0 0 10px!important}
-html body #app#app #page .bank-hero .v46-hero-foot{grid-column:1;grid-row:7;margin:0!important}
-html body #app#app #page .bank-hero .v46-global-secondary{grid-column:2;grid-row:1/span 6;align-self:center;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important;margin:0!important}
-html body #app#app #page .bank-hero .v46-global-note{grid-column:2;grid-row:7;margin:12px 0 0!important}
-html body #app#app #page .bank-hero .v46-global-secondary>.v187-interactive-kpi{min-height:0!important}
-}
-@media(min-width:791px){
-html body #app#app #page .bank-hero .v61-profile-switch{position:static!important;inset:auto!important;transform:none!important;margin:0 0 10px!important}
-html body #app#app #page .bank-hero .v46-global-main>span{margin-top:6px}
-}
 /* V1262 · Banners de Bancos: solo la etiqueta como título; sin eslogan */
-@media(min-width:791px){
-html body #app#app #page .bank-hero .v46-bank-intro>h2{display:none!important}
-html body #app#app #page .bank-hero .hero-eyebrow{font-size:13px!important;letter-spacing:.16em!important;font-weight:700!important;margin-bottom:10px!important}
-}
 /* V1263 · Banners de Bancos: solo etiqueta, número y botones; sin textos de apoyo a la izquierda */
-@media(min-width:791px){
-html body #app#app #page .bank-hero .v46-global-main>small,html body #app#app #page .bank-hero .v46-bank-intro>p,html body #app#app #page .bank-hero .v46-hero-foot{display:none!important}
-}
-@media(min-width:791px){html body #app#app #page .bank-hero .v46-global-note{display:none!important}}
-
-@media(min-width:791px){
-html body #app#app #page .bank-hero .v61-profile-switch{grid-row:7!important;margin:12px 0 0!important}
-}
 
 /* V1264 · Historial de institución */
 html body #app#app .v1264-hist{display:grid;gap:16px;padding:22px 24px;border-radius:28px;margin:0 0 16px;background:var(--v1264-bg,rgba(255,255,255,.78));border:1px solid color-mix(in srgb,var(--v424-accent-strong) 16%,transparent);box-shadow:0 14px 34px color-mix(in srgb,var(--v424-accent-strong) 10%,transparent)}
@@ -50591,18 +49993,11 @@ html body #app#app .main.world-overview #page{margin-left:9px!important;margin-r
 }
 
 /* V1267 · Préstamo: pestañas solo en web PC; logos sin fondo; botones con acento */
-@media(max-width:790px){html body #app#app .v1267-tabs{display:none!important}}
-@media(min-width:791px){
-html body #app#app .v1267-tabs{display:flex;gap:6px;padding:5px;border-radius:999px;background:color-mix(in srgb,var(--v424-accent-strong) 8%,transparent);width:max-content;max-width:100%;margin:4px 0 14px}
-html body #app#app .v1267-tabs .loan-tab{border:0;background:transparent;padding:9px 18px;border-radius:999px;font-weight:700;color:inherit}
-html body #app#app .v1267-tabs .loan-tab.on{background:var(--v424-accent-strong);color:#fff!important}
-}
 html body #app#app .bank-photo-mark:has(img){background:transparent!important;box-shadow:none!important;border:0!important}
 html body #app#app .bank-photo-mark img{background:transparent!important;padding:0!important}
 html body #app#app .v1265-logo,html body #app#app .v239-logo-bank{background:transparent!important;box-shadow:none!important}
 html body #app#app :is(.v1246,.v1265-loan,.loan-workspace) .btn:is(.ghost,.soft,.sm):not(.loan-primary){background:color-mix(in srgb,var(--v424-accent-strong) 12%,transparent)!important;color:var(--vx-accent-ink)!important;-webkit-text-fill-color:var(--v424-accent-strong)!important;border:1px solid color-mix(in srgb,var(--v424-accent-strong) 28%,transparent)!important;font-weight:700}
 html body #app#app :is(.v1246,.v1265-loan,.loan-workspace) .btn.loan-primary,html body #app#app :is(.v1246,.v1265-loan) .loan-primary{background:var(--v424-accent-strong)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border-color:transparent!important}
-html body #app#app .v1246-more>div .btn{width:100%}
 html body #app#app .loan-workspace :is(.loan-back,.loan-link,.loan-right-panel a,.loan-right-panel button:not(.btn)){color:var(--vx-accent-ink)!important;-webkit-text-fill-color:var(--v424-accent-strong)!important;font-weight:700;opacity:1}
 @media(min-width:791px){
 html body #app#app .main.world-overview #page{margin-left:9px!important;margin-right:0!important;width:auto!important;max-width:100%!important}
@@ -50688,7 +50083,6 @@ html body #app#app .main.world-register #page .section-title{margin:0 0 8px!impo
 html body:is(.theme-black,.theme-dark) #app#app #page table.annual-table :is(tr,td,th){background:#000!important;color:#e8ecf6!important}
 html body:is(.theme-black,.theme-dark) #app#app #page table.annual-table tr:is(.v27-balance-net,.v27-balance-final,:nth-child(n+3)) :is(td,th){background:#0c0c10!important;color:#f4f6fb!important}
 html body:is(.theme-black,.theme-dark) #app#app #page :is(.v1265-loan,.v1246,.loan-workspace) .btn:is(.ghost,.soft,.sm):not(.loan-primary){background:color-mix(in srgb,var(--v424-accent-strong) 22%,#000)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border-color:color-mix(in srgb,var(--v424-accent-strong) 45%,transparent)!important}
-html body:is(.theme-black,.theme-dark) #app#app #page .v256-hero-benefits{background:rgba(255,255,255,.1)!important;color:#fff!important;border:1px solid rgba(255,255,255,.25)!important}
 
 /* V1278 · Galería La vida que quiero */
 .v1278-card{position:relative;text-align:left;border:0;padding:0 0 14px;border-radius:22px;overflow:hidden;background:var(--v1278-bg,#fff);box-shadow:0 8px 22px rgba(20,30,60,.08);cursor:pointer;display:grid;align-content:start;gap:3px;font:inherit;color:inherit;transition:transform .2s ease,box-shadow .2s ease}
