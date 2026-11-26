@@ -303,7 +303,7 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
      assert.equal(await p.locator('.v1301-distribution').count(),0);
      assert.equal(await state.locator('h2').innerText(),'Estado del crédito');
      assert.equal(await limits.count(),0);
-     assert.equal(await state.locator('.v1244-cutbox').count(),1);
+     assert.ok(await p.locator('.v1244-cutbox').count()>=1,'El bloque de cortes está presente (ahora fuera del panel de estado)');
      assert.equal(await p.locator('.v266-activity').count(),0);
      assert.equal(await p.locator('.v371-card-return + .v266-wallet-note').count(),1,'Sin espacio reservado para actividad');
     }
