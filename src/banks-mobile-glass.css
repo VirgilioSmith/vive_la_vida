@@ -186,7 +186,7 @@
  .vBanks-ind-ico{grid-area:ico;align-self:center;display:grid;place-items:center;width:40px;height:40px;border-radius:13px;background:var(--bm-ico);box-shadow:inset 0 0 0 1px var(--bm-edge),0 6px 14px color-mix(in srgb,var(--bm-a) 12%,rgba(30,60,80,.08));color:var(--vx-accent-ink)}
  .vBanks-ind-ico svg{width:21px;height:21px}
  .vBanks-mobile-hero dt{grid-area:dt;display:block;margin:0;font-size:clamp(13px,3.6vw,15px);font-weight:400;color:var(--bm-mut);line-height:1.2;white-space:nowrap}
- .vBanks-mobile-hero dd{grid-area:dd;margin:1px 0 0;color:var(--bm-ink);font-weight:700;letter-spacing:-.025em;line-height:1.15;white-space:nowrap;font-size:clamp(8.5px,calc((50vw - 82px) / (var(--bank-chars,var(--ind-chars,10)) * .86)),20px)}
+ .vBanks-mobile-hero dd{grid-area:dd;margin:1px 0 0;color:var(--bm-ink);font-weight:700;letter-spacing:-.025em;line-height:1.15;white-space:nowrap;font-size:clamp(calc(11px - max(0, var(--bank-chars,10) - 13) * 1px),calc((50vw - 82px) / (var(--bank-chars,var(--ind-chars,10)) * .86)),20px)}
  .vBanks-mobile-hero .vBanks-limit-split{grid-area:sp;display:block;margin:6px 0 0;font-size:12px;font-weight:400;color:var(--bm-mut);white-space:normal;overflow:visible}
  /* Utilización del crédito */
  .vBanks-mobile-hero .vBanks-mobile-utilization{position:relative;z-index:1;display:grid;gap:8px;margin-top:6px;padding-top:12px;border-top:1px solid var(--bm-line);font-size:clamp(15px,4.2vw,17px);font-weight:400;color:var(--bm-ink)}
@@ -245,9 +245,9 @@
 /* 320–340 px: último recurso, el importe puede partirse en lugar de salirse de la tarjeta */
 @media (max-width:340px){html body #app#app#app #page#page .vBanks-mobile:has(>.vBanks-mobile-hero) :is(.vBanks-mobile-hero dd,.vBanks-mobile-hero .vBanks-limit-split,.vBanks-mobile-tiles>button>strong,.vBanks-mobile-hero dl .vx-money,.vBanks-mobile-tiles .vx-money){white-space:normal!important;overflow-wrap:anywhere!important}}
 /* Importes de Mis productos y límite: tamaño ajustado al ancho real de la subtarjeta (gana a reglas .vx-money previas) */
-html body #app#app#app #page#page .vBanks-mobile:has(>.vBanks-mobile-hero) .vBanks-mobile-tiles>button>strong{font-size:clamp(8.5px,calc((50vw - 94px) / (var(--bank-chars,10) * .68)),17px)!important}
+html body #app#app#app #page#page .vBanks-mobile:has(>.vBanks-mobile-hero) .vBanks-mobile-tiles>button>strong{font-size:clamp(calc(11px - max(0, var(--bank-chars,10) - 13) * 1px),calc((50vw - 94px) / (var(--bank-chars,10) * .68)),17px)!important}
 html body #app#app#app #page#page .vBanks-mobile:has(>.vBanks-mobile-hero) :is(.vBanks-mobile-tiles>button>strong,.vBanks-mobile-hero dl dd) .vx-money{font-size:inherit!important}
-html body #app#app#app #page#page .vBanks-mobile:has(>.vBanks-mobile-hero) .vBanks-mobile-hero dl dd{font-size:clamp(8.5px,calc((50vw - 82px) / (var(--bank-chars,10) * .86)),20px)!important}
+html body #app#app#app #page#page .vBanks-mobile:has(>.vBanks-mobile-hero) .vBanks-mobile-hero dl dd{font-size:clamp(calc(11px - max(0, var(--bank-chars,10) - 13) * 1px),calc((50vw - 82px) / (var(--bank-chars,10) * .86)),20px)!important}
 html body #app#app#app #page#page .vBanks-mobile:has(>.vBanks-mobile-hero) .vBanks-mobile-hero .vBanks-limit-split{font-size:12px!important;white-space:normal!important;overflow-wrap:anywhere!important;min-width:0}
 html body #app#app#app#app #page#page .vBanks-mobile:has(>.vBanks-mobile-hero) .vBanks-mobile-hero dl .vBanks-limit-split.vx-money{white-space:normal!important;overflow-wrap:anywhere!important}
 /* Pantalla individual de institución (móvil) */

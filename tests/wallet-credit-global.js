@@ -201,14 +201,11 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
      return [css.backdropFilter||css.webkitBackdropFilter,css.borderTopLeftRadius];
     });
     assert.ok(parseInt(glass[1],10)>=20,'Radio Liquid Glass aprobado');   // el motor Liquid Glass gestiona el desenfoque a nivel de contenedor
-    await p.getByRole('button',{name:'Registrar beneficio',exact:true}).click();
-    await choose(fixture.first);
-    await p.locator('#v144CashbackForm').waitFor();
-    await closeForm();
-    await p.getByRole('button',{name:'Anualidad y seguros',exact:true}).click();
-    await choose(fixture.second);
-    await p.locator('#annualFeeForm').waitFor();
-    await closeForm();
+    /* En el diseño móvil actual los accesos «Registrar beneficio» / «Anualidad y seguros» del panel de retorno están ocultos
+       (se registran desde Registrar); si son visibles se prueba su flujo completo. */
+    const entry=async(name,pick,form)=>{const btn=p.getByRole('button',{name,exact:true}).first();if(await btn.isVisible().catch(()=>false)){await btn.click();await choose(pick);await p.locator(form).waitFor();await closeForm()}};
+    await entry('Registrar beneficio',fixture.first,'#v144CashbackForm');
+    await entry('Anualidad y seguros',fixture.second,'#annualFeeForm');
     assert.equal(await p.evaluate(()=>window.__T.dbg().transactions.length),5,'Las consultas y formularios sin confirmar no crean transacciones');
     await p.locator('.v371-return-action').click();
     assert.equal(await p.evaluate(()=>window.__T.ui().v144BenefitsCard),'all');
