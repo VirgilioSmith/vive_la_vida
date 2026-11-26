@@ -99,7 +99,7 @@ async function testBanks(browser,width,theme='light'){
    assert.equal(await root.locator('.vBanksPc-lanes').count(),0,'Productos no debe repetir los listados de detalle.');
    assert.match(await root.locator('.vBanksPc-overview-tile[data-id="cards"]').innerText(),/Deuda utilizada\s+RD\$6,500 · 1\.8%/);
    assert.match(await root.locator('.vBanksPc-overview-tile[data-id="accounts"]').innerText(),/RD\$120,000/);
-   assert.match(await root.locator('.vBanksPc-overview-tile[data-id="loans"]').innerText(),/Cuota RD\$[\d,]+ · Avance \d+%/);
+   assert.match(await root.locator('.vBanksPc-overview-tile[data-id="loans"]').innerText(),/Deuda total\s*RD\$[\d,]+ · Avance \d+%/);
    assert.match(await root.locator('.vBanksPc-overview-tile[data-id="certificates"]').innerText(),/RD\$70,000/);
    assert.match(await root.locator('.vBanksPc-mp-total').innerText(),/Total: \d+ productos/);
    assert.ok(await root.locator('.vBanksPc-consumption-rows > div').count()>=1,'Se muestran todas las categorías de consumo.');
@@ -277,9 +277,8 @@ async function testBanks(browser,width,theme='light'){
   const ledger=root.getByRole('region',{name:'Tabla de beneficios por tarjeta'});
   assert.equal(await ledger.locator('table').count(),1);
   if(!mobile){
-    const heroAnnual=root.locator('.v57-benefits .hero-actions [data-act="annualFee"]');
-    assert.equal(await heroAnnual.count(),1,'La cabecera ejecutiva de Beneficios incluye el acceso a anualidades.');
-    assert.match(await root.locator('.v57-benefits .v46-global-secondary').innerText(),/1/,'El encabezado respeta el banco elegido.');
+    assert.equal(await root.locator('.vbd-benefits [data-v144-action="new-cashback"]').count(),1,'La cabecera de Beneficios ofrece registrar beneficio.');
+    assert.match(await root.locator('.vbd-benefits .vbd-face footer').innerText(),/\d+ tarjetas?/,'El encabezado respeta el banco elegido.');
     const annual=ledger.locator('button[data-act="annualFee"]');
     assert.equal(await annual.count(),1,'Anualidad accesible con una tarjeta seleccionada en Bancos PC.');
     if(evidence&&[1440,1024].includes(width))await p.screenshot({path:path.join(evidence,'bancos-beneficios-'+width+'.png'),animations:'disabled'});
@@ -311,7 +310,7 @@ async function testBanks(browser,width,theme='light'){
    return root.getByRole('region',{name:'Detalle del producto'});
   };
   const closeProduct=async(detail,bankId)=>{
-   await detail.locator('[data-act="banksCloseProduct"]').click();
+   await detail.locator('[data-act="banksCloseProduct"]:visible').first().click();
    if(!mobile){
     assert.equal(await root.locator(`.vBanksPc-bank[data-id="${bankId}"]`).getAttribute('aria-pressed'),'true');
     assert.equal(await root.locator('.vBanksPc-bank-list').count(),1);
@@ -340,10 +339,10 @@ async function testBanks(browser,width,theme='light'){
   const detail=await openProduct('loans','loan-b');
   await detail.getByRole('heading',{name:'Préstamo General',exact:true}).waitFor();
   if(!mobile){
-   await detail.getByRole('button',{name:'Amortización',exact:true}).click();
+   await detail.getByRole('tab',{name:'Amortización',exact:true}).click();
    await detail.getByRole('heading',{name:'Amortización inteligente'}).waitFor();
-   await detail.getByRole('button',{name:'Historial real',exact:true}).click();
-   await detail.getByRole('button',{name:'Simulador de abonos',exact:true}).click();
+   await detail.getByRole('tab',{name:'Historial real',exact:true}).click();
+   await detail.getByRole('tab',{name:'Simulador de abonos',exact:true}).click();
    await detail.locator('#loanSimAmount').waitFor();
   }
   await closeProduct(detail,'bank-b');

@@ -38,7 +38,7 @@ const open=require('./harness.js');
     await page.locator('#cardForm .v1110-next').click();
     await page.waitForTimeout(100);
     assert.equal(await page.locator('#cardForm').getAttribute('data-v1110-step'),'2');
-    await page.locator('#modal-root [data-act="closeModal"]').first().click();
+    {const x=page.locator('#modal-root [data-act="closeModal"]:visible').first();if(await x.count())await x.click();else await page.keyboard.press('Escape');}   // en móvil el paso 2 no tiene «cerrar» visible: se sale con Escape
     // En la ficha real de tarjeta, mantener Registrar pago y exponer Anualidad y seguros.
     await page.evaluate(()=>{
      const d=window.__T.dbg(),c=d.cards[0];if(!c)throw new Error('Falta tarjeta demo');

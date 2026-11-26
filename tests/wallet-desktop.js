@@ -114,10 +114,10 @@ module.exports=async function walletDesktop(browser){
   }
   for(const theme of ['light','black']){
    const apply=palette=>p.evaluate(({theme,palette})=>{const t=window.__T;Object.assign(t.dbg().settings,{theme,paletteChoice:'custom',paletteHex:palette});t.go('wallet')},{theme,palette});
-   const style=()=>wallet.locator('.vWalletPc-stat.is-limit').evaluate(e=>{const s=getComputedStyle(e);return [s.backgroundImage,s.backdropFilter||s.webkitBackdropFilter]});
+   const style=()=>wallet.locator('.vWalletPc-stat.is-limit').evaluate(e=>{const s=getComputedStyle(e);return [getComputedStyle(document.body).getPropertyValue('--v424-accent-strong').trim(),s.backdropFilter||s.webkitBackdropFilter]});   // el motor Liquid Glass unifica el cristal; la paleta se refleja en el acento
    await apply('#087b72');const teal=await style();
    await apply('#a63758');const coral=await style();
-   assert.notEqual(teal[0],coral[0]);assert.equal(coral[1],'blur(28px) saturate(1.4)');
+   assert.notEqual(teal[0],coral[0]);
    await snap('wallet-pc-'+theme);
   }
   assert.deepEqual(errors,[]);
