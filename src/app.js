@@ -9177,8 +9177,19 @@ async function v405Read(userId){
  }
  throw Error('El servidor cambió mientras se cargaban los datos. Reintenta.');
 }
+/* VIVE V1 · versión del motor de sincronización que este cliente declara al servidor. El servidor puede exigir una versión mínima
+   (tabla app_policy, ver supabase/migrations/20261126000000_politica_version_minima.sql): un cliente anterior NO puede escribir. */
+const VIVE_CLIENT_VERSION=1;
+let f33Obsolete=false,v405NoVersionParam=false;
+const v405IsObsolete=err=>!!err&&(String(err.code||'')==='VI001'||/VERSION_OBSOLETE/.test(String(err.message||'')));
 async function v405Commit(expected,changes){
- const {data,error}=await f33Api.rpc('finance_apply_changes',{p_expected_revision:Number(expected),p_changes:changes});
+ const base={p_expected_revision:Number(expected),p_changes:changes};
+ let res=await f33Api.rpc('finance_apply_changes',v405NoVersionParam?base:{...base,p_client_version:VIVE_CLIENT_VERSION});
+ /* Servidor anterior a la política de versión: no conoce el parámetro. Se reintenta UNA vez sin él y se recuerda (sin bucles). */
+ if(res.error&&!v405NoVersionParam&&(String(res.error.code||'')==='PGRST202'||/Could not find the function/i.test(String(res.error.message||'')))){
+  v405NoVersionParam=true;res=await f33Api.rpc('finance_apply_changes',base);
+ }
+ const {data,error}=res;
  if(error)throw error;
  if(data===null||data===undefined||!Number.isSafeInteger(Number(data))||Number(data)<=Number(expected))throw Error('Supabase no confirmó una nueva revisión válida.');
  return Number(data);
@@ -9266,7 +9277,7 @@ f33LoadUser=async function(user){
 };
 f33FirstStart=async function(){if(f33User)await f33LoadUser(f33User)};
 f33Flush=async function(){
- if(!f33Active||!f33User||!f33Dirty||f33Saving||f33Conflict)return;
+ if(!f33Active||!f33User||!f33Dirty||f33Saving||f33Conflict||f33Obsolete)return;
  if(!navigator.onLine){f33SetStatus('error','Sin conexión: el cambio no está confirmado.');return;}
  if(Date.now()<Math.max(v714NextWriteAt,v719BusyUntil())){v714ScheduleWriteRetry();return;}
  f33Saving=true;f33Dirty=false;f33SetStatus('saving','Guardando filas en Supabase…');
@@ -9285,6 +9296,12 @@ f33Flush=async function(){
   let newRevision;
   try{newRevision=await v405Commit(v405Revision,changes)}
   catch(err){
+   if(v405IsObsolete(err)){
+    /* Versión no autorizada para escribir: error TERMINAL. Se detiene toda escritura (cero reintentos); los cambios locales quedan como copia de recuperación. */
+    f33Obsolete=true;f33Conflict=true;f33Dirty=true;v360WritePending();
+    f33SetStatus('error','Esta versión de Vive ya no puede guardar. Recarga la app para actualizarla; tus cambios locales están protegidos.');
+    return;
+   }
    if(err.code==='40001'||/CONFLICT|revision|simultáneo/i.test(err.message||'')){
     f33Dirty=true;
     // V1134: si los conflictos se repiten seguidos, esperar con retroceso en lugar de reintentar sin pausa.

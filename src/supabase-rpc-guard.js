@@ -16,6 +16,7 @@
     const transientUntil = new Map();
     const rejectedUntil = new Map();
     const delayedErrors = new Map();
+    let obsolete = false; // versión rechazada por el servidor (VI001): bloqueo definitivo, sin tocar la red
     const SUPPRESSION_MS = 20 * 60 * 1000;
     const RETRY_RESPONSE_DELAY_MS = 15 * 1000;
 
@@ -52,6 +53,7 @@
 
     client.rpc = function (name, params, options) {
       if (name !== 'finance_apply_changes') return nativeRpc(name, params, options);
+      if (obsolete) return Promise.resolve({ data: null, error: { code: 'VI001', message: 'VERSION_OBSOLETE: esta versión de Vive ya no puede guardar; actualiza la app.' }, count: null, status: 409, statusText: 'Conflict' });
       const expected = Number(params?.p_expected_revision);
       if (!Number.isSafeInteger(expected) || expected < 0) return nativeRpc(name, params, options);
 
@@ -74,6 +76,7 @@
 
       return Promise.resolve(request).then(result => {
         active.delete(key);
+        if (String(result?.error?.code || '') === 'VI001' || /VERSION_OBSOLETE/.test(String(result?.error?.message || ''))) obsolete = true;
         const conflict = String(result?.error?.code || '') === '40001'
           || /CONFLICT:\s*la revisión remota cambió/i.test(String(result?.error?.message || ''));
         const consumed = !result?.error && Number(result?.data) > expected;
