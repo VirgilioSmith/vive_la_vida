@@ -67,3 +67,12 @@ Seis SVG estáticos (Mi dinero, Tarjetas, Pagos, Servicios, Movimientos, Analít
 | **Safari iOS / WebKit real** | **NO verificado**: la descarga de WebKit está bloqueada en este entorno. Pendiente de prueba en un iPhone o con Playwright-WebKit |
 | Comparación con la referencia (imagen de ChatGPT) | Cualitativa: rim luminoso direccional, profundidad, negros auténticos. No es una comparación píxel a píxel (la referencia es un render conceptual, no una captura de la app) |
 | Artefactos previos detectados (no causados por el motor) | En Black PC (Wallet) hay rectángulos oscuros tras el grupo de acciones y tras el título de «Beneficios y retorno»; esquinas cuadradas en algunos paneles. Se reproducen con el motor desactivado. Pendientes de corregir |
+
+## 7 · Pendientes conocidos (registrados, sin resolver)
+
+| Pendiente | Detalle |
+|---|---|
+| Bancos PC por debajo de ~1180 px | Las 4 tarjetas KPI pasan a 2×2 y los paneles inferiores se montan entre sí (alturas fijas). Decisión del usuario: queda pendiente. |
+| Rectángulos oscuros en Black PC (Wallet) | Detrás del grupo de acciones de la barra superior y del título «Beneficios y retorno»; se reproducen con el motor desactivado. |
+| Safari iOS / WebKit real | No verificado (descarga de WebKit bloqueada en este entorno). |
+| `dynamic-appearance` | Falla igual en el commit anterior a esta sesión (`.vBanks-mobile-selector` no aparece): preexistente. |
