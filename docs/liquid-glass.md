@@ -75,4 +75,4 @@ Seis SVG estáticos (Mi dinero, Tarjetas, Pagos, Servicios, Movimientos, Analít
 | Bancos PC por debajo de ~1180 px | Las 4 tarjetas KPI pasan a 2×2 y los paneles inferiores se montan entre sí (alturas fijas). Decisión del usuario: queda pendiente. |
 | Rectángulos oscuros en Black PC (Wallet) | Detrás del grupo de acciones de la barra superior y del título «Beneficios y retorno»; se reproducen con el motor desactivado. |
 | Safari iOS / WebKit real | No verificado (descarga de WebKit bloqueada en este entorno). |
-| `dynamic-appearance` | Falla igual en el commit anterior a esta sesión (`.vBanks-mobile-selector` no aparece): preexistente. |
+| `dynamic-appearance` | Prueba heredada con varias expectativas obsoletas. Se actualizaron 3 (selector tras elegir institución, fondo ambiental por página, selector de Ingresos); queda una: espera `backdrop-filter: blur(28px) saturate(1.4)` en superficies compartidas, valor del motor anterior al Liquid Glass. Pendiente de reescribir. |
