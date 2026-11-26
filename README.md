@@ -39,7 +39,7 @@ GitHub Pages desde `main`. Cada cambio de un archivo servido sube su `?v=` en `i
 
 * Escritura **solo** por la RPC `finance_apply_changes(p_expected_revision, p_changes, p_client_version)`: control de revisión, límites de tamaño/importe y **versión mínima** (`app_policy.min_client_version`). Un cliente por debajo de la mínima recibe un error terminal `VI001`: no guarda y no reintenta.
 * RLS en todas las tablas; el cliente nunca recibe permisos de escritura directa.
-* Para exigir una versión nueva: `update public.app_policy set min_client_version = N;` (volver a 0 lo revierte al instante).
+* Versión mínima vigente: **1** (desde el 26-nov-2026 23:45 UTC). Para exigir una nueva: `update public.app_policy set min_client_version = N;` (volver a 0 lo revierte al instante).
 * Sin *branches*, sin planes de pago, sin servicios extra.
 
 ## Recuperación
