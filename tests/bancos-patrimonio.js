@@ -99,7 +99,7 @@ async function testBanks(browser,width,theme='light'){
    assert.equal(await root.locator('.vBanksPc-lanes').count(),0,'Productos no debe repetir los listados de detalle.');
    assert.match(await root.locator('.vBanksPc-overview-tile[data-id="cards"]').innerText(),/Deuda utilizada\s+RD\$6,500 · 1\.8%/);
    assert.match(await root.locator('.vBanksPc-overview-tile[data-id="accounts"]').innerText(),/RD\$120,000/);
-   assert.match(await root.locator('.vBanksPc-overview-tile[data-id="loans"]').innerText(),/Deuda total\s*RD\$[\d,]+ · Avance \d+%/);
+   assert.match(await root.locator('.vBanksPc-overview-tile[data-id="loans"]').innerText(),/Deuda total\s*RD\$[\d,]+ · \d+%/);
    assert.match(await root.locator('.vBanksPc-overview-tile[data-id="certificates"]').innerText(),/RD\$70,000/);
    assert.match(await root.locator('.vBanksPc-mp-total').innerText(),/Total: \d+ productos/);
    assert.ok(await root.locator('.vBanksPc-consumption-rows > div').count()>=1,'Se muestran todas las categorías de consumo.');

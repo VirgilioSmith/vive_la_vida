@@ -2198,7 +2198,7 @@ function vBanksProducts(groups,bankId,f,mobile){
   // La vista general es un resumen de categorías, no una segunda lista de productos.
   // Los importes provienen de la misma posición financiera calculada para los KPI.
   if(current==='all'){
-   const loanLine=(()=>{const ls=groups.loans.map(l=>{try{return loanStatus(l)}catch(_){return null}}).filter(Boolean);if(!ls.length)return '';const q=ls.reduce((n,x)=>n+fx(num(x.installment),'DOP'),0),d=ls.reduce((n,x)=>n+num(x.payments),0),t=ls.reduce((n,x)=>n+num(x.payments)+num(x.remaining),0);return `<em> · Avance ${t>0?Math.round(d/t*100):0}%</em>`})();
+   const loanLine=(()=>{const ls=groups.loans.map(l=>{try{return loanStatus(l)}catch(_){return null}}).filter(Boolean);if(!ls.length)return '';const q=ls.reduce((n,x)=>n+fx(num(x.installment),'DOP'),0),d=ls.reduce((n,x)=>n+num(x.payments),0),t=ls.reduce((n,x)=>n+num(x.payments)+num(x.remaining),0);return `<em title="Avance de pago"> · ${t>0?Math.round(d/t*100):0}%</em>`})();
    const rows=[
     ['cards','Tarjetas','card','Deuda utilizada',`${money(f.cardDebt)}<em> · ${vBanksFlags(f)}</em>`,f.cardDebt],
     ['accounts','Cuentas','wallet','Balance total',money(f.funds),f.funds],

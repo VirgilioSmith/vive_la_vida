@@ -124,3 +124,19 @@ html body:is(.theme-black,.theme-dark) #app#app#app .world-mobilesearch #page#pa
 html body:is(.theme-black,.theme-dark) #app#app#app .world-mobilesearch #page#page .v721-category-tile.v721-category-tile .v154-category-sub{color:#aab3c4!important;-webkit-text-fill-color:#aab3c4!important}
 html body:is(.theme-black,.theme-dark) #app#app#app .world-mobilesearch #page#page .v721-category-tile.v721-category-tile .v711-category-arrow{background:rgba(255,255,255,.1)!important;border:1px solid rgba(255,255,255,.18)!important;color:#fff!important;box-shadow:none!important}
 html body:is(.theme-black,.theme-dark) #app#app#app .world-mobilesearch #page#page .v721-category-tile.v721-category-tile .v711-category-arrow svg{color:#fff!important;stroke:#fff!important}
+
+/* Bancos · «Mis productos»: las cuatro filas (Tarjetas, Cuentas, Préstamos, Certificados) usan la MISMA escala de cifra,
+   calculada sobre el ancho real de la fila (no del viewport), para que nunca se pisen con el nombre y queden alineadas. */
+html body #app#app#app#app main.vBanksPc-world #page#page .vBanksPc-overview-tile{container-type:inline-size}
+html body #app#app#app#app main.vBanksPc-world #page#page .vBanksPc-overview-tile .vBanksPc-overview-top{flex:1 1 0;min-width:0}
+html body #app#app#app#app main.vBanksPc-world #page#page .vBanksPc-overview-tile .vBanksPc-overview-name{min-width:0;overflow:hidden;text-overflow:ellipsis}
+html body #app#app#app#app main.vBanksPc-world #page#page .vBanksPc-overview-tile .vBanksPc-overview-metric{flex:0 0 auto;min-width:0}
+html body #app#app#app#app main.vBanksPc-world #page#page .vBanksPc-overview-tile .vBanksPc-overview-metric strong{font-size:clamp(14px,4.7cqi,26px)!important}
+html body #app#app#app#app main.vBanksPc-world #page#page .vBanksPc-overview-tile .vBanksPc-overview-metric strong.is-line{font-size:clamp(13px,3.6cqi,18px)!important}
+html body #app#app#app#app main.vBanksPc-world #page#page .vBanksPc-overview-tile .vBanksPc-overview-metric small{font-size:clamp(11.5px,3.1cqi,15px)!important}
+@container (max-width:430px){
+ html body #app#app#app#app main.vBanksPc-world #page#page .vBanksPc-overview-tile .vBanksPc-overview-icon{width:46px!important;height:46px!important;flex:0 0 46px}
+ html body #app#app#app#app main.vBanksPc-world #page#page .vBanksPc-overview-tile .vBanksPc-overview-icon svg{max-width:100%;max-height:100%}
+ html body #app#app#app#app main.vBanksPc-world #page#page .vBanksPc-overview-tile .vBanksPc-overview-name{font-size:16px!important}
+ html body #app#app#app#app main.vBanksPc-world #page#page .vBanksPc-overview-tile .vBanksPc-overview-top{gap:10px!important}
+}
