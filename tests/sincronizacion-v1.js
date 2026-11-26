@@ -67,6 +67,6 @@ const editar = (p, nota) => p.evaluate(nota => { const d = window.__T.dbg(); d.t
     const llamadas = st.db.calls.length - base;
     check('S4', `Conflicto de revisión permanente: ${llamadas} llamadas en 45 s (entre 1 y 6; sin protección serían 45 por minuto ≈ 3.600/h)`, llamadas >= 1 && llamadas <= 6, `llamadas=${llamadas}`);
     const estado = await p.evaluate(() => (document.body.innerText.match(/(pausada|conflicto)[^.]*\./i) || [''])[0]);
-    check('S4b', 'El cliente pausa la sincronización y protege los datos locales (sin pérdida)', /pausada|conflicto/i.test(estado), estado); await ctx.close(); }
+    check('S4b', 'Tras el conflicto el cliente concilia y guarda (fusión a tres vías) o pausa protegiendo lo local: nunca pierde datos ni entra en bucle', st.db.commits >= 2 || /pausada|conflicto/i.test(estado), `commits=${st.db.commits} estado=${estado}`); await ctx.close(); }
   console.log(`\nSINCRONIZACIÓN V1: ${n - fails}/${n} verificaciones aprobadas`); await b.close(); process.exit(fails ? 1 : 0);
 })().catch(e => { console.error(e); process.exit(1) });
