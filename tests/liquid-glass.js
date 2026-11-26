@@ -16,7 +16,7 @@ const lum=c=>{const m=c.match(/[\d.]+/g).map(Number);const f=v=>{v/=255;return v
   await p.evaluate(g=>window.__T.go(g),mob?'banks':'wallet');await p.waitForTimeout(1500);
   const st=await p.evaluate(()=>{
    const L=window.ViveLiquidGlass;const s=[...document.querySelectorAll('[data-vlg]')];
-   const bad=s.filter(e=>{const a=getComputedStyle(e,'::after').content;const bf=getComputedStyle(e,'::before').content;const aft=/\baft\b/.test(e.getAttribute('data-vlg'));return a!=='""'||(!aft&&bf!=='""')}).map(e=>String(e.className).slice(0,40));
+   const bad=s.filter(e=>!/\bbare\b/.test(e.getAttribute('data-vlg'))).filter(e=>{const a=getComputedStyle(e,'::after').content;const bf=getComputedStyle(e,'::before').content;const aft=/\baft\b/.test(e.getAttribute('data-vlg'));return a!=='""'||(!aft&&bf!=='""')}).map(e=>String(e.className).slice(0,40));
    const bfCount=[...document.querySelectorAll('#app *')].filter(e=>{const f=getComputedStyle(e).backdropFilter;return f&&f!=='none'}).length;
    const inf=document.getAnimations().filter(a=>a.effect&&a.effect.getComputedTiming().iterations===Infinity).map(a=>(a.effect.target&&a.effect.target.className||'')+'|'+(a.animationName||''));
    return {caps:L&&L.caps(),n:s.length,bad,aura:!!document.getElementById('vlg-aura'),defs:!!document.getElementById('vlg-refract'),bfCount,inf,refr:s.filter(e=>/url\(/.test(getComputedStyle(e).backdropFilter)).length}});

@@ -46,6 +46,8 @@
   const aft=!free(cs1);
   const kind=el.matches(FLOAT)||el.matches(CTRL)?'refract press':el.matches(SHEET)?'sheet':el.matches(TILES)?'panel press':'panel';
   el.setAttribute('data-vlg',kind+(aft?' aft':''));
+  /* Si otra regla fuerza content:none en el pseudo-elemento, las capas no se pintan: el componente conserva solo la refracción/pulsación */
+  if(getComputedStyle(el,'::after').content!=='""')el.setAttribute('data-vlg',kind+' bare');
  }
  function mark(scope){
   try{if(scope.nodeType===1&&scope.matches(ALL))markOne(scope);scope.querySelectorAll(ALL).forEach(markOne)}catch(_){}

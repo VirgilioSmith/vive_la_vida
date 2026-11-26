@@ -44,7 +44,7 @@
     PC: bajo el título de la barra superior (.topbar-intro). Móvil: bajo el encabezado propio de la página (h1 + su fila de controles); en Inicio, bajo el saludo.
     El subtítulo descriptivo estático de ese encabezado se retira: la línea de inteligencia ocupa su lugar. Sin lecturas de layout (sin reflow). */
  const hideSubs=root=>{if(!root)return;root.querySelectorAll('p,.top-sub').forEach(p=>{if(!p.querySelector('button,input,select,a,label,summary'))p.classList.add('vi-sub-off')})};
- function place(el){
+ function place(el,allowFallback){
   const home=document.querySelector('.vive-mobile-home'),page=document.getElementById('page');
   const wide=!window.matchMedia('(max-width:790px)').matches;
   if(wide){const intro=document.querySelector('.topbar .topbar-intro'),t=intro&&intro.querySelector('.top-title');
@@ -55,7 +55,8 @@
   if(h){let anchor=h;
    for(let n=0;n<4;n++){const p=anchor.parentElement;if(!p||p===page||p===main||p.id==='app'||p.querySelectorAll('*').length>45)break;anchor=p}
    hideSubs(anchor);anchor.after(el);return true}
-  el.dataset.viFb='1';   /* sin encabezado todavía (la página lo pinta de forma diferida): mount() lo reintentará */
+  if(!allowFallback)return false;   /* sin encabezado todavía (la página lo pinta de forma diferida): nunca se coloca ANTES del título; se reintenta */
+  el.dataset.viFb='1';
   if(page&&page.parentElement){page.parentElement.insertBefore(el,page);return true}
   if(main){main.prepend(el);return true}return false
  }
@@ -99,9 +100,10 @@
 
  const rank=(page,list,d,mods)=>rankAll(page,list,d,mods)[0]||null;
  let retry=null;
- function mount(again){
+ function mount(stage){
+  stage=stage|0;
   try{
-   if(retry){retry.forEach(clearTimeout);retry=null}
+   if(retry&&stage===0){retry.forEach(clearTimeout);retry=null}
    if(rot){clearInterval(rot);rot=null}
    document.querySelectorAll('.vi-strip').forEach(n=>n.remove());
    document.querySelectorAll('.vi-sub-off').forEach(n=>n.classList.remove('vi-sub-off'));
@@ -114,7 +116,10 @@
    for(const c of all){const t=c.item.title;if(!t||seen.has(t))continue;seen.add(t);items.push({title:t,priority:c.item.priority||'info'})}
    if(!items.length)return;
    const el=strip(items.slice(0,4),items.length,mods);
-   if(el&&place(el)){rotate(el);if(!again)retry=[350,1100].map(ms=>setTimeout(()=>{const s=document.querySelector('.vi-strip');if(!s||s.dataset.viFb)mount(true)},ms))}
+   const placed=el&&place(el,stage>=4);
+   if(placed)rotate(el);
+   /* Páginas que pintan su encabezado de forma diferida: reintentos breves hasta que exista el título (la línea nunca aparece antes que él) */
+   if(stage===0&&(!placed||el.dataset.viFb))retry=[90,220,450,1100].map((ms,i)=>setTimeout(()=>{const s=document.querySelector('.vi-strip');if(!s||s.dataset.viFb)mount(i+1)},ms));
   }catch(e){console.warn('[Intelligence] mount',e)}
  }
 
