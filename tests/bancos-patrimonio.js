@@ -185,9 +185,11 @@ async function testBanks(browser,width,theme='light'){
   }),'Beneficios y retorno PC usa cuadrícula 2×2 sin cifras superpuestas.');
   if(!mobile)assert.ok(await p.evaluate(()=>{
    const subtitle=document.querySelector('main.vBanksPc-world .topbar .top-sub');
+   const line=document.querySelector('main.vBanksPc-world .topbar .top-title + .vi-strip');
    const tiles=document.querySelector('main.vBanksPc-world .v371-return-tile');
-   return !!subtitle&&getComputedStyle(subtitle).display!=='none'&&(!tiles||getComputedStyle(tiles).backgroundColor==='rgba(0, 0, 0, 0)');
-  }),'Bancos PC muestra su subtítulo y las celdas de retorno usan fondo transparente.');
+   /* Encabezado universal: sin subtítulo estático; la línea de Vive Intelligence va justo bajo el título */
+   return (!subtitle||getComputedStyle(subtitle).display==='none')&&!!line&&(!tiles||getComputedStyle(tiles).backgroundColor==='rgba(0, 0, 0, 0)');
+  }),'Bancos PC: sin subtítulo estático, línea de Vive Intelligence bajo el título y celdas de retorno transparentes.');
   if(mobile)assert.ok(await root.locator('.vBanks-mobile-tiles').evaluate(el=>{
    const cols=getComputedStyle(el).gridTemplateColumns.split(' ').filter(Boolean);
    return cols.length===2&&[...el.querySelectorAll('strong')].every(x=>getComputedStyle(x).textOverflow!=='ellipsis'&&x.scrollWidth<=x.clientWidth+1);

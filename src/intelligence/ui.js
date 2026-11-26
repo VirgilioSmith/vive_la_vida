@@ -51,7 +51,9 @@
    if(t){hideSubs(intro);t.after(el);return true}}
   if(home&&!wide){const g=home.querySelector('.vive-mobile-greeting');if(g&&g.nextSibling)home.insertBefore(el,g.nextSibling);else home.prepend(el);return true}
   const main=document.querySelector('#app main.main');
-  const h=[...document.querySelectorAll('#page h1,#app main h1')].find(e=>!e.closest('.topbar,[hidden],.modal,#modal-root')&&(!e.checkVisibility||e.checkVisibility({checkVisibilityCSS:true})));
+  const vis=e=>!e.closest('.topbar,[hidden],.modal,#modal-root')&&(!e.checkVisibility||e.checkVisibility({checkVisibilityCSS:true}));
+  /* título propio de la página (h1); si la página abre directamente con un encabezado de sección (Anual, Proyección…), el primer h2 hace de título */
+  const h=[...document.querySelectorAll('#page h1,#app main h1')].find(vis)||[...document.querySelectorAll('#page h2')].find(vis);
   if(h){let anchor=h;
    for(let n=0;n<4;n++){const p=anchor.parentElement;if(!p||p===page||p===main||p.id==='app'||p.querySelectorAll('*').length>45)break;anchor=p}
    hideSubs(anchor);anchor.after(el);return true}
@@ -119,7 +121,7 @@
    const placed=el&&place(el,stage>=4);
    if(placed)rotate(el);
    /* Páginas que pintan su encabezado de forma diferida: reintentos breves hasta que exista el título (la línea nunca aparece antes que él) */
-   if(stage===0&&(!placed||el.dataset.viFb))retry=[90,220,450,1100].map((ms,i)=>setTimeout(()=>{const s=document.querySelector('.vi-strip');if(!s||s.dataset.viFb)mount(i+1)},ms));
+   if(stage===0&&(!placed||el.dataset.viFb))retry=[90,220,450,800].map((ms,i)=>setTimeout(()=>{const s=document.querySelector('.vi-strip');if(!s||s.dataset.viFb)mount(i+1)},ms));
   }catch(e){console.warn('[Intelligence] mount',e)}
  }
 

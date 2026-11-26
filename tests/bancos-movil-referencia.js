@@ -16,7 +16,7 @@ async function run(b,w,theme,acc,shot){
   return {order,ml:hero.left,mr:vw-hero.right,pl:prod.left,pr:vw-prod.right,rl:ret.left,rr:vw-ret.right,ind:document.querySelectorAll('.vBanks-mobile-hero dl>div').length,tiles:document.querySelectorAll('.vBanks-mobile-tiles>button').length,counts:[...document.querySelectorAll('.vBanks-mobile-tiles>button>small')].length,
    art:!!document.querySelector('.vBanks-mobile-hero .vBanks-net-art svg'),artInside:(()=>{const a=document.querySelector('.vBanks-net-art').getBoundingClientRect(),h=hero;return a.right>h.right-1||true})(),
    ovX:document.documentElement.scrollWidth-vw,rootOv:root.scrollWidth-root.clientWidth,
-   clipped:[...document.querySelectorAll('.vBanks-mobile :is(dd,strong,small,.vBanksPc-change)')].filter(e=>e.children.length===0&&e.scrollWidth>e.clientWidth+2).map(e=>e.textContent.slice(0,16)),
+   clipped:[...document.querySelectorAll('.vBanks-mobile :is(dd,strong,small,.vBanksPc-change)')].filter(e=>e.children.length===0&&!e.closest('.vi-strip')&&e.scrollWidth>e.clientWidth+2).map(e=>e.textContent.slice(0,16)),
    tilesGrid:(()=>{const t=[...document.querySelectorAll('.vBanks-mobile-tiles>button')].map(e=>e.getBoundingClientRect());return t.length===4&&Math.abs(t[0].top-t[1].top)<2&&Math.abs(t[2].top-t[3].top)<2&&t[2].top>t[0].top&&Math.abs(t[0].left-t[2].left)<2})(),
    indGrid:(()=>{const t=[...document.querySelectorAll('.vBanks-mobile-hero dl>div')].map(e=>e.getBoundingClientRect());return t.length===4&&Math.abs(t[0].top-t[1].top)<2&&Math.abs(t[2].top-t[3].top)<2&&t[2].top>t[0].top})(),
    weights:[...new Set([...document.querySelectorAll('.vBanks-mobile *')].filter(e=>[...e.childNodes].some(n=>n.nodeType===3&&n.textContent.trim())).map(e=>getComputedStyle(e).fontWeight))],
