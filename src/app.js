@@ -15385,87 +15385,55 @@ document.addEventListener('click',function(event){
 
 
 
-/* V239 · Tres experiencias bancarias móviles, sin cambios al motor contable ni a desktop. */
-(function v239MobileProductExperiences(){
+/* Bancos · detalle de producto (cuenta y certificado). Un solo componente nuevo (`vbd-*`) para móvil y escritorio.
+   Sustituye a la antigua experiencia v239 (listas y detalles móviles), que ya no existe. */
+(function vBanksDetailExperiences(){
   const mobile=()=>window.matchMedia('(max-width: 790px)').matches;
   const fmt=(n,c='DOP')=>money(num(n),c,2);
   const cash=a=>a.kind==='cash';
-  const currencyLabel=c=>c==='USD'?'US$':'RD$';
   const validDate=d=>/^\d{4}-\d{2}-\d{2}$/.test(String(d||''));
   const cDate=d=>validDate(d)?prettyDate(d):'Sin fecha';
-  const action=(label,act,opts={})=>`<button type="button" class="v239-action ${opts.primary?'v239-action-primary':''}" data-act="${act}"${opts.id?` data-id="${sanitize(opts.id)}"`:''}${opts.mode?` data-mode="${opts.mode}"`:''}${opts.disabled?' disabled':''}>${opts.ico?icon(opts.ico):''}<span>${label}</span></button>`;
-  const tab=(section,id,label,count)=>`<button type="button" role="tab" aria-selected="${(ui['v239'+section]||(section==='Accounts'?'all':'active'))===id}" class="v239-segment ${(ui['v239'+section]||(section==='Accounts'?'all':'active'))===id?'selected':''}" data-v239-tab="${section}:${id}"><span>${label}</span>${count===undefined?'':`<small>${count}</small>`}</button>`;
-  const top=(eyebrow,title,desc,act,label)=>`<header class="v239-intro"><div><span class="v239-eyebrow">${eyebrow}</span><h2>${title}</h2><p>${desc}</p></div><button class="v239-add" type="button" data-act="${act}" aria-label="${label}">${icon('plus')}<span>${label}</span></button></header>`;
-  const empty=(ico,title,desc,act,label)=>`<section class="v239-empty">${icon(ico)}<h3>${title}</h3><p>${desc}</p>${action(label,act,{primary:true,ico:'plus'})}</section>`;
-  const row=(label,val)=>`<div class="v239-fact"><span>${label}</span><strong>${val}</strong></div>`;
   const bankCaption=b=>sanitize(String(b||'Sin institución'));
-  const txList=(tx,currency)=>tx.length?`<div class="v239-history">${tx.slice(0,15).map(t=>`<div class="v239-history-row"><span class="v239-history-mark">${icon(t.type==='income'?'up':t.type==='transfer'?'cycle':'down')}</span><span class="v239-history-copy"><strong>${sanitize(transactionTitle(t))}</strong><small>${cDate(t.date)} · ${sanitize(TRANSL[t.type]||t.type)}</small></span><b>${txDisplay(t)}</b><button type="button" data-act="editTransaction" data-id="${t.id}" aria-label="Editar movimiento" class="v239-history-edit">${icon('receipt')}</button></div>`).join('')}</div>`:'<p class="v239-no-data">Aún no hay movimientos vinculados a este producto.</p>';
+  const btn=(label,act,o={})=>`<button type="button" class="vbd-btn${o.primary?' is-primary':''}" data-act="${act}"${o.id?` data-id="${sanitize(o.id)}"`:''}${o.mode?` data-mode="${o.mode}"`:''}>${o.ico?icon(o.ico):''}<span>${label}</span></button>`;
+  const facts=(title,rows,note)=>`<section class="vbd-card"><h3>${title}</h3><dl class="vbd-facts">${rows.map(([l,v])=>`<div><dt>${l}</dt><dd>${v}</dd></div>`).join('')}</dl>${note?`<p class="vbd-note">${note}</p>`:''}</section>`;
+  const tx=(list,currency)=>list.length?`<ul class="vbd-tx">${list.slice(0,15).map(t=>`<li><span class="vbd-tx-mark">${icon(t.type==='income'?'up':t.type==='transfer'?'cycle':'down')}</span><span class="vbd-tx-copy"><strong>${sanitize(transactionTitle(t))}</strong><small>${cDate(t.date)} · ${sanitize(TRANSL[t.type]||t.type)}</small></span><b>${txDisplay(t)}</b><button type="button" class="vbd-tx-edit" data-act="editTransaction" data-id="${t.id}" aria-label="Editar movimiento">${icon('receipt')}</button></li>`).join('')}</ul>`:'<p class="vbd-empty">Aún no hay movimientos vinculados a este producto.</p>';
+  const activity=(title,list,currency)=>`<section class="vbd-card"><header class="vbd-card-head"><h3>${title}</h3><span>${list.length}</span></header>${tx(list,currency)}</section>`;
+  const manage=(label,kind,id,archived)=>`<details class="vbd-more"><summary>${label} ${icon('arrow')}</summary><div class="vbd-more-body">${productControls(kind,id,archived)}</div></details>`;
+  const shell=o=>`<div class="vbd vbd-${o.kind}"><button type="button" class="vbd-back" data-act="banksCloseProduct">${icon('arrow')}<span>${o.back}</span></button>
+    <div class="vbd-grid"><div class="vbd-main">
+     <article class="vbd-face"><span class="vbd-kicker">${o.kicker}</span><h2>${o.title}</h2><p>${o.sub}</p><div class="vbd-amt"><small>${o.label}</small><strong>${o.amount}</strong></div><footer><span>${o.foot[0]}</span><span>${o.foot[1]}</span></footer></article>
+     <div class="vbd-actions">${o.actions}</div>${o.extra||''}${o.facts}
+    </div><div class="vbd-side">${o.side}</div></div></div>`;
 
-  function accountsMobile(selected=ui.accountId?account(ui.accountId):null){
-    const visible=db.accounts.filter(a=>ui.showHidden||!a.archived);
-    const cur=ui.v239Currency==='USD'?'USD':'DOP';
-    const inCur=visible.filter(a=>a.currency===cur), bankSum=inCur.filter(a=>!cash(a)).reduce((v,a)=>v+num(getAccountBalance(a)),0), cashSum=inCur.filter(cash).reduce((v,a)=>v+num(getAccountBalance(a)),0);
-    if(selected){
-      const tx=recentTx().filter(t=>t.accountId===selected.id||t.toAccountId===selected.id);
-      const isCash=cash(selected),balance=num(getAccountBalance(selected));
-      return `<div class="v239-mobile-root v239-accounts v239-detail-mode">
-        <button class="v239-back" data-act="closeAccountDetails">${icon('arrow')} Todas mis cuentas</button>
-        <section class="v239-hero v239-detail-hero"><span class="v239-hero-label">${isCash?'EFECTIVO PERSONAL':'CUENTA BANCARIA'} · ${selected.currency}</span><h2>${sanitize(selected.name)}</h2><p>${isCash?'Billetera permanente':bankCaption(bankOf(selected))}</p><small>SALDO DISPONIBLE</small><strong>${fmt(balance,selected.currency)}</strong><div class="v239-hero-bottom"><span>${isCash?'No depende de un banco':selected.kind==='savings'?'Ahorros':'Corriente'}</span><span>${selected.last4?'•••• '+sanitize(selected.last4):'Movimientos reales'}</span></div></section>
-        <div class="v239-actions">${action('Recibir','guidedFlow',{mode:'income',ico:'up',primary:true})}${action('Enviar','guidedFlow',{mode:'own',ico:'cycle'})}${action(isCash?'Configurar':'Editar',isCash?'addCashWallet':'editAccount',{id:selected.id,ico:'receipt'})}</div>
-        <section class="v239-sheet"><h3>Información de la cuenta</h3><div class="v239-facts">${row('Saldo inicial',fmt(selected.opening,selected.currency))}${row('Fecha de apertura',cDate(selected.opened))}${row('Interés mensual orientativo',fmt(Math.max(0,balance)*num(selected.annualRate)/1200,selected.currency))}${row('Movimientos registrados',String(tx.length))}</div><p class="v239-disclaimer">El interés es una estimación, no un ingreso contabilizado.</p></section>
-        <section class="v239-sheet"><div class="v239-sheet-head"><h3>Actividad reciente</h3><span>${tx.length}</span></div>${txList(tx,selected.currency)}</section>
-        ${isCash?'':`<details class="v239-more"><summary>Administrar esta cuenta ${icon('arrow')}</summary><div class="v239-more-body">${productControls('account',selected.id,selected.archived)}</div></details>`}
-      </div>`;
-    }
-    const filter=ui.v239Accounts||'all';
-    const shown=visible.filter(a=>filter==='all'||(filter==='cash'?cash(a):!cash(a))); 
-    const cards=shown.map(a=>{const c=cash(a);return `<article class="v239-product v239-account-item"><div class="v239-product-top"><span class="v239-logo ${c?'v239-logo-cash':'v239-logo-bank'}">${c?icon('wallet'):v1002BankGlyph(a,'building')}</span><span class="v239-product-meta"><strong>${sanitize(a.name)}</strong><small>${c?'Efectivo personal':bankCaption(bankOf(a))} · ${a.currency}</small></span><span class="v239-currency">${currencyLabel(a.currency)}</span></div><div class="v239-product-value"><small>SALDO DISPONIBLE</small><strong>${fmt(getAccountBalance(a),a.currency)}</strong></div><div class="v239-product-foot"><span>${c?'Billetera permanente':a.kind==='savings'?'Cuenta de ahorros':'Cuenta corriente'}</span><button type="button" data-act="accountDetails" data-id="${a.id}" aria-label="Ver detalle de ${sanitize(a.name)}">Ver cuenta ${icon('arrow')}</button></div></article>`}).join('');
-    return `<div class="v239-mobile-root v239-accounts">
-      ${top('TU DINERO, BIEN ORGANIZADO','Cuentas y efectivo','Cada saldo en su moneda, sin duplicidades.','addAccount','Nueva')}
-      <section class="v239-hero" aria-label="Disponible por moneda"><div class="v239-hero-top"><span class="v239-hero-label">SALDO TOTAL · ${currencyLabel(cur)}</span><span class="v239-hero-icon">${icon('wallet')}</span></div><strong class="v239-hero-amount">${fmt(bankSum+cashSum,cur)}</strong><div class="v239-currency-tabs" role="group" aria-label="Moneda del resumen"><button type="button" data-v239-currency="DOP" aria-pressed="${cur==='DOP'}" class="${cur==='DOP'?'active':''}">RD$</button><button type="button" data-v239-currency="USD" aria-pressed="${cur==='USD'}" class="${cur==='USD'?'active':''}">US$</button></div><div class="v239-hero-metrics"><div><small>EN BANCOS</small><strong>${fmt(bankSum,cur)}</strong></div><div><small>EFECTIVO</small><strong>${fmt(cashSum,cur)}</strong></div></div></section>
-      <div class="v239-list-head"><div><span class="v239-eyebrow">MIS PRODUCTOS</span><h3>Mis cuentas <small>${visible.length}</small></h3></div>${db.accounts.some(a=>a.archived)?visibilityControl():''}</div>
-      <div class="v239-segments" role="tablist" aria-label="Filtrar cuentas">${tab('Accounts','all','Todas',visible.length)}${tab('Accounts','bank','Bancarias',visible.filter(a=>!cash(a)).length)}${tab('Accounts','cash','Efectivo',visible.filter(cash).length)}</div>
-      <div class="v239-product-list">${cards||empty('wallet','Todavía no hay cuentas aquí','Puedes crear una cuenta bancaria o cambiar el filtro.','addAccount','Crear cuenta')}</div>
-      <p class="v239-bottom-note">Los fondos en RD$ y US$ se mantienen separados. El cambio de moneda del resumen no convierte ni mueve dinero.</p>
-    </div>`;
-  }
-
-  vBanksAccountDetail=accountsMobile;
-
-  
-
-  vBanksCertificateDetail=function(selected){const p=certProjection(selected),capital=certificateCapital(selected),days=validDate(selected.maturityDate)?diffDays(selected.maturityDate,today()):null;return `<div class="v239-mobile-root v239-certificates v239-detail-mode"><button class="v239-back" type="button" data-v239-cert-close>${icon('arrow')} Mis certificados</button>
-      <section class="v239-hero v239-cert-hero v239-detail-hero"><span class="v239-hero-label">INVERSIÓN · ${selected.currency}</span><h2>${sanitize(selected.name)}</h2><p>${bankCaption(bankOf(selected))}</p><small>CAPITAL CONSTITUIDO</small><strong>${fmt(capital,selected.currency)}</strong><div class="v239-hero-bottom"><span>Tasa anual ${num(selected.rate).toFixed(2)}%</span><span>${days===null?'Sin vencimiento':days<0?'Vencido':days===0?'Vence hoy':'En '+days+' días'}</span></div></section>
-      <div class="v239-actions">${action('Cobrar interés','certificateInterest',{id:selected.id,ico:'up',primary:true})}${action('Rescatar','certificateRedeem',{id:selected.id,ico:'wallet'})}${action('Editar','editCertificate',{id:selected.id,ico:'receipt'})}</div>
-      ${selected.capitalMode==='pending'?`<div class="v239-pending-action">${action('Constituir capital pendiente','certificateFund',{id:selected.id,ico:'plus',primary:true})}</div>`:''}
-      <section class="v239-sheet"><h3>Rendimiento y vencimiento</h3><div class="v239-facts">${row('Tasa anual',num(selected.rate).toFixed(2)+'%')}${row('Antigüedad',antiguedadTexto(selected,'certificate')||'Sin fecha')}${row('Vencimiento',cDate(selected.maturityDate))}${row('Ganancia neta estimada',fmt(p.net,selected.currency))}${row('Interés cobrado registrado',fmt(p.collected,selected.currency))}${row('Retención configurada',num(selected.taxPct).toFixed(2)+'%')}${row('Capital original',fmt(selected.principal,selected.currency))}</div><p class="v239-disclaimer">Las ganancias estimadas son informativas. Solo los intereses cobrados y registrados afectan ingresos.</p></section>
-      <section class="v239-sheet"><div class="v239-sheet-head"><h3>Movimientos del certificado</h3></div>${txList(recentTx().filter(t=>t.certificateId===selected.id),selected.currency)}</section>
-      <details class="v239-more"><summary>Administrar certificado ${icon('arrow')}</summary><div class="v239-more-body">${productControls('certificate',selected.id,selected.archived)}</div></details></div>`}
-;
-  
-
-  // Páginas de escritorio quedan intactas; solo se reemplaza su cuerpo móvil.
+  vBanksAccountDetail=function(selected){
+    const list=recentTx().filter(t=>t.accountId===selected.id||t.toAccountId===selected.id);
+    const isCash=cash(selected),balance=num(getAccountBalance(selected));
+    return shell({kind:'account',back:'Todas mis cuentas',kicker:`${isCash?'EFECTIVO PERSONAL':'CUENTA BANCARIA'} · ${selected.currency}`,title:sanitize(selected.name),sub:isCash?'Billetera permanente':bankCaption(bankOf(selected)),label:'SALDO DISPONIBLE',amount:fmt(balance,selected.currency),
+      foot:[isCash?'No depende de un banco':selected.kind==='savings'?'Ahorros':'Corriente',selected.last4?'•••• '+sanitize(selected.last4):'Movimientos reales'],
+      actions:btn('Recibir','guidedFlow',{mode:'income',ico:'up',primary:true})+btn('Enviar','guidedFlow',{mode:'own',ico:'cycle'})+btn(isCash?'Configurar':'Editar',isCash?'addCashWallet':'editAccount',{id:selected.id,ico:'receipt'}),
+      facts:facts('Información de la cuenta',[['Saldo inicial',fmt(selected.opening,selected.currency)],['Fecha de apertura',cDate(selected.opened)],['Interés mensual orientativo',fmt(Math.max(0,balance)*num(selected.annualRate)/1200,selected.currency)],['Movimientos registrados',String(list.length)]],'El interés es una estimación, no un ingreso contabilizado.'),
+      side:activity('Actividad reciente',list,selected.currency)+(isCash?'':manage('Administrar esta cuenta','account',selected.id,selected.archived))});
+  };
+  vBanksCertificateDetail=function(selected){
+    const p=certProjection(selected),capital=certificateCapital(selected),days=validDate(selected.maturityDate)?diffDays(selected.maturityDate,today()):null;
+    const list=recentTx().filter(t=>t.certificateId===selected.id);
+    return shell({kind:'certificate',back:'Mis certificados',kicker:`INVERSIÓN · ${selected.currency}`,title:sanitize(selected.name),sub:bankCaption(bankOf(selected)),label:'CAPITAL CONSTITUIDO',amount:fmt(capital,selected.currency),
+      foot:[`Tasa anual ${num(selected.rate).toFixed(2)}%`,days===null?'Sin vencimiento':days<0?'Vencido':days===0?'Vence hoy':'En '+days+' días'],
+      actions:btn('Cobrar interés','certificateInterest',{id:selected.id,ico:'up',primary:true})+btn('Rescatar','certificateRedeem',{id:selected.id,ico:'wallet'})+btn('Editar','editCertificate',{id:selected.id,ico:'receipt'}),
+      extra:selected.capitalMode==='pending'?`<div class="vbd-actions vbd-pending">${btn('Constituir capital pendiente','certificateFund',{id:selected.id,ico:'plus',primary:true})}</div>`:'',
+      facts:facts('Rendimiento y vencimiento',[['Tasa anual',num(selected.rate).toFixed(2)+'%'],['Antigüedad',antiguedadTexto(selected,'certificate')||'Sin fecha'],['Vencimiento',cDate(selected.maturityDate)],['Ganancia neta estimada',fmt(p.net,selected.currency)],['Interés cobrado registrado',fmt(p.collected,selected.currency)],['Retención configurada',num(selected.taxPct).toFixed(2)+'%'],['Capital original',fmt(selected.principal,selected.currency)]],'Las ganancias estimadas son informativas. Solo los intereses cobrados y registrados afectan ingresos.'),
+      side:activity('Movimientos del certificado',list,selected.currency)+manage('Administrar certificado','certificate',selected.id,selected.archived)});
+  };
 
   const oldMain=main;
-  main=function(){if(mobile()&&ui.page==='advanced')ui.page='overview';if(ui.page!=='certificates')ui.v239CertificateId=null;return oldMain();};
+  main=function(){if(mobile()&&ui.page==='advanced')ui.page='overview';return oldMain();};
   // Los resultados del buscador móvil tampoco deben anunciar un destino oculto.
   const previousMobileIndex=v154PrepareMobileIndex;
   v154PrepareMobileIndex=function(){previousMobileIndex();if(mobile())v154MobileSearchIndex=v154MobileSearchIndex.filter(x=>x.page!=='advanced');};
   document.addEventListener('click',function(e){
     if(!mobile())return;
-    const tabBtn=e.target.closest?.('[data-v239-tab]');
-    const currencyBtn=e.target.closest?.('[data-v239-currency]');
-    const certOpen=e.target.closest?.('[data-v239-cert-open]');
-    const certClose=e.target.closest?.('[data-v239-cert-close]');
-    const mobileAdvanced=e.target.closest?.('[data-act="navigate"][data-id="advanced"]');
-    if(!tabBtn&&!currencyBtn&&!certOpen&&!certClose&&!mobileAdvanced)return;
-    e.preventDefault();e.stopImmediatePropagation();
-    if(mobileAdvanced){ui.page='overview';}
-    if(tabBtn){const [section,value]=tabBtn.dataset.v239Tab.split(':');if(['Accounts','Loans','Certificates'].includes(section))ui['v239'+section]=value;}
-    if(currencyBtn)ui.v239Currency=currencyBtn.dataset.v239Currency==='USD'?'USD':'DOP';
-    if(certOpen)ui.v239CertificateId=certOpen.dataset.v239CertOpen;
-    if(certClose)ui.v239CertificateId=null;
-    render();
+    if(!e.target.closest?.('[data-act="navigate"][data-id="advanced"]'))return;
+    e.preventDefault();e.stopImmediatePropagation();ui.page='overview';render();
   },true);
 })();
 

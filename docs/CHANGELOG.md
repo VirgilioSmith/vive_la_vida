@@ -122,3 +122,11 @@
 - Se conserva lo reutilizado al adentrarse: `loans()`/`loanDetail`/`loanWorkspace`, el detalle de cuenta y de certificado.
 - Verificación: 51 de 52 capturas (PC y móvil, claro y Black, 9 pantallas + tipos y detalles de Bancos) idénticas píxel a píxel antes/después (la restante, 0,08 %); `bancos-pc-glass`, `bancos-movil-referencia`, `detalles`, `movimientos-costos-prestamo` y `remediacion-03` pasan; `prestamos` queda igual que antes (1 fallo previo). Las pruebas `prestamos` y `detalles` se actualizaron al flujo nuevo.
 - Pendiente (no se tocó): las familias CSS `v46/v57/v239` siguen en uso por los detalles y no se pueden quitar sin rehacerlos con el diseño nuevo; `auditoria-estados` falla igual que antes.
+
+## Detalle de producto rehecho (cuenta y certificado) y retirada de la experiencia v239
+- Nuevo componente único `vbd-*` (`src/banks-detail.css`, `vBanksDetailExperiences` en `app.js`) para el detalle de **cuenta** y **certificado**, móvil y PC, Claro/Black y con el acento elegido: cara del producto, acciones, datos, movimientos y «Administrar». Reutiliza las mismas acciones y funciones (Recibir, Enviar, Editar, Cobrar interés, Rescatar, controles de producto y gráfico de evolución en PC).
+- Corrige un fallo real: en PC el detalle de cuenta/certificado se veía sin estilos (usaba el marcado móvil) y el contenedor mostraba un aro de foco morado.
+- Eliminada la experiencia móvil v239 (listas y detalles viejos) con su JS y 172 reglas CSS huérfanas (−27,8 KB), además del código sin referencias detectado por análisis.
+- Verificación: 46 de 52 capturas idénticas; las 6 que cambian son los detalles rehechos (cuenta y certificado, PC y móvil) y 2 detalles (tarjeta, préstamo) con diferencia < 1 % por quitar el aro de foco. Pasan `detalles`, `bancos-pc-glass`, `bancos-movil-referencia`, `intelligence-contexto`, `glass-engine`, `negro-verdadero`; `prestamos` mantiene su fallo previo.
+- Hallazgo pendiente (previo a esta tarea): en móvil el detalle de préstamo no muestra la barra de pestañas (Visión, Amortización, Historial, Simulador); por eso la prueba `P3-390` ya fallaba.
+- Pendiente: la página `cards` vieja (`v243`) sigue conviviendo con Wallet; el héroe `v57`/`v46`/`bank-hero` solo la alimenta a ella.
