@@ -238,7 +238,8 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
     assert.equal(await p.getByText('Límite por tarjeta',{exact:true}).count(),0);
     assert.equal(await limits.count(),1);
     assert.equal(await state.locator('.v1244-limits').count(),1);
-    assert.deepEqual(await state.evaluate(el=>[...el.children].map(c=>c.className)),['v266-panel-heading','v1244-main','v1301-limit-breakdown','v1244-cutbox']);
+    assert.deepEqual(await state.evaluate(el=>[...el.children].map(c=>c.className)),['v266-panel-heading','wallet-mobile-tools','v1244-main','v1301-limit-breakdown']);   // el bloque de cortes vive ahora fuera del panel de estado
+    assert.ok(await p.locator('.v1244-cutbox').count()>=1,'El bloque de cortes sigue presente en Wallet');
     assert.deepEqual(await state.locator('.v1244-main').evaluate(el=>[...el.children].map(c=>c.classList.contains('v1244-gauge')?'gauge':c.className)),['gauge','v1244-limits']);
     assert.ok(await state.evaluate(el=>{const main=el.querySelector('.v1244-main').getBoundingClientRect(),rank=el.querySelector('.v1301-limit-breakdown').getBoundingClientRect(),cuts=el.querySelector('.v1244-cutbox').getBoundingClientRect();return main.bottom<=rank.top&&rank.bottom<=cuts.top&&el.scrollWidth<=el.clientWidth+1}),'Desglose después del límite y antes de los cortes, sin desbordamiento');
     assert.notEqual(await consumption.getAttribute('open'),null,'El consumo se muestra al entrar en Créditos generales');
