@@ -1,13 +1,13 @@
 'use strict';
 /* Bancos PC · Premium Liquid Glass: 4 KPI (Ingresos | Egresos | Resultado neto | Fondos), variaciones sin flechas,
    Mis bancos, Mis productos, Beneficios y retorno, Consumo por tipo. Valida Claro/Black, acentos, resoluciones,
-   consola, desbordes, y que Wallet PC y Bancos móvil no cambian. Capturas en docs/auditoria/bancos-pc-glass/. */
+   consola, desbordes, y que Wallet PC y Bancos móvil no cambian. Capturas en test-results/auditoria/bancos-pc-glass/. */
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
 const {chromium}=require('playwright');
 const open=require('./harness');
-const OUT=path.join(__dirname,'..','docs','auditoria','bancos-pc-glass');
+const OUT=path.join(__dirname,'..','test-results','auditoria','bancos-pc-glass');
 
 async function fixture(p){
  await p.evaluate(()=>{

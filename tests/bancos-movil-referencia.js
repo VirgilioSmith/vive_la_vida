@@ -1,9 +1,9 @@
 'use strict';
 /* Bancos móvil · portada de la referencia aprobada: orden, 2×2, ilustración dentro del KPI, anchos 320–430, Claro/Black, acentos,
-   funcionalidad (productos, beneficios, +, filtros, banco individual) y estado sin datos. Capturas en docs/auditoria/bancos-movil-referencia/. */
+   funcionalidad (productos, beneficios, +, filtros, banco individual) y estado sin datos. Capturas en test-results/auditoria/bancos-movil-referencia/. */
 const assert=require('node:assert/strict');const path=require('node:path');
 const {chromium}=require('playwright');const open=require('./harness');
-const OUT=path.join(__dirname,'..','docs','auditoria','bancos-movil-referencia');
+const OUT=path.join(__dirname,'..','test-results','auditoria','bancos-movil-referencia');
 const ACC=[['turquesa','#14b8a6'],['rojo','#e5484d'],['violeta','#6d69f1']];
 async function run(b,w,theme,acc,shot){
  process.env.THEME=theme;process.env.TOUCH='1';

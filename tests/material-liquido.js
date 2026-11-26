@@ -1,6 +1,6 @@
 'use strict';
 /* Fase 03 · Motor Liquid Glass: mide por ruta (PC/móvil × Claro/Black) cuántas superficies usan backdrop-filter, cuántas están anidadas,
-   cuántas superficies grandes siguen opacas, y que las listas largas no lleven filtro por fila. Informe: docs/auditoria/fase03/material.json */
+   cuántas superficies grandes siguen opacas, y que las listas largas no lleven filtro por fila. Informe: test-results/auditoria/fase03/material.json */
 const fs=require('node:fs'),path=require('node:path');
 const {chromium}=require('playwright');const open=require('./harness');
 const PAGES=['overview','register','flow','income','expenses','wallet','banks','accounts','cards','loans','certificates','mobilehub','budget','categories','recurring','personal','patrimony','advanced','settings','mobilesearch'];
@@ -25,6 +25,6 @@ const P=()=>{
   const {ctx,p}=await open(b,w,h);const k=pl+'-'+theme;res[k]={};
   for(const pg of PAGES){try{await p.evaluate(id=>window.__T.go(id),pg);await p.waitForTimeout(400);res[k][pg]=await p.evaluate(P)}catch(e){res[k][pg]={error:1}}}
   await ctx.close()}
- await b.close();const out=path.join(__dirname,'..','docs','auditoria','fase03');fs.mkdirSync(out,{recursive:true});fs.writeFileSync(path.join(out,process.env.OUT||'material.json'),JSON.stringify(res,null,1));
+ await b.close();const out=path.join(__dirname,'..','test-results','auditoria','fase03');fs.mkdirSync(out,{recursive:true});fs.writeFileSync(path.join(out,process.env.OUT||'material.json'),JSON.stringify(res,null,1));
  for(const [k,v] of Object.entries(res)){const r=Object.values(v).filter(x=>!x.error);console.log(k,'blur/ruta máx',Math.max(...r.map(x=>x.blur)),'anidados total',r.reduce((a,x)=>a+x.nested,0),'opacas total',r.reduce((a,x)=>a+x.opaque,0),'listas con filtro',r.reduce((a,x)=>a+x.listaConFiltro,0),'blur máx px',Math.max(...r.map(x=>x.maxBlur)),'área máx',Math.max(...r.map(x=>x.area)))}
 })().catch(e=>{console.error(e);process.exit(1)});

@@ -7,7 +7,7 @@ const fs=require('node:fs');
 const path=require('node:path');
 const {chromium}=require('playwright');
 const open=require('./harness');
-const OUT=path.join(__dirname,'..','docs','auditoria','flujo-ingresos');
+const OUT=path.join(__dirname,'..','test-results','auditoria','flujo-ingresos');
 const num=s=>Number(String(s).replace(/[^0-9.\-]/g,''));
 
 async function fixture(p){

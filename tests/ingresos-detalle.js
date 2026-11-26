@@ -36,9 +36,9 @@ const open=require('./harness');
  // acciones reales presentes en el detalle
  await p.locator('.vinc-kpi-link',{hasText:'Trabajo formal'}).click();await p.waitForSelector('.vincd-body');
  ok(await p.locator('.vincd-body [data-v40-action="editIncome"],.vincd-body [data-v40-action="addIncome"],.vincd-body button').count()>0,'acciones de edición disponibles');
- await p.screenshot({path:'docs/auditoria/fase02/ingresos-formal.jpg',type:'jpeg',quality:70});
+ await p.screenshot({path:'test-results/auditoria/fase02/ingresos-formal.jpg',type:'jpeg',quality:70});
  await p.locator('.vincd-back').click();await p.waitForSelector('.vinc-kpis');await p.locator('.vinc-kpi-link',{hasText:'Joseo'}).click();await p.waitForSelector('.vincd-body[data-kind="informal"]');
- await p.screenshot({path:'docs/auditoria/fase02/ingresos-joseo.jpg',type:'jpeg',quality:70});
+ await p.screenshot({path:'test-results/auditoria/fase02/ingresos-joseo.jpg',type:'jpeg',quality:70});
  ok(errs.length===0,'consola: '+errs.join('|'));
  await ctx.close();await b.close();console.log('ingresos-detalle: OK');
 })().catch(e=>{console.error(e);process.exit(1)});

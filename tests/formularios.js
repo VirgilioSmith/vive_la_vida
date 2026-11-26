@@ -42,6 +42,6 @@ const ACTS=[['newTransaction','income'],['newTransaction','expense'],['newTransa
   res[tag+':__integridad']={datosSinCambios:after===base,erroresConsola:errs.length};
   await ctx.close();
  }
- await b.close();fs.writeFileSync(path.join(__dirname,'..','docs','auditoria','fase02','formularios.json'),JSON.stringify(res,null,1));
+ await b.close();fs.mkdirSync(path.join(__dirname,'..','test-results','auditoria','fase02'),{recursive:true});fs.mkdirSync(path.join(__dirname,'..','test-results','auditoria','fase02'),{recursive:true});fs.writeFileSync(path.join(__dirname,'..','test-results','auditoria','fase02','formularios.json'),JSON.stringify(res,null,1));
  for(const [k,v] of Object.entries(res))console.log(k,JSON.stringify(v,(kk,vv)=>kk==='ej'?undefined:vv).slice(0,330));
 })().catch(e=>{console.error(e);process.exit(1)});

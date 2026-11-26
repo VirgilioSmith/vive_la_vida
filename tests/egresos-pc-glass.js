@@ -2,13 +2,13 @@
 /* Egresos PC · Premium Liquid Glass + nómina integrada. Datos de prueba aislados (no tocan datos reales):
    valida KPI, detalle de categoría/subcategorías, filtros Fijas/Variables, selector Mes|Año|Histórico, deducciones de nómina
    (RD$7,268 + 1,677 + 1,633 = 10,578) sin duplicarse ni alterar saldos/movimientos, ausencia de Pareto/comercios/tarjeta de deducciones,
-   Claro/Black, acentos, desbordes y consola. Capturas en docs/auditoria/egresos-pc/. */
+   Claro/Black, acentos, desbordes y consola. Capturas en test-results/auditoria/egresos-pc/. */
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
 const {chromium}=require('playwright');
 const open=require('./harness');
-const OUT=path.join(__dirname,'..','docs','auditoria','egresos-pc');
+const OUT=path.join(__dirname,'..','test-results','auditoria','egresos-pc');
 const num=s=>Number(String(s).replace(/[^0-9.\-]/g,''));
 
 async function fixture(p){

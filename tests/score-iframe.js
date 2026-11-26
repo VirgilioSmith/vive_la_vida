@@ -20,9 +20,9 @@ const {chromium}=require('playwright');const open=require('./harness');const {me
   res[key]={...info,medidos:c.medidos,fallos:c.fallos.length,ej:c.fallos.slice(0,5),errores:errs.length};
   await fr.click('#tabs [data-tab="control"]').catch(()=>{});await p.waitForTimeout(500);
   const c2=await medir(p,{root:'body',max:300,frame:fr});res[key].control={medidos:c2.medidos,fallos:c2.fallos.length,ej:c2.fallos.slice(0,4)};
-  await p.screenshot({path:path.join(__dirname,'..','docs','auditoria','fase02',`score-${key}.jpg`),type:'jpeg',quality:65});
+  await p.screenshot({path:path.join(__dirname,'..','test-results','auditoria','fase02',`score-${key}.jpg`),type:'jpeg',quality:65});
   await ctx.close();
  }
- await b.close();fs.writeFileSync(path.join(__dirname,'..','docs','auditoria','fase02','score-iframe.json'),JSON.stringify(res,null,1));
+ await b.close();fs.mkdirSync(path.join(__dirname,'..','test-results','auditoria','fase02'),{recursive:true});fs.mkdirSync(path.join(__dirname,'..','test-results','auditoria','fase02'),{recursive:true});fs.writeFileSync(path.join(__dirname,'..','test-results','auditoria','fase02','score-iframe.json'),JSON.stringify(res,null,1));
  console.log(JSON.stringify(res,(k,v)=>k==='ej'?undefined:v));
 })().catch(e=>{console.error(e);process.exit(1)});

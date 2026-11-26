@@ -144,7 +144,7 @@ const diffDays=(a,b)=>Math.round((dateObj(a)-dateObj(b))/86400000);
 const v1235PrettyFmt=new Intl.DateTimeFormat('es-DO',{day:'2-digit',month:'short',year:'numeric'});
 const prettyDate=s=>s?v1235PrettyFmt.format(dateObj(s)):'—';
 const num=v=>Number.isFinite(+v)?+v:0;const rnd=v=>Math.round((num(v)+Number.EPSILON)*100)/100;
-/* Reglas con vigencia e instantáneas: solo se agrega, nunca se edita ni se borra (ver docs/logica/METODOLOGIA.md). */
+/* Reglas con vigencia e instantáneas: solo se agrega, nunca se edita ni se borra. */
 function financeRuleAt(key,subject,date){try{return window.FinanzasReglas.reglaVigente(db.ruleVersions||[],key,date||today(),subject||'*')}catch(_){return undefined}}
 function financeRuleList(key,subject){return (db.ruleVersions||[]).filter(v=>v.clave===key&&v.sujeto===(subject||'*')).sort((a,b)=>a.desde.localeCompare(b.desde))}
 function financeRuleAdd(key,subject,value,from){

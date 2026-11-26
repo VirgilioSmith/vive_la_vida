@@ -16,6 +16,6 @@ const PERFILES=[['iPhone SE',375,667],['Android pequeño',360,740],['iPhone 15',
      if(!sc&&(b.right>vw+1||b.left<-1))f.push(e.tagName.toLowerCase()+'.'+String(e.className).split(' ')[0]+' «'+e.textContent.trim().slice(0,18)+'»')}
      return {ovX:document.documentElement.scrollWidth-vw,fuera:f.length,ej:f.slice(0,3)}})}catch(e){res[n].rutas[pg]={error:1}}}
   res[n].consola=errs.length;await ctx.close()}
- await b.close();fs.writeFileSync(path.join(__dirname,'..','docs','auditoria','fase02','responsive.json'),JSON.stringify(res,null,1));
+ await b.close();fs.mkdirSync(path.join(__dirname,'..','test-results','auditoria','fase02'),{recursive:true});fs.mkdirSync(path.join(__dirname,'..','test-results','auditoria','fase02'),{recursive:true});fs.writeFileSync(path.join(__dirname,'..','test-results','auditoria','fase02','responsive.json'),JSON.stringify(res,null,1));
  for(const [n,v] of Object.entries(res)){const r=Object.entries(v.rutas);console.log(n,v.ancho,'desborde página:',r.filter(([,x])=>x.ovX>2).map(([k])=>k).join(',')||'ninguno','| texto fuera:',r.filter(([,x])=>x.fuera>0).map(([k,x])=>k+':'+x.fuera).join(',')||'ninguno','| consola',v.consola)}
 })().catch(e=>{console.error(e);process.exit(1)});

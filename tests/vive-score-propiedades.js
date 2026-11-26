@@ -1,6 +1,6 @@
 /* Propiedades matemáticas y pruebas destructivas del motor de VIVE SCORE (datos sintéticos, entorno controlado).
    Uso:  node tests/vive-score-propiedades.js            comprueba
-         MATRIZ=1 node tests/vive-score-propiedades.js   además escribe docs/auditoria/MATRIZ-SENSIBILIDAD-SCORE.md */
+         MATRIZ=1 node tests/vive-score-propiedades.js   además escribe test-results/auditoria/MATRIZ-SENSIBILIDAD-SCORE.md */
 const { chromium } = require('playwright'); const fs = require('fs'), path = require('path');
 const open = require('./harness.js');
 const res = []; const check = (n, name, ok, extra = '') => { res.push(ok); console.log(`${ok ? '✓' : '✕'} ${n} ${name}${extra ? ' — ' + extra : ''}`); };

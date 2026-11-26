@@ -6,7 +6,7 @@ const fs = require('fs');
 const open = require('./harness.js');
 const W = +(process.env.W || 390), H = +(process.env.H || 844), CAP = +(process.env.CAP || 20), FUZZ = process.env.FUZZ !== '0';
 const PAGES = (process.env.PAGES || 'overview,register,income,expenses,wallet,banks,accounts,cards,loans,certificates,benefits,personal,payments,transactions,recurring,budget,annual,analytics,categories,advanced,patrimony,projection,pressure,mobilehub,mobilesearch,settings').split(',');
-const EVID = process.env.EVID || 'docs/auditoria/evidencias';
+const EVID = process.env.EVID || 'test-results/auditoria/evidencias';
 const out = { vista: `${W}x${H}`, paginas: [], hallazgos: [], formularios: {}, noLocalizados: [] };
 const find = (tipo, pg, detalle, extra) => out.hallazgos.push({ tipo, pagina: pg, detalle: String(detalle).slice(0, 220), ...extra });
 

@@ -5,7 +5,7 @@ const path=require('node:path');
 const {chromium}=require('playwright');
 const open=require('./harness');
 const {medir}=require('./lib-contraste');
-const OUT=path.join(__dirname,'..','docs','auditoria','fase02');
+const OUT=path.join(__dirname,'..','test-results','auditoria','fase02');
 const ACENTOS=[['violeta','#6d69f1'],['rojo','#e5484d'],['verde','#16a34a'],['azul','#1d63e0']];
 (async()=>{
  const b=await chromium.launch();let resumen=[];

@@ -29,7 +29,7 @@ async function run(browser,{theme,palhex,w=390,h=844}){
  // márgenes laterales
  const m=await p.locator('.vxm-hero').evaluate(e=>{const r=e.getBoundingClientRect();return [r.left,innerWidth-r.right]});
  no(Math.abs(m[0]-m[1])<2&&m[0]>=12,'márgenes laterales uniformes '+m);
- await p.screenshot({path:`docs/auditoria/explorar-movil/${theme}${palhex?'-'+palhex:''}-${w}x${h}.png`,fullPage:true});
+ await p.screenshot({path:`test-results/auditoria/explorar-movil/${theme}${palhex?'-'+palhex:''}-${w}x${h}.png`,fullPage:true});
  // navegación
  for(const [sel,page] of [['.vxm-inc','income'],['.vxm-exp','expenses'],['.vxm-budget','budget'],['.vxm-categories','categories'],['.vxm-recurring','recurring'],['.vxm-personal','personal'],['.vxm-patrimony','patrimony']]){
   await p.click(sel);await p.waitForTimeout(300);

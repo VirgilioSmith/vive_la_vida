@@ -3,7 +3,8 @@
 const fs=require('node:fs'),path=require('node:path');
 const {chromium}=require('playwright');
 const open=require('./harness');
-const OUT=path.join(__dirname,'..','docs','auditoria','fase01');
+const OUT=path.join(__dirname,'..','test-results','auditoria','fase01');
+require('fs').mkdirSync(OUT,{recursive:true});
 const PAGES=['overview','register','flow','income','expenses','wallet','banks','accounts','cards','loans','certificates','mobilehub','budget','categories','recurring','personal','patrimony','advanced','score','settings','mobilesearch'];
 const PROBE=()=>{
  const vw=innerWidth,vh=innerHeight,r={};

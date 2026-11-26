@@ -1,5 +1,5 @@
 'use strict';
-/* Contraste WCAG 2.2 AA real de la aplicación: todas las rutas, PC y móvil, Claro/Black y acentos. Informe: docs/auditoria/fase02/contraste-app.json */
+/* Contraste WCAG 2.2 AA real de la aplicación: todas las rutas, PC y móvil, Claro/Black y acentos. Informe: test-results/auditoria/fase02/contraste-app.json */
 const fs=require('node:fs'),path=require('node:path');
 const {chromium}=require('playwright');
 const open=require('./harness');const {medir}=require('./lib-contraste');
@@ -16,5 +16,5 @@ const PAGES=['overview','register','flow','income','expenses','wallet','banks','
    const r=await medir(p,{root:'body',max:500});res[key][pg]={medidos:r.medidos,fallos:r.fallos.length,ej:r.fallos.slice(0,6),todos:r.fallos.map(f=>[f.sel,f.text,f.ratio,f.fg,f.bg,f.size])}}catch(e){res[key][pg]={error:String(e.message).slice(0,100)}}}
   await ctx.close();console.log('listo',key);
  }
- await b.close();fs.writeFileSync(path.join(__dirname,'..','docs','auditoria','fase02',process.env.OUT||'contraste-app.json'),JSON.stringify(res,null,1));
+ await b.close();fs.mkdirSync(path.join(__dirname,'..','test-results','auditoria','fase02'),{recursive:true});fs.mkdirSync(path.join(__dirname,'..','test-results','auditoria','fase02'),{recursive:true});fs.writeFileSync(path.join(__dirname,'..','test-results','auditoria','fase02',process.env.OUT||'contraste-app.json'),JSON.stringify(res,null,1));
 })().catch(e=>{console.error(e);process.exit(1)});

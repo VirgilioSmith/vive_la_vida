@@ -3,7 +3,7 @@
    seis clasificaciones de Egresos, categorías expandibles, detalle de Trabajo formal/Joseo con flecha, 320–430 px, Claro/Black, sin vistas antiguas. */
 const assert=require('node:assert/strict');const path=require('node:path');
 const {chromium}=require('playwright');const open=require('./harness');
-const OUT=path.join(__dirname,'..','docs','auditoria','flujo-movil');
+const OUT=path.join(__dirname,'..','test-results','auditoria','flujo-movil');
 const kpis=p=>p.evaluate(()=>({flow:[...document.querySelectorAll('.vflow-kpi strong')].map(e=>e.textContent),inc:[...document.querySelectorAll('.vinc-kpi strong')].map(e=>e.textContent),exp:[...document.querySelectorAll('.vexp-kpi strong')].map(e=>e.textContent)}));
 (async()=>{
  const b=await chromium.launch();

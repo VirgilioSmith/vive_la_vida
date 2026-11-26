@@ -1,6 +1,6 @@
 'use strict';
 /* Fase 04 · Tipografía: por ruta (PC/móvil × Claro/Black) mide pesos distintos, textos < 12 px, importes (RD$/US$) recortados o sin cifras tabulares.
-   Informe docs/auditoria/fase04/<OUT>. */
+   Informe test-results/auditoria/fase04/<OUT>. */
 const fs=require('node:fs'),path=require('node:path');
 const {chromium}=require('playwright');const open=require('./harness');
 const PAGES=['overview','register','flow','income','expenses','wallet','banks','accounts','cards','loans','certificates','mobilehub','budget','categories','recurring','personal','patrimony','advanced','settings','mobilesearch'];
@@ -22,6 +22,6 @@ const P=()=>{
   const {ctx,p}=await open(b,w,h);const k=pl+'-'+theme;res[k]={};
   for(const pg of PAGES){try{await p.evaluate(id=>window.__T.go(id),pg);await p.waitForTimeout(400);res[k][pg]=await p.evaluate(P)}catch(e){res[k][pg]={error:1}}}
   await ctx.close()}
- await b.close();fs.writeFileSync(path.join(__dirname,'..','docs','auditoria','fase04',process.env.OUT||'tipografia.json'),JSON.stringify(res,null,1));
+ await b.close();fs.mkdirSync(path.join(__dirname,'..','test-results','auditoria','fase04'),{recursive:true});fs.mkdirSync(path.join(__dirname,'..','test-results','auditoria','fase04'),{recursive:true});fs.writeFileSync(path.join(__dirname,'..','test-results','auditoria','fase04',process.env.OUT||'tipografia.json'),JSON.stringify(res,null,1));
  for(const [k,v] of Object.entries(res)){const r=Object.values(v).filter(x=>!x.error);const pes=new Set(r.flatMap(x=>x.pesos));console.log(k,'pesos distintos',pes.size,[...pes].join(','),'| <12px',r.reduce((a,x)=>a+x.tiny,0),'| importes',r.reduce((a,x)=>a+x.importes,0),'recortados',r.reduce((a,x)=>a+x.recortados,0),'sin tabular',r.reduce((a,x)=>a+x.sinTabular,0),'| ≥800:',r.reduce((a,x)=>a+x.pesados,0))}
 })().catch(e=>{console.error(e);process.exit(1)});

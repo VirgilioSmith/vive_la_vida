@@ -1,7 +1,7 @@
--- VIVE V1 · Política de versión mínima de cliente para escribir (PREPARADA — NO APLICADA A PRODUCCIÓN).
+-- VIVE V1 · Política de versión mínima de cliente para escribir. APLICADA a producción el 2026-11-26 con min_client_version = 0.
 -- Principios: una única versión oficial; cero versiones obsoletas autorizadas para escribir; cero reintentos infinitos; Supabase Free
 -- (solo una tabla de una fila y una función; sin servicios adicionales, sin Edge Functions, sin Realtime nuevo).
--- Despliegue seguro en dos pasos (ver docs/principios-v1.md):
+-- Despliegue seguro en dos pasos:
 --   1) Aplicar esta migración con min_client_version = 0  → ningún cliente cambia de comportamiento.
 --   2) Cuando todos los dispositivos usen la versión nueva (que envía p_client_version = 1):
 --        update public.app_policy set min_client_version = 1;   -- desde ese momento un cliente anterior NO puede escribir.

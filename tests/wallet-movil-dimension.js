@@ -3,7 +3,7 @@
    crédito inmediatamente debajo. Mide con getBoundingClientRect en 320–430 px, Claro/Black; sin scroll horizontal ni importes cortados. */
 const assert=require('node:assert/strict');const path=require('node:path');
 const {chromium}=require('playwright');const open=require('./harness');
-const OUT=path.join(__dirname,'..','docs','auditoria','wallet-movil-dimension');
+const OUT=path.join(__dirname,'..','test-results','auditoria','wallet-movil-dimension');
 (async()=>{const b=await chromium.launch();const res=[];
  for(const theme of ['light','black'])for(const w of [320,360,375,390,430]){
   process.env.THEME=theme;process.env.TOUCH='1';const {ctx,p}=await open(b,w,844);const errs=[];p.on('pageerror',e=>errs.push(e.message));

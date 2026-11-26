@@ -1,7 +1,7 @@
 'use strict';
 /* Material Liquid Glass: es solo estético. Para 22 rutas, PC y móvil, Claro y Black, compara la geometría de todos los
    elementos con la hoja liquid-material.css desactivada y activada: debe ser idéntica. También exige 0 errores de consola.
-   Capturas antes/después en docs/auditoria/liquid-material/. */
+   Capturas antes/después en test-results/auditoria/liquid-material/. */
 const assert=require('node:assert/strict');
 const {chromium}=require('playwright');
 const open=require('./harness');
