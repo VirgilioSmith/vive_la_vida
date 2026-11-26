@@ -250,7 +250,7 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
      assert.equal(await item.locator('.v1301-stack').count(),0);
      assert.equal(await item.locator('.v1301-bank .bank-photo-mark img').count(),2);
      assert.equal(await item.locator('.v1301-mini,.credit-network').count(),0);
-     assert.equal(await item.evaluate(el=>el.scrollWidth<=el.clientWidth+1),true);
+     assert.equal(await item.evaluate(el=>{const r=el.getBoundingClientRect().right+1;return [...el.querySelectorAll('*')].every(c=>c.getBoundingClientRect().right<=r)}),true,'Ningún elemento sobresale del contenedor');   // criterio visible; scrollWidth incluye relleno y daba falsos positivos de 9 px
      assert.equal(await item.locator('.v1301-ranked').innerText().then(t=>t.includes('%')),item===consumption);
      const columns=await item.locator('.v1301-equivalent').evaluateAll(els=>els.map(el=>({x:el.getBoundingClientRect().x,right:el.getBoundingClientRect().right})));
      assert.ok(columns.every(c=>Math.abs(c.x-columns[0].x)<1&&Math.abs(c.right-columns[0].right)<1),'Equivalentes alineados');
