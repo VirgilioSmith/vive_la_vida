@@ -20551,6 +20551,8 @@ function vIntelMemOp(op,arg){
  else if(op==='export')return D.Memory.exportJSON(m);
  db.settings.intelligenceMem=m;persist();vDiscCache.res=null;return true;
 }
+function vIntelStrategic(){return window.ViveDiscovery.strategic(vIntelSnapshot(),vIntelMem())}
+function vIntelAnswer(id,v){const s=vIntelStrategic();db.settings.intelligenceMem=s.answer(id,v);persist();vDiscCache.res=null}
 function vIntelSimulate(sc){return window.ViveDiscovery.simulate(vIntelSnapshot(),sc)}
 /* Hallazgos seleccionados para el Centro Estratégico (solo los más relevantes; sin felicitaciones si hay críticos) */
 function vIntelForMomentos(){
@@ -20559,7 +20561,7 @@ function vIntelForMomentos(){
   return d.discoveries.filter(h=>!(crit&&h.valence==='positive')).slice(0,2).map(h=>({id:h.key,kicker:h.kicker,text:h.summary,valence:h.valence,go:(h.action&&h.action.target)||'overview',label:(h.action&&h.action.label)||'Ver más'}));
  }catch(_){return []}
 }
-window.__viveIntel=Object.freeze({run:vIntelRun,discover:vIntelDiscover,discFeedback:vIntelDiscFeedback,memOp:vIntelMemOp,simulate:vIntelSimulate,forMomentos:vIntelForMomentos,memory:vIntelMem,invalidate:()=>v99Invalidate(),feedback:vIntelFeedback,setPref:vIntelSetPref,snapshot:vIntelSnapshot,prefs:()=>window.ViveIntelligence.engines.learning.normalize(db.settings.intelligence).prefs,
+window.__viveIntel=Object.freeze({run:vIntelRun,discover:vIntelDiscover,discFeedback:vIntelDiscFeedback,memOp:vIntelMemOp,simulate:vIntelSimulate,strategic:vIntelStrategic,answer:vIntelAnswer,forMomentos:vIntelForMomentos,memory:vIntelMem,invalidate:()=>v99Invalidate(),feedback:vIntelFeedback,setPref:vIntelSetPref,snapshot:vIntelSnapshot,prefs:()=>window.ViveIntelligence.engines.learning.normalize(db.settings.intelligence).prefs,
  go:id=>{const b=document.createElement('button');b.type='button';b.dataset.act='navigate';b.dataset.id=id;b.hidden=true;document.body.append(b);b.click();b.remove()},
  render:()=>render(),page:()=>ui.page,toast:m=>toast(m)});
 /* Carga bajo demanda: motor, interfaz y estilos se descargan una sola vez, en reposo, la primera vez que se muestra una página con Intelligence. */
@@ -20569,9 +20571,9 @@ function vIntelEnsure(){
  if(window.ViveIntelligence&&window.ViveIntelUI)return Promise.resolve();
  if(vIntelLoading)return vIntelLoading;
  vIntelLoading=new Promise(done=>{
-  try{const css=document.createElement('link');css.rel='stylesheet';css.href='./src/intelligence/intelligence.css?v=3';document.head.appendChild(css)}catch(_){}
+  try{const css=document.createElement('link');css.rel='stylesheet';css.href='./src/intelligence/intelligence.css?v=6';document.head.appendChild(css)}catch(_){}
   const load=src=>new Promise((ok,ko)=>{const el=document.createElement('script');el.src=src;el.onload=ok;el.onerror=ko;document.head.appendChild(el)});
-  load('./src/intelligence/engine.js?v=4').then(()=>load('./src/intelligence/stats.js?v=1')).then(()=>load('./src/intelligence/discovery.js?v=1')).then(()=>load('./src/intelligence/ui.js?v=7')).then(()=>done()).catch(()=>done());
+  load('./src/intelligence/engine.js?v=4').then(()=>load('./src/intelligence/stats.js?v=2')).then(()=>load('./src/intelligence/strategy.js?v=1')).then(()=>load('./src/intelligence/discovery.js?v=2')).then(()=>load('./src/intelligence/ui.js?v=9')).then(()=>done()).catch(()=>done());
  });
  return vIntelLoading;
 }

@@ -587,3 +587,21 @@ html body #app#app .v985-ring small{display:block!important;font-size:9px;line-h
 html body #app#app .v985-minis-3{grid-template-columns:repeat(3,40px)!important;gap:8px!important}
 html body #app#app .v985-minis-3 .v985-mini{width:40px!important;min-height:92px!important;height:92px!important;border-radius:20px!important}
 html body #app#app .v985-minis-3 .v985-mini svg{width:20px;height:20px}
+
+/* R-fix · Resumen PC: las superficies protagonistas (círculo «Deudas totales» y «Fuerza del mes») conservan el relleno de ACENTO.
+   La migración a cristal claro las había blanqueado y su texto blanco se volvía ilegible. Se mantiene la óptica de cristal encima del acento. */
+html body #app#app#app #page :is(.ff-bubble.featured,.ff-health-card){
+ background:
+  linear-gradient(118deg,rgba(255,255,255,.30) 0%,rgba(255,255,255,0) 36%,rgba(255,255,255,0) 72%,rgba(255,255,255,.10) 100%),
+  radial-gradient(120% 60% at 50% -12%,rgba(255,255,255,.34),rgba(255,255,255,0) 60%),
+  linear-gradient(140deg,color-mix(in srgb,var(--v424-accent-strong,#4f4cad) 86%,#fff 14%),var(--v424-accent-strong,#4f4cad) 62%,color-mix(in srgb,var(--v424-accent-strong,#4f4cad) 82%,#0b1a36 18%))!important;
+ border:1px solid color-mix(in srgb,var(--v424-accent-strong,#4f4cad) 55%,#fff 45%)!important;color:#fff!important;
+ box-shadow:inset 0 1px 1px rgba(255,255,255,.55),inset 0 -2px 6px rgba(0,0,0,.14),0 16px 34px color-mix(in srgb,var(--v424-accent-strong,#4f4cad) 34%,transparent)!important;
+ -webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+html body #app#app#app #page .ff-bubble.featured :is(span,small,b,strong,.v105-bubble-pct){color:#fff!important}
+html body #app#app#app #page .ff-health-card :is(h2,h3,h4,span,small,b,strong,p,em){color:#fff}
+/* R-fix · Resumen en Black/Oscuro: las píldoras de acción principal conservan el ACENTO (antes quedaban en gris neutro) */
+body:is(.theme-black,.theme-dark) #app#app#app #page :is(.ff-black-btn,.ff-balance-actions button.dark,.v290-budget-head>button,.ff-quick-more){
+ background:linear-gradient(135deg,color-mix(in srgb,var(--v424-accent-strong,#4f4cad) 88%,#fff 12%),var(--v424-accent-strong,#4f4cad))!important;
+ border-color:color-mix(in srgb,var(--v424-accent-strong,#4f4cad) 60%,#fff 40%)!important;color:#fff!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 6px 16px color-mix(in srgb,var(--v424-accent-strong,#4f4cad) 38%,transparent)!important}

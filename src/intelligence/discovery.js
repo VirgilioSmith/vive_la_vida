@@ -15,7 +15,8 @@
 (function(root){
  'use strict';
  const S=(typeof require==='function'&&typeof module==='object')?require('./stats.js'):root.ViveStats;
- const VERSION='2.0.0';
+ const ST=()=>(typeof require==='function'&&typeof module==='object')?require('./strategy.js'):root.ViveStrategy;
+ const VERSION='3.0.0';
  const DAY=86400000;
  const num=x=>Number.isFinite(Number(x))?Number(x):0;
  const dms=d=>Date.parse(d+'T00:00:00Z');
@@ -112,6 +113,7 @@
  const H=(o)=>Object.assign({kind:'fact',valence:'neutral',urgency:.2,impact:0,modules:['overview'],category:'habits',alternatives:[],evidence:[],minSeen:2},o);
 
  const Engines={};
+ Engines.shadow=(F,snap,mem)=>{const st=ST();return st?st.shadow(F,snap,mem,confidence):[]};
  /* --- Pattern: día de la semana y ventana posterior al cobro --- */
  Engines.pattern=F=>{
   const out=[];const d=F.days.filter(r=>!r.ex);if(F.profile.historyDays<70)return out;
@@ -291,8 +293,8 @@
    why:'Si hay una secuencia estable, puedes anticiparla.',ifContinues:'Necesita más ciclos para confirmarse.',alternatives:['Seguir observándola','No me interesa'],action:{label:'Ver ingresos',target:'income'},modules:['overview','income'],urgency:.05,minSeen:3}))}
   return out;
  };
- const ENGINE_ORDER=['pattern','anomaly','drift','blindspot','correlation','prediction','evolution','sequence'];
- const ENGINE_FREQ={pattern:'semanal',anomaly:'diaria',drift:'semanal',blindspot:'diaria',correlation:'semanal',prediction:'diaria',evolution:'mensual',sequence:'semanal'};
+ const ENGINE_ORDER=['pattern','anomaly','drift','blindspot','correlation','prediction','evolution','sequence','shadow'];
+ const ENGINE_FREQ={pattern:'semanal',anomaly:'diaria',drift:'semanal',blindspot:'diaria',correlation:'semanal',prediction:'diaria',evolution:'mensual',sequence:'semanal',shadow:'diaria'};
 
  /* ==========================================================================
     PRIORIDAD multidimensional (puntuación de relevancia 0–100; NO es una probabilidad)
@@ -351,12 +353,16 @@
    try{const r=Engines[name](F,snap,mem)||[];for(const h of r){h.engine=name;raw.push(h);produced++}}catch(e){error=String(e&&e.message||e)}
    audit.engines.push({id:name,ms:Date.now()-s,produced,error,frequency:ENGINE_FREQ[name],records:F.profile.records});
   }
-  const surfaced=[],internal=[];const seenKeys=new Set();
+  const surfaced=[],internal=[];const seenKeys=new Set();const stg=ST();
   for(const h of raw){
    if(seenKeys.has(h.key))continue;seenKeys.add(h.key);
    if(mem.prefs&&mem.prefs.off&&mem.prefs.off[h.category]){audit.discarded.push({key:h.key,reason:'aprendizaje desactivado para la categoría «'+h.category+'»'});continue}
    const dis=mem.disabled[h.engine+'.'+h.type];if(dis){audit.discarded.push({key:h.key,reason:'tipo desactivado por el usuario'});continue}
    const ex=mem.exc[h.key];if(ex&&(!ex.until||ex.until>=today)){audit.discarded.push({key:h.key,reason:'descartado por retroalimentación: '+ex.why});continue}
+   if(stg){try{h.science=stg.science(h,F,snap);h.council=stg.council(h,{mem});}catch(e){audit.engines.push({id:'strategy',error:String(e&&e.message||e)})}
+    if(h.science&&h.science.refuted){internal.push(h);audit.discarded.push({key:h.key,reason:'refutada al ponerla a prueba: '+h.science.reason});continue}
+    if(h.council&&h.council.verdict==='descartar'){internal.push(h);audit.discarded.push({key:h.key,reason:'el consejo interno la descartó'});continue}
+    const th=(mem.thr||{})[h.engine];if(th&&h.confidence.score<.45+th&&!h.immediate){internal.push(h);audit.discarded.push({key:h.key,reason:'umbral elevado por falsos positivos reportados en este motor'});continue}}
    const prev=mem.hyp[h.key];const seen=prev?[...new Set([...(prev.seen||[]),today])].slice(-8):[today];
    h.seenDays=seen.length;h.isNew=!prev;
    const known=mem.know[h.key];
@@ -376,9 +382,20 @@
   for(const k of Object.keys(mem.hyp)){const h=mem.hyp[k];if(h.last!==today&&diff(today,h.last)>=14&&!['resolved','discarded','pattern'].includes(h.state))h.state='resolved'}
   // seguimiento de metas de mejora
   for(const [k,g] of Object.entries(mem.goals)){const cur=raw.find(h=>h.key===k);if(cur&&g.baseline!=null){const imp=g.baseline?(g.baseline-cur.observed)/Math.abs(g.baseline):0;g.progress=+imp.toFixed(2)}}
+  let strategy=null;
+  if(stg&&!o.noStrategy){try{
+   const producedKeys=new Set(raw.map(h=>h.key));const unlearned=stg.unlearn(mem,producedKeys,today);
+   stg.calibrate(mem);const evaluated=stg.evaluatePredictions(mem,snap);
+   const done=(snap.months||[]).filter(m=>!m.partial&&m.txCount>0).map(m=>num(m.expense));
+   const gov=stg.govern(mem,done);
+   if(gov.ok){const cur=today.slice(0,7),ab=stg.abstain(mem,'spend');gov.abstain=ab;
+    if(!ab.abstain)stg.logPrediction(mem,{t:'spend',for:cur,pred:Math.round(gov.pred),lo:Math.round(gov.pred-1.645*gov.sigma),hi:Math.round(gov.pred+1.645*gov.sigma),naive:Math.round(done[done.length-1]),model:gov.champion})}
+   stg.recordBenchmark(mem,today);
+   strategy={lifeModel:stg.lifeModel(snap,F),curiosity:stg.curiosity(snap,F,mem,{discoveries:show,internal}),governance:gov,unlearned,evaluated,benchmark:stg.benchmark(mem,Date.now()-t0)};
+  }catch(e){audit.engines.push({id:'strategy',error:String(e&&e.message||e)})}}
   mem.audit={runs:(mem.audit.runs||0)+1,last:today};Memory.prune(mem,today);
   audit.ms=Date.now()-t0;audit.surfaced=show.length;audit.hypotheses=raw.length;audit.memoryBytes=Memory.size(mem);
-  return {discoveries:show,internal,mem,audit,features:{profile:F.profile,windows:F.windows}};
+  return {discoveries:show,internal,mem,audit,strategy,features:{profile:F.profile,windows:F.windows}};
  }
 
  /* ==========================================================================
@@ -418,7 +435,10 @@
  }
 
  const REGISTRY=[{id:'robust-z+mad',engines:['anomaly'],status:'producción',note:'z robusto sobre mediana/MAD'},{id:'isolation-forest',engines:['anomaly'],status:'producción (solo en consenso con z robusto)',note:'64 árboles, semilla fija'},{id:'cusum',engines:['drift'],status:'producción',note:'k=0,6σ h=5σ, ≥4 semanas'},{id:'spearman-permutación+BH',engines:['correlation'],status:'producción en silencio (mínimo 3 evaluaciones)',note:'FDR q=0,10'},{id:'backtest-rodante',engines:['prediction'],status:'producción',note:'solo si mejora ≥5 % al ingenuo'},{id:'montecarlo-liquidez',engines:['prediction'],status:'producción con supuestos explícitos',note:'600 trayectorias, semilla fija'},{id:'binomial-secuencias',engines:['sequence'],status:'experimental (mínimo 3 evaluaciones)',note:'tasa base propia'},{id:'bootstrap-ic',engines:['pattern'],status:'producción',note:'300 remuestreos'}];
- const api={VERSION,REGISTRY,STATES,VISIBLE:[...VISIBLE],FEEDBACK,discover,simulate,explain,reflect,feedback,Memory,buildFeatures,confidence,relevance,WEIGHTS,ENGINE_ORDER,ENGINE_FREQ,
+ /* API estratégica bajo demanda (no se ejecuta en cada render) */
+ function strategic(snap,memIn){const stg=ST();const mem=Memory.norm(JSON.parse(JSON.stringify(memIn||{})));const F=buildFeatures(snap,mem);
+  return {horizon:()=>stg.horizon(snap,F),decisionLab:s=>stg.decisionLab(snap,F,s),chain:d=>stg.chain(snap,F,d),graph:()=>stg.graph(snap,F,mem,Object.values(mem.hyp||{})),lifeModel:()=>stg.lifeModel(snap,F),curiosity:()=>stg.curiosity(snap,F,mem,null),answer:(id,v)=>stg.answer(mem,id,v,snap.today),benchmark:()=>stg.benchmark(mem)}}
+ const api={strategic,VERSION,REGISTRY,STATES,VISIBLE:[...VISIBLE],FEEDBACK,discover,simulate,explain,reflect,feedback,Memory,buildFeatures,confidence,relevance,WEIGHTS,ENGINE_ORDER,ENGINE_FREQ,
   engines:Object.keys(Engines),isHoliday,_Engines:Engines};
  if(typeof module==='object'&&module.exports)module.exports=api;else root.ViveDiscovery=api;
 })(typeof window!=='undefined'?window:globalThis);

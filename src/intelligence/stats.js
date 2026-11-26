@@ -67,6 +67,14 @@
  function bootstrap(a,n,R){const out=[];for(let i=0;i<n;i++)out.push(a[Math.floor(R()*a.length)]);return out}
  /* Intervalo de confianza bootstrap de la mediana */
  function bootCI(a,{reps=300,seed=5,level=.9}={}){if(a.length<5)return null;const R=rng(seed),m=[];for(let i=0;i<reps;i++)m.push(median(bootstrap(a,a.length,R)));return {low:quantile(m,(1-level)/2),high:quantile(m,1-(1-level)/2)}}
- const api={sum,mean,median,quantile,variance,stdev,mad,iqr,robustZ,personalRange,ewma,cusum,linreg,rng,ranks,pearson,spearman,spearmanPerm,benjaminiHochberg,binomTail,isolationForest,bootstrap,bootCI};
+ /* Mann–Kendall (tendencia monótona, no paramétrica) con corrección de empates y valor p bilateral normal */
+ function mannKendall(a){const n=a.length;if(n<8)return null;let s=0;for(let i=0;i<n-1;i++)for(let j=i+1;j<n;j++)s+=Math.sign(a[j]-a[i]);
+  const t={};for(const v of a)t[v]=(t[v]||0)+1;let tie=0;for(const k in t){const c=t[k];if(c>1)tie+=c*(c-1)*(2*c+5)}
+  const vs=(n*(n-1)*(2*n+5)-tie)/18;const z=vs>0?(s>0?(s-1)/Math.sqrt(vs):s<0?(s+1)/Math.sqrt(vs):0):0;
+  const erf=x=>{const sg=x<0?-1:1;x=Math.abs(x);const tt=1/(1+.3275911*x);return sg*(1-(((((1.061405429*tt-1.453152027)*tt)+1.421413741)*tt-.284496736)*tt+.254829592)*tt*Math.exp(-x*x))};
+  const p=2*(1-.5*(1+erf(Math.abs(z)/Math.SQRT2)));return {s,z,p:Math.max(0,Math.min(1,p)),tau:s/(n*(n-1)/2),n}}
+ /* Pendiente de Theil–Sen (mediana de pendientes por pares) */
+ function sen(a){const sl=[];for(let i=0;i<a.length-1;i++)for(let j=i+1;j<a.length;j++)sl.push((a[j]-a[i])/(j-i));return sl.length?median(sl):0}
+ const api={sum,mean,median,quantile,variance,stdev,mad,iqr,robustZ,personalRange,ewma,cusum,linreg,rng,ranks,pearson,spearman,spearmanPerm,benjaminiHochberg,binomTail,isolationForest,bootstrap,bootCI,mannKendall,sen};
  if(typeof module==='object'&&module.exports)module.exports=api;else root.ViveStats=api;
 })(typeof window!=='undefined'?window:globalThis);
