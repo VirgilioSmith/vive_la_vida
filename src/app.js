@@ -1077,7 +1077,7 @@ function v342CreativePositionMobile(liquid,debt,net){
     </div>
     <div class="v421-meter-grid" aria-label="Presupuesto y compromisos del mes">
       ${meter('Presupuesto',pctLabel(pct),budgetLine,budgetState,'data-v290-budget-open="execution"','Abrir presupuesto mensual',pct,p.percent===null?'Aún no has definido un límite':`Gastado ${money(p.spent)} · ${p.remaining<0?'Exceso':'Libre'} ${freeBudget}`)}
-      ${meter('Compromisos del mes',money(capacity.monthly),pressure.detail,pressure.tone,'data-act="navigate" data-id="pressure"','Abrir compromisos del mes',debtRatio===null?0:debtRatio,debtRatio===null?'Sin ingresos de referencia':`${pctLabel(debtRatio)} de tus ingresos comprometidos`)}
+      ${meter('Compromisos del mes',money(capacity.monthOnly??capacity.monthly),pressure.detail,pressure.tone,'data-act="navigate" data-id="pressure"','Abrir compromisos del mes',debtRatio===null?0:debtRatio,debtRatio===null?'Sin ingresos de referencia':`${pctLabel(debtRatio)} de tus ingresos comprometidos${capacity.overdueDop>0?` · + ${money(capacity.overdueDop)} vencido de meses anteriores`:''}`)}
     </div>
     <div class="v421-bottom-strip" aria-label="Resumen complementario">
       ${mini('Balance del mes',bubbleMoney(m.net),'Ingresos − egresos','balance','cycle','data-act="navigate" data-id="advanced"')}
@@ -2206,11 +2206,11 @@ function vBanksProducts(groups,bankId,f,mobile){
   // La vista general es un resumen de categorías, no una segunda lista de productos.
   // Los importes provienen de la misma posición financiera calculada para los KPI.
   if(current==='all'){
-   const loanLine=(()=>{const ls=groups.loans.map(l=>{try{return loanStatus(l)}catch(_){return null}}).filter(Boolean);if(!ls.length)return '';const q=ls.reduce((n,x)=>n+fx(num(x.installment),'DOP'),0),d=ls.reduce((n,x)=>n+num(x.payments),0),t=ls.reduce((n,x)=>n+num(x.payments)+num(x.remaining),0);return `Cuota ${money(q)} · Avance ${t>0?Math.round(d/t*100):0}%`})();
+   const loanLine=(()=>{const ls=groups.loans.map(l=>{try{return loanStatus(l)}catch(_){return null}}).filter(Boolean);if(!ls.length)return '';const q=ls.reduce((n,x)=>n+fx(num(x.installment),'DOP'),0),d=ls.reduce((n,x)=>n+num(x.payments),0),t=ls.reduce((n,x)=>n+num(x.payments)+num(x.remaining),0);return `<em> · Avance ${t>0?Math.round(d/t*100):0}%</em>`})();
    const rows=[
     ['cards','Tarjetas','card','Deuda utilizada',`${money(f.cardDebt)}<em> · ${vBanksFlags(f)}</em>`,f.cardDebt],
     ['accounts','Cuentas','wallet','Balance total',money(f.funds),f.funds],
-    ['loans','Préstamos','landmark','',loanLine,f.loanDebt],
+    ['loans','Préstamos','landmark','Deuda total',`${money(f.loanDebt)}${loanLine}`,f.loanDebt],
     ['certificates','Certificados','layers','Capital invertido',money(f.invested),f.invested]
    ];
    const tiles=rows.map(([key,label,glyph,metric,valueHtml,value])=>{
@@ -2834,7 +2834,7 @@ function payments(){
       <div class="v145-pay-hero-foot"><span class="v145-pay-period">${monthLabel}</span><button type="button" class="v145-debt-indicator ${risk}" data-v85-action="capacity" aria-label="Abrir detalle de capacidad de endeudamiento">${icon('receipt')} <span>${cap.ratio===null?'Sin referencia de ingreso':`Ingresos comprometidos · ${ratioText}`}</span>${icon('arrow')}</button></div>
      </header>
      <div class="v145-payment-kpis" aria-label="Indicadores del centro de pagos">
-      <div class="v145-payment-kpi"><small>Compromisos del mes</small><strong>${money(cap.monthly)}</strong><span>Carga contractual programada</span></div>
+      <div class="v145-payment-kpi"><small>Compromisos del mes</small><strong>${money(cap.monthOnly??cap.monthly)}</strong><span>${cap.overdueDop>0?'Programado del mes · + '+money(cap.overdueDop)+' vencido anterior':'Carga contractual programada'}</span></div>
       <div class="v145-payment-kpi"><small>Pendientes en agenda</small><strong>${money(pendingValue)}</strong><span>${all.length} vencimiento${all.length===1?'':'s'} registrado${all.length===1?'':'s'}</span></div>
       <div class="v145-payment-kpi ${overdue.length?'is-danger':''}"><small>Vencidos a hoy</small><strong>${money(overdueValue)}</strong><span>${current?`${overdue.length} compromiso${overdue.length===1?'':'s'} atrasado${overdue.length===1?'':'s'}`:'Consulta el mes actual para ver atrasos'}</span></div>
       <div class="v145-payment-kpi"><small>Ingresos considerados</small><strong>${money(cap.income)}</strong><span>Del mismo período seleccionado</span></div>
@@ -12239,7 +12239,7 @@ function v99DebtMonth(period=ui.month){
   const monthly=rnd(a.loans+a.recurring+a.cards+a.personal),income=inc.income;
   const ratio=income>0?rnd(monthly/income*100):null,balance=income>0?rnd(income-monthly):null;
   let risk=ratio===null?'missing':ratio>100?'over':ratio>=80?'caution':'ok';
-  const out={period:p,a,monthly,income,ratio,balance,risk,source:inc.source,
+  const out={period:p,a,monthly,overdueDop:0,monthOnly:monthly,income,ratio,balance,risk,source:inc.source,
    lines:[...loan.items,...recurring.items,...card.items,...personal.items],
    f:{period:p,income,source:inc.source},groups:{loan,recurring,card,personal}};
   /* V959 · Mes en curso: la capacidad es DINÁMICA. Se compara lo que aún hay que pagar
@@ -12250,13 +12250,14 @@ function v99DebtMonth(period=ui.month){
   if(p===today().slice(0,7)){try{
    const pend=v99PendingForPeriod(p).filter(x=>['card','loan','recurring','personal'].includes(x.kind));
    const pendingMonthly=rnd(pend.reduce((t,x)=>t+v99MoneyInDop(x.amount,x.currency),0));
+   const overdueDop=rnd(pend.filter(x=>x.date&&String(x.date).slice(0,7)<p).reduce((t,x)=>t+v99MoneyInDop(x.amount,x.currency),0));
    const f=inc.forecast||v82ForecastMonth();
    const manual=String(inc.source||'').startsWith('Ingreso neto mensual configurado');
    const toCollect=rnd(Math.max(0,manual?income-num(f?.actual?.income):num(f?.expectedIncome)));
    const onHand=rnd(Math.max(0,(db.accounts||[]).filter(a=>!a.archived&&a.kind!=='savings').reduce((t,a)=>t+Math.max(0,fx(getAccountBalance(a),a.currency||'DOP')),0)));
    const avail=rnd(toCollect+onHand);
    const r2=avail>0?rnd(pendingMonthly/avail*100):(pendingMonthly>0?null:0);
-   Object.assign(out,{basis:'remaining',fullMonthly:monthly,fullIncome:income,pendingMonthly,toCollect,onHand,
+   Object.assign(out,{overdueDop,monthOnly:rnd(pendingMonthly-overdueDop),basis:'remaining',fullMonthly:monthly,fullIncome:income,pendingMonthly,toCollect,onHand,
     monthly:pendingMonthly,income:avail,ratio:r2,balance:rnd(avail-pendingMonthly),
     risk:r2===null?(pendingMonthly>0?'over':'missing'):r2>100?'over':r2>=80?'caution':'ok',
     source:'Por cobrar este mes + dinero disponible hoy, frente a lo que aún falta por pagar',
