@@ -37,7 +37,8 @@ let ok=0,bad=0;const check=(n,c,x)=>{if(c){ok++;console.log('✓',n)}else{bad++;
   const pages=[['overview','Inicio'],['register','Movimientos'],['wallet','Tarjetas'],['loans','Préstamos'],['recurring','Suscripciones'],['banks','Bancos'],['patrimony','Patrimonio']];
   const seen={};
   for(const [pg,lab] of pages){await p.evaluate(g=>window.__T.go(g),pg);await p.waitForTimeout(900);const st=await p.evaluate(()=>{const s=document.querySelector('.vi-strip');if(!s)return null;const r=s.getBoundingClientRect();return {w:Math.round(r.width),h:Math.round(r.height),inView:r.right<=innerWidth+1&&r.left>=-1,txt:s.innerText.slice(0,60)}});seen[pg]=st;
-   check(`[${name}] franja de Intelligence en ${lab} (visible, dentro de pantalla, ≤ 70 px)`,!!st&&st.inView&&st.h<=70,st);}
+   check(`[${name}] franja de Intelligence en ${lab} (si hay algo propio de la página: visible, dentro de pantalla, ≤ 70 px; si no, silencio)`,['Bancos','Patrimonio'].includes(lab)?(!st||(st.inView&&st.h<=70)):(!!st&&st.inView&&st.h<=70),st);}
+  await p.evaluate(g=>window.__T.go(g),'overview');await p.waitForTimeout(900);
   check(`[${name}] sin desbordamiento horizontal`,await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
   // hoja
   await p.evaluate(g=>window.__T.go(g),'overview');await p.waitForTimeout(700);
@@ -45,7 +46,7 @@ let ok=0,bad=0;const check=(n,c,x)=>{if(c){ok++;console.log('✓',n)}else{bad++;
   const sh=await p.evaluate(()=>{const s=document.querySelector('.vi-sheet');if(!s)return null;const r=s.getBoundingClientRect();return {cards:document.querySelectorAll('.vi-card').length,groups:[...document.querySelectorAll('.vi-group h3')].map(h=>h.childNodes[0].textContent),h:Math.round(r.height),fits:r.bottom<=innerHeight+1&&r.top>=-1,back:!!document.querySelector('.vi-back'),closeX:document.querySelectorAll('.vi-sheet .close').length,meta:document.querySelector('.vi-meta')?.innerText}});
   check(`[${name}] la hoja abre con hallazgos agrupados por prioridad`,!!sh&&sh.cards>=3&&sh.groups[0]==='Crítico',sh);
   check(`[${name}] la hoja cabe en pantalla y tiene flecha atrás (sin ×)`,!!sh&&sh.fits&&sh.back&&sh.closeX===0,sh);
-  check(`[${name}] declara cálculo local y reglas evaluadas`,!!sh&&/64 reglas.*cálculo local/.test(sh.meta||''),sh&&sh.meta);
+  check(`[${name}] la hoja no muestra pie técnico (reglas, milisegundos, interruptores)`,!!sh&&!sh.meta,sh&&sh.meta);
   // por qué
   await p.click('.vi-card .vi-opts summary');await p.click('.vi-card [data-vi="why"]');
   check(`[${name}] «¿Por qué estoy viendo esto?» muestra evidencia`,await p.evaluate(()=>{const w=document.querySelector('.vi-card .vi-why');return w&&!w.hidden&&/Evidencia/.test(w.innerText)}));

@@ -33,17 +33,46 @@
   if(page&&page.parentElement){page.parentElement.insertBefore(el,page);return true}
   const m=document.querySelector('#app main.main');if(m){m.prepend(el);return true}return false
  }
+ /* Qué mostrar en la franja según DÓNDE estás. Inicio → lo estratégico (no lo vencido, que ya ven Compromisos y Pagos);
+    cada página específica → lo propio de esa página (tarjetas en Wallet, intereses en Préstamos, recurrentes en Suscripciones…).
+    Los hallazgos transversales (aparecen en ≥ 5 módulos, como «pagos vencidos») se rebajan fuera de Inicio para que no repitan el mismo mensaje en todas partes. */
+ const PRI={critical:3,attention:2,opportunity:1.6,info:1,recognition:1.2};
+ const STRATEGIC=new Set(['overview','mobilehub','kpis']);
+ const AFF={wallet:['credit'],cards:['credit'],benefits:['credit'],loans:['credit','financial'],recurring:['pattern'],pressure:['risk','prediction'],payments:['risk','prediction'],patrimony:['financial','prediction'],certificates:['financial'],register:['pattern','financial'],expenses:['pattern','financial'],categories:['pattern','financial'],banks:['financial'],accounts:['financial'],budget:['financial','prediction'],income:['financial','prediction'],personal:['risk']};
+ /* Vencimientos vistos desde cada página: tarjetas en Wallet, préstamos en Préstamos, recurrentes en Suscripciones */
+ const KIND={wallet:['card'],cards:['card'],benefits:['card'],loans:['loan'],recurring:['recurring'],payments:['recurring','card','loan']};
+ const WORD={card:['de tarjeta','de tarjeta'],loan:['de préstamo','de préstamo'],recurring:['recurrente','recurrentes']};
+ function scoped(page,d){
+  const ks=KIND[page];if(!ks||!d||!d.snapshot)return [];const up=(d.snapshot.upcoming||[]).filter(x=>ks.includes(x.kind)&&x.amountDop>0);const f=v=>'RD$'+Math.round(v).toLocaleString('es-DO');
+  const od=up.filter(x=>x.days<0),soon=up.filter(x=>x.days>=0&&x.days<=7).sort((a,b)=>a.days-b.days),out=[];
+  const w=ks.length===1?WORD[ks[0]]:['','']; const go=page==='loans'?'loans':page==='recurring'?'recurring':'wallet';
+  if(od.length)out.push({id:'sc-od',key:'sc-od',rule:'scoped.overdue',engine:'risk',kind:'fact',priority:'critical',modules:[page],title:`${od.length} pago${od.length===1?'':'s'} ${ks.length===1?w[0]+' ':''}vencido${od.length===1?'':'s'} por ${f(od.reduce((s,x)=>s+x.amountDop,0))}`,confidence:{level:'alta'}});
+  else if(soon.length)out.push({id:'sc-soon',key:'sc-soon',rule:'scoped.soon',engine:'risk',kind:'fact',priority:'attention',modules:[page],title:`${soon[0].name} vence ${soon[0].days===0?'hoy':'en '+soon[0].days+' día'+(soon[0].days===1?'':'s')}: ${f(soon[0].amountDop)}`,confidence:{level:'alta'}});
+  return out}
+ function rank(page,list,d,mods){
+  const strat=STRATEGIC.has(page);const c=[];
+  for(const f of scoped(page,d))c.push({item:f,s:(PRI[f.priority]||1)+.5});
+  for(const f of list){let s=PRI[f.priority]||1;const broad=f.modules.length>=5;
+   if(!strat&&broad&&!['pressure','payments'].includes(page))continue;
+   if(strat){if(/^risk\.(overdue|due-soon)$/.test(f.rule||''))s-=2.6;if(f.kind==='projection'||f.kind==='interpretation')s+=1.4;else if(f.kind==='fact')s-=.3;if(f.priority==='recognition')s+=.8}
+   else{if(broad)s-=2.3;if((AFF[page]||[]).includes(f.engine))s+=1.2;if(f.modules[0]&&mods.includes(f.modules[0]))s+=.8}
+   c.push({item:f,s})}
+  if(d)for(const h of d.discoveries){if(h.repeat)continue;const m=h.modules||['overview'];if(!m.some(x=>mods.includes(x)))continue;
+   const fake={...h,priority:h.valence==='risk'?'attention':h.valence==='positive'?'recognition':'info',title:h.title,modules:m};
+   c.push({item:fake,disc:h,s:(h.valence==='risk'?2.6:2.3)+(strat?1.8:.6)+(m[0]&&mods.includes(m[0])?.6:0)})}
+  if(!c.length)return null;c.sort((a,b)=>b.s-a.s);return c[0]}
+
  function mount(){
   try{
    document.querySelectorAll('.vi-strip').forEach(n=>n.remove());
    const b=B();if(!b)return;const mods=MAP[b.page()];if(!mods)return;
    const res=b.run();const list=forModule(res,mods);
-   res.__label=({overview:'Inicio',register:'Movimientos',banks:'Bancos',accounts:'Cuentas',wallet:'Tarjetas',cards:'Tarjetas',loans:'Préstamos',patrimony:'Patrimonio',recurring:'Suscripciones',pressure:'Compromisos',income:'Ingresos',budget:'Presupuesto',personal:'Entre personas'})[b.page()]||'';
-   let shown=list;let d=null;try{d=B().discover()}catch(_){}
-   const top=list[0];
-   if(d&&d.discoveries.length&&(!top||(top.priority!=='critical'&&top.priority!=='attention'))){const h=d.discoveries.find(x=>!x.repeat&&(x.modules||['overview']).some(m=>mods.includes(m)));
-    if(h){const fake={...h,priority:h.valence==='risk'?'attention':h.valence==='positive'?'recognition':'info',title:h.title};shown=[fake,...list];res.__disc=h}}
-   const el=strip(res,shown,mods);if(el){if(res.__disc){el.querySelector('.vi-copy small').textContent='VIVE Intelligence · '+(res.__disc.kicker||'Descubrimiento');res.__disc=null}place(el)}
+   res.__label=({overview:'Inicio',mobilehub:'Inicio',register:'Movimientos',banks:'Bancos',accounts:'Cuentas',wallet:'Tarjetas',cards:'Tarjetas',loans:'Préstamos',patrimony:'Patrimonio',recurring:'Suscripciones',pressure:'Compromisos',income:'Ingresos',budget:'Presupuesto',personal:'Entre personas'})[b.page()]||'';
+   let d=null;try{d=B().discover()}catch(_){}
+   const pick=rank(b.page(),list,d,mods);
+   if(pick){const top=pick.item;const shown=list.length?list:[top];
+    const el=strip(res,[top,...list.filter(x=>x!==top)],mods);
+    if(el){if(pick.disc)el.querySelector('.vi-copy small').textContent='VIVE Intelligence · '+(pick.disc.kicker||'Descubrimiento');place(el)}}
   }catch(e){console.warn('[Intelligence] mount',e)}
  }
 
@@ -123,9 +152,10 @@ const plainLabel=l=>String(l).replace(/^z robustos?$/i,'Distancia a lo habitual'
    <div class="vi-know-actions"><button type="button" class="vi-chip" data-vi="dexport">Exportar mi conocimiento</button><button type="button" class="vi-chip vi-danger" data-vi="dforgetall">Borrar todo lo aprendido</button></div></div></details>`;
  }
  function sheetHTML(res,mods){
-  const all=res.findings;const mine=mods?forModule(res,mods):[];const ordered=mine.length?[...mine,...all.filter(f=>!mine.includes(f))]:all;
-  const by=p=>ordered.filter(f=>f.priority===p);
+  const all=res.findings;const mine=mods?forModule(res,mods):[];const ordered=mine.length?[...mine,...all.filter(f=>!mine.includes(f))]:[...all];
   let disc=null;try{disc=B().discover()}catch(e){console.warn('[Intelligence] discover',e)}
+  try{const pk=mods?rank(B().page(),mine,disc,mods):null;if(pk&&!pk.disc){const i=ordered.indexOf(pk.item);if(i>0){ordered.splice(i,1);ordered.unshift(pk.item)}}}catch(_){}
+  const by=p=>ordered.filter(f=>f.priority===p);
   const dsec=disc&&disc.discoveries.length?`<section class="vi-group"><h3>Descubrimientos<span>${disc.discoveries.length}</span></h3>${disc.discoveries.map(discCard).join('')}</section>`:'';
   const body=GROUPS.map(([p,l])=>{const a=by(p);const g=a.length?`<section class="vi-group"><h3>${l}<span>${a.length}</span></h3>${a.map(card).join('')}</section>`:'';return (p==='attention'?g+dsec:g)}).join('').replace(/^$/,'')||(dsec||'<p class="vi-empty">Por ahora no hay nada que destacar. VIVE Intelligence sigue aprendiendo en silencio y vuelve a evaluar cuando registres o cambies información.</p>');
   const bodyFinal=(!/Descubrimientos<span>/.test(body)&&dsec)?dsec+body:body;
