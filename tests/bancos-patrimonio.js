@@ -310,7 +310,7 @@ async function testBanks(browser,width,theme='light'){
    return root.getByRole('region',{name:'Detalle del producto'});
   };
   const closeProduct=async(detail,bankId)=>{
-   await detail.locator('[data-act="banksCloseProduct"]:visible').first().click();
+   await root.locator('[data-act="banksCloseProduct"]:visible').first().click();
    if(!mobile){
     assert.equal(await root.locator(`.vBanksPc-bank[data-id="${bankId}"]`).getAttribute('aria-pressed'),'true');
     assert.equal(await root.locator('.vBanksPc-bank-list').count(),1);
