@@ -9331,7 +9331,7 @@ f33Flush=async function(){
   f33Saving=false;
   if(f33Dirty&&!f33Conflict&&navigator.onLine){
    // Evita el bucle anterior de escrituras cada 150 ms cuando hay HTTP 504.
-   if(v714WriteRetryCount===0)v714NextWriteAt=Date.now()+150;
+   if(v714WriteRetryCount===0&&v1134ConflictStreak===0)v714NextWriteAt=Math.max(v714NextWriteAt,Date.now()+150);
    v714ScheduleWriteRetry();
   }
   else if(v10RemoteQueued&&!f33Dirty){v10RemoteQueued=false;v10SchedulePull(1500);} 
