@@ -763,6 +763,7 @@ function vMomentosSnapshot(){
   const net=num(cur.income)-num(cur.expense),pnet=num(prev.income)-num(prev.expense);
   if(num(cur.income)>0&&num(cur.expense)>num(cur.income))s.pressure={income:money(cur.income),expense:money(cur.expense)};
   if((num(prev.income)||num(prev.expense))&&net>0&&net>pnet)s.improving={net:money(net),prev:money(pnet)};
+  try{if(window.__viveIntel&&window.__viveIntel.forMomentos)s.discoveries=window.__viveIntel.forMomentos()}catch(_){}
   /* Metas: VIVE aún no registra metas; se mostrarán aquí cuando existan datos reales. */
  }catch(err){}
  return s;
@@ -20498,6 +20499,17 @@ function vIntelSnapshot(){
  // Entre personas
  snap.personal={overdueReceivable:[],soonPayable:[]};try{for(const l of db.personalLoans||[]){const b=personalBalance(l);if(!(b>0.005)||!l.dueDate)continue;const days=diffDays(l.dueDate,t);const it={id:l.id,person:l.person||'Persona',amountDop:cvt(b,l.currency||'DOP')};if(l.direction==='lent'&&days<0)snap.personal.overdueReceivable.push(it);if(l.direction==='borrowed'&&days>=0&&days<=7)snap.personal.soonPayable.push(it)}}catch(_){}
  snap.pendingOps=(db.pendingOperations||[]).length;
+ /* Libro mayor normalizado para el motor de descubrimiento (mismas reglas contables que monthlyTotals):
+    gasto = gasto + compra con tarjeta − devolución; ingreso = ingreso. Se EXCLUYEN transferencias propias, pagos de tarjeta,
+    cuotas (capital), ajustes y cashback: ya fueron reconocidos en su movimiento original (sin doble contabilización). */
+ const dLed=addDays(t,-400);snap.ledger=[];
+ for(const x of txs){if(!x||!x.date||x.date<dLed||x.date>t||(x.pendingStatus==='pending')||x.postingStatus==='pending')continue;
+  const a=cvt(x.amount,x.currency||'DOP');if(!(a>0)&&x.type!=='card_refund')continue;
+  if(x.type==='expense')snap.ledger.push({d:x.date,a,k:'x',c:x.category||'',l:String(x.note||x.payee||'').slice(0,40),p:'a'});
+  else if(x.type==='card_charge')snap.ledger.push({d:x.date,a,k:'x',c:x.category||'',l:String(x.note||x.payee||'').slice(0,40),p:'c'});
+  else if(x.type==='card_refund')snap.ledger.push({d:x.date,a:-a,k:'x',c:x.category||'',l:'devolución',p:'c'});
+  else if(x.type==='income')snap.ledger.push({d:x.date,a,k:'i',c:x.category||'',l:String(x.note||'').slice(0,40),p:'a'});
+  if(snap.ledger.length>=6000)break;}
  return snap;
 }
 const vIntelCache={rev:-1,key:'',res:null};
@@ -20515,7 +20527,39 @@ function vIntelFeedback(finding,action){
  persist(); // una sola escritura por acción del usuario; nunca por lectura ni por animación
 }
 function vIntelSetPref(key,val){const st=window.ViveIntelligence.engines.learning.normalize(db.settings.intelligence);st.prefs[key]=!!val;db.settings.intelligence=st;persist()}
-window.__viveIntel=Object.freeze({run:vIntelRun,invalidate:()=>v99Invalidate(),feedback:vIntelFeedback,setPref:vIntelSetPref,snapshot:vIntelSnapshot,prefs:()=>window.ViveIntelligence.engines.learning.normalize(db.settings.intelligence).prefs,
+/* ---- Descubrimiento adaptativo: caché + memoria persistente (≤ 1 escritura pequeña por día) ---- */
+const vDiscCache={key:'',res:null};
+function vIntelMem(){return window.ViveDiscovery.Memory.norm((db.settings||{}).intelligenceMem)}
+function vIntelDiscover(){
+ if(!window.ViveDiscovery)return null;
+ const mem=vIntelMem();const key=(window.__viveIntelRev|0)+'|'+today()+'|'+JSON.stringify(mem.audit)+'|'+Object.keys(mem.exc).length+'|'+mem.fb.length+'|'+JSON.stringify(mem.prefs)+'|'+JSON.stringify(mem.w);
+ if(vDiscCache.res&&vDiscCache.key===key)return vDiscCache.res;
+ const snap=vIntelSnapshot();const res=window.ViveDiscovery.discover(snap,mem);res.snapshot=snap;
+ vDiscCache.key=key;vDiscCache.res=res;
+ // persistencia: solo si cambió el conocimiento Y no se guardó hoy (≤ 1 escritura/día); nunca durante la lectura de otras pantallas
+ try{const prev=JSON.stringify((db.settings||{}).intelligenceMem||null);const next=JSON.stringify(res.mem);
+  if(prev!==next&&(!(db.settings||{}).intelligenceMem||(db.settings.intelligenceMem.audit||{}).last!==today()||!mem.audit.runs)){
+   (window.requestIdleCallback||(f=>setTimeout(f,400)))(()=>{try{db.settings.intelligenceMem=res.mem;persist()}catch(_){}});}}catch(_){}
+ return res;
+}
+function vIntelDiscFeedback(h,action){
+ const D=window.ViveDiscovery;db.settings.intelligenceMem=D.feedback(vIntelMem(),h,action,today());persist();vDiscCache.res=null;
+}
+function vIntelMemOp(op,arg){
+ const D=window.ViveDiscovery;let m=vIntelMem();
+ if(op==='forget')m=D.Memory.forget(m,arg);else if(op==='forgetAll')m=D.Memory.forgetAll();else if(op==='setOff'){m.prefs.off=m.prefs.off||{};if(arg.v)m.prefs.off[arg.k]=true;else delete m.prefs.off[arg.k]}
+ else if(op==='export')return D.Memory.exportJSON(m);
+ db.settings.intelligenceMem=m;persist();vDiscCache.res=null;return true;
+}
+function vIntelSimulate(sc){return window.ViveDiscovery.simulate(vIntelSnapshot(),sc)}
+/* Hallazgos seleccionados para el Centro Estratégico (solo los más relevantes; sin felicitaciones si hay críticos) */
+function vIntelForMomentos(){
+ try{if(!window.ViveDiscovery||!window.ViveIntelligence)return [];
+  const d=vDiscCache.res||null;if(!d)return [];const crit=vIntelCache.res&&vIntelCache.res.findings.some(f=>f.priority==='critical'||f.priority==='attention');
+  return d.discoveries.filter(h=>!(crit&&h.valence==='positive')).slice(0,2).map(h=>({id:h.key,kicker:h.kicker,text:h.summary,valence:h.valence,go:(h.action&&h.action.target)||'overview',label:(h.action&&h.action.label)||'Ver más'}));
+ }catch(_){return []}
+}
+window.__viveIntel=Object.freeze({run:vIntelRun,discover:vIntelDiscover,discFeedback:vIntelDiscFeedback,memOp:vIntelMemOp,simulate:vIntelSimulate,forMomentos:vIntelForMomentos,memory:vIntelMem,invalidate:()=>v99Invalidate(),feedback:vIntelFeedback,setPref:vIntelSetPref,snapshot:vIntelSnapshot,prefs:()=>window.ViveIntelligence.engines.learning.normalize(db.settings.intelligence).prefs,
  go:id=>{const b=document.createElement('button');b.type='button';b.dataset.act='navigate';b.dataset.id=id;b.hidden=true;document.body.append(b);b.click();b.remove()},
  render:()=>render(),page:()=>ui.page,toast:m=>toast(m)});
 /* Carga bajo demanda: motor, interfaz y estilos se descargan una sola vez, en reposo, la primera vez que se muestra una página con Intelligence. */
@@ -20525,9 +20569,9 @@ function vIntelEnsure(){
  if(window.ViveIntelligence&&window.ViveIntelUI)return Promise.resolve();
  if(vIntelLoading)return vIntelLoading;
  vIntelLoading=new Promise(done=>{
-  try{const css=document.createElement('link');css.rel='stylesheet';css.href='./src/intelligence/intelligence.css?v=2';document.head.appendChild(css)}catch(_){}
+  try{const css=document.createElement('link');css.rel='stylesheet';css.href='./src/intelligence/intelligence.css?v=3';document.head.appendChild(css)}catch(_){}
   const load=src=>new Promise((ok,ko)=>{const el=document.createElement('script');el.src=src;el.onload=ok;el.onerror=ko;document.head.appendChild(el)});
-  load('./src/intelligence/engine.js?v=4').then(()=>load('./src/intelligence/ui.js?v=6')).then(()=>done()).catch(()=>done());
+  load('./src/intelligence/engine.js?v=4').then(()=>load('./src/intelligence/stats.js?v=1')).then(()=>load('./src/intelligence/discovery.js?v=1')).then(()=>load('./src/intelligence/ui.js?v=7')).then(()=>done()).catch(()=>done());
  });
  return vIntelLoading;
 }

@@ -56,6 +56,8 @@
   if(cuts.length)out.push(mk('cut','finance','Corte cercano',`${cuts.length===1?cuts[0].name+' '+when(cuts[0].days)+'.':cuts.length+' tarjetas con fecha cercana: '+names(cuts)+'. La primera '+when(cuts[0].days)+'.'}`,'amber',80,15,{critical:true,action:{label:'Explorar ciclo',go:'wallet'}}));
   if(s.pressure)out.push(mk('pressure','finance','Gastos elevados',`Este mes tus egresos (${s.pressure.expense}) superan tus ingresos registrados (${s.pressure.income}).`,'amber',70,16,{action:{label:'Ver egresos',go:'expenses'}}));
   if(s.improving)out.push(mk('growth','finance','Vas mejorando',`Tu resultado neto de este mes (${s.improving.net}) supera al del mes anterior (${s.improving.prev}).`,'growth',60,14,{action:{label:'Ver flujo',go:'flow'}}));
+  /* Descubrimientos de VIVE Intelligence: solo los seleccionados por relevancia; el texto es la evidencia, no una frase genérica. */
+  (s.discoveries||[]).forEach((d,i)=>out.push(mk('disc-'+String(d.id).slice(0,40),'finance',d.kicker||'Mira esto',d.text,d.valence==='risk'?'amber':d.valence==='positive'?'growth':'calm',66-i,15,{action:{label:d.label,go:d.go}})));
   (s.goals||[]).forEach(g=>out.push(mk('goal-'+g.id,'goals',g.title||'Meta cumplida',g.text||'',g.achieved?'growth':'goals',55,14,{action:{label:'Ver mi meta',go:g.go||'overview'}})));
   return out;
  }
