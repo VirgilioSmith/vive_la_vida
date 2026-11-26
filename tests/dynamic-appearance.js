@@ -84,7 +84,10 @@ async function themeMatrix(browser,width,mode,activePalettes){
    assert.match(ambient,/radial-gradient/);assert.notEqual(ambient,seen.ambient);seen.ambient=ambient;
    for(const route of ['overview','banks','wallet',mobile?'mobilehub':'register']){
     await go(p,route);
-    assert.equal(await style(p,'body','backgroundImage'),ambient,`${route}: same ambient`);
+    /* El brillo del acento alterna de lado según la página (vAmbientSide): el fondo es el mismo POR PÁGINA y cambia con el acento */
+    const routeAmbient=await style(p,'body','backgroundImage');
+    assert.match(routeAmbient,/radial-gradient/,`${route}: ambient present`);
+    seen['amb:'+route]!==undefined&&assert.notEqual(routeAmbient,seen['amb:'+route],`${route}: ambient follows the accent`);seen['amb:'+route]=routeAmbient;
     assert.equal(await style(p,'main.main','backgroundImage'),'none',`${route}: no local gradient`);
     assert.equal(await style(p,'main.main','backgroundColor'),'rgba(0, 0, 0, 0)',`${route}: no opaque background`);
     if(route==='banks'||route==='wallet'){
