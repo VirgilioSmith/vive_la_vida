@@ -1,23 +1,11 @@
 /* VIVE · INTELLIGENCE — identidad visual. Consume el motor de cristal (--vg-*) con valores de respaldo.
    Indicador: constelación de tres puntos que «respira» (solo opacity/transform, 3.2 s, desactivado con movimiento reducido). */
-.vi-strip{--vi-tone:var(--vg-accent,var(--lg-accent,#6d69f1));position:relative;display:flex;align-items:center;gap:10px;width:100%;min-height:46px;margin:0 0 12px;padding:6px 12px 6px 8px;box-sizing:border-box;text-align:left;cursor:pointer;color:var(--vg-ink,#0f2038);font:inherit;
- border-radius:16px;border:1px solid color-mix(in srgb,var(--vi-tone) 22%,rgba(255,255,255,.6));
- background:linear-gradient(118deg,rgba(255,255,255,.34),transparent 38%),radial-gradient(70% 120% at 100% 0%,color-mix(in srgb,var(--vi-tone) 13%,transparent),transparent 70%),rgba(255,255,255,.5);
- box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 6px 18px -12px color-mix(in srgb,var(--vi-tone) 40%,rgba(20,30,60,.4));-webkit-backdrop-filter:blur(10px) saturate(1.4);backdrop-filter:blur(10px) saturate(1.4);transition:transform .16s ease,border-color .16s ease}
-.vi-strip:active{transform:scale(.985)}
-.vi-strip:focus-visible{outline:2px solid color-mix(in srgb,var(--vi-tone) 60%,transparent);outline-offset:2px}
 .vi-p-critical{--vi-tone:#d9374f}.vi-p-attention{--vi-tone:#d98a1c}.vi-p-opportunity{--vi-tone:#2d8cf0}.vi-p-recognition{--vi-tone:#2f9e5a}.vi-p-info{--vi-tone:var(--vg-accent,#6d69f1)}
-.vi-mark{flex:0 0 32px;height:32px;border-radius:11px;display:grid;place-items:center;background:color-mix(in srgb,var(--vi-tone) 14%,rgba(255,255,255,.55));color:var(--vi-tone)}
 .vi-spark{width:20px;height:20px;fill:currentColor}
 .vi-spark-a{transform-origin:12px 10px;animation:vi-breathe 3.2s ease-in-out infinite}
 .vi-spark-b{opacity:.8;animation:vi-twinkle 3.2s ease-in-out infinite .6s}.vi-spark-c{opacity:.7;animation:vi-twinkle 3.2s ease-in-out infinite 1.4s}
 @keyframes vi-breathe{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(.9);opacity:.82}}
 @keyframes vi-twinkle{0%,100%{opacity:.25}50%{opacity:.95}}
-.vi-copy{min-width:0;flex:1;display:grid;gap:1px}
-.vi-copy small{font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--vi-tone);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.vi-copy strong{font-size:13.5px;line-height:1.25;font-weight:650;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.vi-more{flex:none;font-size:12px;font-weight:700;padding:3px 8px;border-radius:999px;background:color-mix(in srgb,var(--vi-tone) 14%,transparent);color:var(--vi-tone)}
-.vi-chev{flex:none;font-size:22px;line-height:1;opacity:.55}
 
 /* Hoja */
 .vi-layer{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:flex-end;justify-content:center;background:rgba(9,18,33,.42);-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);opacity:0;transition:opacity .2s ease;padding:max(54px,env(safe-area-inset-top)) 6px 6px}
@@ -59,14 +47,9 @@ html.vi-open{overflow:hidden}
 
 /* PC: franja y hoja más amplias, centradas */
 @media(min-width:791px){
- .vi-strip{min-height:52px;padding:8px 16px 8px 10px;border-radius:18px;max-width:100%}.vi-copy strong{font-size:14.5px;-webkit-line-clamp:1}
  .vi-layer{align-items:center;padding:24px}.vi-sheet{max-width:640px;max-height:min(86dvh,820px)}
- .vi-strip:hover{border-color:color-mix(in srgb,var(--vi-tone) 40%,rgba(255,255,255,.6))}
 }
 /* Black */
-body.theme-black .vi-strip,body.theme-dark .vi-strip{color:#f5f6f8;background:linear-gradient(118deg,rgba(255,255,255,.07),transparent 38%),radial-gradient(70% 120% at 100% 0%,color-mix(in srgb,var(--vi-tone) 20%,transparent),transparent 70%),rgba(255,255,255,.045);border-color:color-mix(in srgb,var(--vi-tone) 26%,rgba(255,255,255,.12));box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 6px 18px -12px rgba(0,0,0,.7)}
-body.theme-black .vi-mark,body.theme-dark .vi-mark{background:color-mix(in srgb,var(--vi-tone) 22%,#000)}
-body.theme-black .vi-copy small,body.theme-dark .vi-copy small{color:color-mix(in srgb,var(--vi-tone) 62%,#fff)}
 body.theme-black .vi-sheet,body.theme-dark .vi-sheet{color:#f5f6f8;background:linear-gradient(118deg,rgba(255,255,255,.07),transparent 36%),radial-gradient(64% 40% at 100% 0%,color-mix(in srgb,var(--vi-tone) 18%,transparent),transparent 66%),rgba(14,15,20,.92);border-color:rgba(255,255,255,.13);box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 -14px 50px -18px #000}
 body.theme-black .vi-card,body.theme-dark .vi-card{background:linear-gradient(118deg,rgba(255,255,255,.06),transparent 40%),rgba(255,255,255,.045);border-color:color-mix(in srgb,var(--vi-tone) 24%,rgba(255,255,255,.1));box-shadow:inset 0 1px 0 rgba(255,255,255,.12)}
 body.theme-black .vi-head p,body.theme-dark .vi-head p,body.theme-black .vi-card p,body.theme-dark .vi-card p,body.theme-black .vi-conf,body.theme-dark .vi-conf,body.theme-black .vi-why,body.theme-dark .vi-why{color:#c3c9d6}
@@ -76,10 +59,10 @@ body.theme-black .vi-opts summary,body.theme-dark .vi-opts summary{color:#c3c9d6
 body.theme-black .vi-ev,body.theme-dark .vi-ev{background:rgba(255,255,255,.05)}
 body.theme-black .vi-kind,body.theme-dark .vi-kind,body.theme-black .vi-ico,body.theme-dark .vi-ico{color:color-mix(in srgb,var(--vi-tone) 60%,#fff)}
 body.theme-black .vi-k-projection,body.theme-dark .vi-k-projection{color:#8ec1ff}body.theme-black .vi-k-interpretation,body.theme-dark .vi-k-interpretation{color:#c2a8ff}
-@media (prefers-reduced-motion:reduce){.vi-spark-a,.vi-spark-b,.vi-spark-c{animation:none}.vi-strip,.vi-layer,.vi-sheet{transition:none}}
+@media (prefers-reduced-motion:reduce){.vi-spark-a,.vi-spark-b,.vi-spark-c{animation:none}.vi-layer,.vi-sheet{transition:none}}
 html.vg-reduce-motion .vi-spark-a,html.vg-reduce-motion .vi-spark-b,html.vg-reduce-motion .vi-spark-c{animation:none}
-html.vg-reduce-transparency .vi-strip,html.vg-reduce-transparency .vi-sheet{-webkit-backdrop-filter:none;backdrop-filter:none;background:#fff}
-html.vg-reduce-transparency body.theme-black .vi-sheet,html.vg-reduce-transparency body.theme-black .vi-strip{background:#0e0f14}
+html.vg-reduce-transparency .vi-sheet{-webkit-backdrop-filter:none;backdrop-filter:none;background:#fff}
+html.vg-reduce-transparency body.theme-black .vi-sheet{background:#0e0f14}
 
 /* Descubrimientos, explicación y centro de conocimiento */
 .vi-kicker{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--vi-tone);margin-bottom:2px}
@@ -113,21 +96,33 @@ body.theme-black .vi-danger,body.theme-dark .vi-danger{color:#ff7a8e;border-colo
 .vi-fut{padding:10px 0;border-bottom:1px solid rgba(125,140,170,.22)}.vi-fut>b{display:block;font-size:13px}.vi-fut>small{display:block;margin:2px 0 6px}
 .vi-fut-g{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.vi-fut-g span{display:flex;flex-direction:column;min-width:0}.vi-fut-g i{font-style:normal;font-size:10.5px;color:var(--vg-ink-3,#485c78);text-transform:uppercase;letter-spacing:.04em}.vi-fut-g b{font-size:12.5px}
 
-/* ===== Píldora (reemplaza la franja ancha) =====
-   Se ajusta al contenido (no ocupa una fila entera): en PC vive en la barra superior, junto a las acciones; en móvil, como una píldora corta bajo el saludo.
-   Una sola línea con elipsis; el texto completo y los demás hallazgos están en la hoja. */
-.vi-strip{width:fit-content!important;max-width:min(100%,420px);min-height:0!important;height:38px;margin:0 0 10px!important;padding:0 6px 0 5px!important;gap:8px!important;border-radius:999px!important;align-self:flex-start}
-.vi-strip .vi-mark{flex:0 0 28px!important;height:28px!important;border-radius:50%!important}
-.vi-strip .vi-spark{width:17px;height:17px}
-.vi-strip .vi-copy{display:block!important;flex:0 1 auto!important}
-.vi-strip .vi-copy small{display:none!important}
-.vi-strip .vi-copy strong{display:block!important;-webkit-line-clamp:unset!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px;line-height:1.1}
-.vi-strip .vi-more{font-size:11.5px;padding:2px 7px}
-.vi-strip .vi-chev{display:none!important}
-.vi-strip:not(:has(.vi-more)){padding-right:12px!important}
-@media(min-width:791px){
- .vi-strip.vi-in-top{height:42px;margin:0 8px 0 0!important;max-width:clamp(150px,26vw,400px);align-self:center;flex:0 1 auto;min-width:0}
- .top-actions:has(.vi-in-top){display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:nowrap}
-}
-@media(min-width:791px) and (max-width:1180px){.vi-strip.vi-in-top .vi-copy{display:none!important}.vi-strip.vi-in-top{padding-right:6px!important}}
-@media(max-width:790px){.vi-strip .vi-copy{max-width:min(62vw,250px)}}
+/* ===== Línea de inteligencia nativa =====
+   Sin píldora, contenedor, fondo, borde ni sombra: vive directamente sobre el fondo de cada pantalla, justo debajo del título.
+   Estructura: icono · mensaje (una línea) · contador · chevron. Toda la línea es el área pulsable (≥ 44 px). */
+.vi-strip{--vi-tone:var(--vg-accent,var(--lg-accent,#6d69f1));position:relative;display:flex;align-items:center;gap:9px;width:100%;max-width:640px;min-height:44px;margin:0 0 6px;padding:0;box-sizing:border-box;
+ text-align:left;cursor:pointer;color:var(--vg-ink,#0f2038);font:inherit;background:none;border:0;border-radius:12px;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;-webkit-tap-highlight-color:transparent;transition:opacity .16s ease}
+.vi-strip:active{opacity:.72}
+.vi-strip:focus-visible{outline:2px solid color-mix(in srgb,var(--vi-tone) 60%,transparent);outline-offset:2px}
+.vi-mark{position:relative;flex:0 0 24px;width:24px;height:24px;display:grid;place-items:center;background:none;color:var(--vi-tone);transition:color .35s ease}
+.vi-mark::before{content:"";position:absolute;inset:-5px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--vi-tone) 34%,transparent),transparent 68%);opacity:.5;animation:vi-glow 4.2s ease-in-out infinite;pointer-events:none}
+@keyframes vi-glow{0%,100%{opacity:.32;transform:scale(.9)}50%{opacity:.78;transform:scale(1.12)}}
+.vi-spark{position:relative;width:20px;height:20px;fill:currentColor}
+.vi-copy{min-width:0;flex:1;display:block}
+.vi-copy strong{display:block;font-size:15px;line-height:22px;font-weight:600;letter-spacing:-.005em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:opacity .24s ease,transform .24s ease}
+.vi-copy strong.is-swap{opacity:0;transform:translateY(3px)}
+.vi-more{flex:none;margin-left:auto;padding:0;background:none;border-radius:0;font-size:13.5px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--vi-tone)}
+.vi-chev{flex:none;display:grid;place-items:center;width:18px;height:18px;opacity:.5;transition:transform .18s ease,opacity .18s ease}
+.vi-chev svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+@media(hover:hover){.vi-strip:hover .vi-chev{opacity:.9;transform:translateX(2px)}}
+body.theme-black .vi-strip,body.theme-dark .vi-strip{color:#f5f6f8;--vi-tone-on:color-mix(in srgb,var(--vi-tone) 62%,#fff)}
+body.theme-black .vi-mark,body.theme-dark .vi-mark,body.theme-black .vi-more,body.theme-dark .vi-more{color:color-mix(in srgb,var(--vi-tone) 62%,#fff)}
+/* Subtítulos descriptivos estáticos: la línea de inteligencia ocupa su lugar */
+.vi-sub-off{display:none!important}
+/* PC: bajo el título de la barra superior; la barra deja de reservar espacio para la píldora */
+.topbar-intro:has(.vi-strip){min-width:0;flex:1 1 auto}
+.topbar-intro .vi-strip{margin:2px 0 0;max-width:min(100%,560px)}
+@media(prefers-reduced-motion:reduce){.vi-mark::before{animation:none}.vi-copy strong,.vi-chev{transition:none}}
+html.vg-reduce-motion .vi-mark::before{animation:none}
+/* Gana a los estilos genéricos de botón (incluido el tema Black): la línea nunca tiene contenedor */
+html body #app#app#app#app#app#app .vi-strip{min-height:44px;height:auto;padding:0;background:none!important;border:0!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;border-radius:12px}
+html body #app#app#app#app#app#app .vi-strip .vi-more{background:none!important;padding:0;border:0;box-shadow:none}

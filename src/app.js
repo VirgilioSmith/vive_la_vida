@@ -20305,9 +20305,9 @@ function vIntelEnsure(){
  if(window.ViveIntelligence&&window.ViveIntelUI)return Promise.resolve();
  if(vIntelLoading)return vIntelLoading;
  vIntelLoading=new Promise(done=>{
-  try{const css=document.createElement('link');css.rel='stylesheet';css.href='./src/intelligence/intelligence.css?v=10';document.head.appendChild(css)}catch(_){}
+  try{const css=document.createElement('link');css.rel='stylesheet';css.href='./src/intelligence/intelligence.css?v=13';document.head.appendChild(css)}catch(_){}
   const load=src=>new Promise((ok,ko)=>{const el=document.createElement('script');el.src=src;el.onload=ok;el.onerror=ko;document.head.appendChild(el)});
-  load('./src/intelligence/engine.js?v=4').then(()=>load('./src/intelligence/stats.js?v=2')).then(()=>load('./src/intelligence/strategy.js?v=6')).then(()=>load('./src/intelligence/discovery.js?v=9')).then(()=>load('./src/intelligence/ui.js?v=25')).then(()=>done()).catch(()=>done());
+  load('./src/intelligence/engine.js?v=4').then(()=>load('./src/intelligence/stats.js?v=2')).then(()=>load('./src/intelligence/strategy.js?v=6')).then(()=>load('./src/intelligence/discovery.js?v=9')).then(()=>load('./src/intelligence/ui.js?v=28')).then(()=>done()).catch(()=>done());
  });
  return vIntelLoading;
 }

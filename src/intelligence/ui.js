@@ -16,24 +16,48 @@
 
  function forModule(res,mods){return res.findings.filter(f=>f.modules.some(m=>mods.includes(m)))}
 
- function strip(res,list,mods){
-  const top=list[0];if(!top)return null;
+ const CHEV='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>';
+ /* Línea de inteligencia: UN solo componente para todas las vistas. items = hallazgos reales ya ordenados por relevancia; total = cuántos hay disponibles. */
+ function strip(items,total,mods){
+  const top=items[0];if(!top)return null;
   const el=document.createElement('button');el.type='button';el.className='vi-strip vi-p-'+top.priority;el.dataset.vi='open';el.dataset.viModule=mods[0];
-  el.setAttribute('aria-haspopup','dialog');el.title=top.title;el.setAttribute('aria-label','VIVE Intelligence: '+top.title+(list.length>1?'. '+(list.length-1)+' más.':''));
-  el.innerHTML=`<span class="vi-mark">${spark}</span><span class="vi-copy"><small>VIVE Intelligence · ${esc(res.__label||'')}</small><strong>${esc(top.title)}</strong></span>${list.length>1?`<span class="vi-more">+${list.length-1}</span>`:''}<span class="vi-chev" aria-hidden="true">›</span>`;
-  return el;
+  el.setAttribute('aria-haspopup','dialog');el.__items=items;el.__i=0;
+  const extra=Math.max(0,total-1);
+  el.innerHTML=`<span class="vi-mark">${spark}</span><span class="vi-copy"><strong></strong></span>${extra>0?`<span class="vi-more" aria-hidden="true">+${extra}</span>`:''}<span class="vi-chev" aria-hidden="true">${CHEV}</span>`;
+  el.__extra=extra;show(el,0,false);return el;
+ }
+ function show(el,i,swap){
+  const it=el.__items[i],s=el.querySelector('strong');if(!it||!s)return;
+  const apply=()=>{s.textContent=it.title;el.className='vi-strip vi-p-'+it.priority;el.title=it.title;el.setAttribute('aria-label','VIVE Intelligence: '+it.title+(el.__extra>0?'. '+el.__extra+(el.__extra===1?' hallazgo más.':' hallazgos más.'):''));el.__i=i};
+  if(!swap){apply();return}
+  s.classList.add('is-swap');setTimeout(()=>{if(!el.isConnected)return;apply();s.classList.remove('is-swap')},240);
+ }
+ /* Rotación suave entre los hallazgos más relevantes: sin reflujo (altura y una sola línea fijas), pausada con la pestaña oculta o la hoja abierta. */
+ let rot=null;
+ function rotate(el){
+  if(rot){clearInterval(rot);rot=null}
+  if(!el||el.__items.length<2||window.matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+  rot=setInterval(()=>{if(!el.isConnected){clearInterval(rot);rot=null;return}if(document.hidden||open||el.matches(':active'))return;show(el,(el.__i+1)%el.__items.length,true)},7500);
  }
 
- /* Anfitrión visible: #page (PC y demás páginas) o la portada móvil de Inicio (tras el saludo) */
+ /* Dónde va: SIEMPRE justo debajo del título principal de la pantalla.
+    PC: bajo el título de la barra superior (.topbar-intro). Móvil: bajo el encabezado propio de la página (h1 + su fila de controles); en Inicio, bajo el saludo.
+    El subtítulo descriptivo estático de ese encabezado se retira: la línea de inteligencia ocupa su lugar. Sin lecturas de layout (sin reflow). */
+ const hideSubs=root=>{if(!root)return;root.querySelectorAll('p,.top-sub').forEach(p=>{if(!p.querySelector('button,input,select,a,label,summary'))p.classList.add('vi-sub-off')})};
  function place(el){
-  /* Sin lecturas de layout (getBoundingClientRect forzaría un reflow de toda la página en cada render):
-     la portada móvil de Inicio existe en el DOM solo en móvil; en el resto se usa #page. */
   const home=document.querySelector('.vive-mobile-home'),page=document.getElementById('page');
-  const wide=!window.matchMedia('(max-width:790px)').matches;const ta=wide?document.querySelector('.topbar .top-actions'):null;
-  if(ta){el.classList.add('vi-in-top');ta.prepend(el);return true}
+  const wide=!window.matchMedia('(max-width:790px)').matches;
+  if(wide){const intro=document.querySelector('.topbar .topbar-intro'),t=intro&&intro.querySelector('.top-title');
+   if(t){hideSubs(intro);t.after(el);return true}}
   if(home&&!wide){const g=home.querySelector('.vive-mobile-greeting');if(g&&g.nextSibling)home.insertBefore(el,g.nextSibling);else home.prepend(el);return true}
+  const main=document.querySelector('#app main.main');
+  const h=[...document.querySelectorAll('#page h1,#app main h1')].find(e=>!e.closest('.topbar,[hidden],.modal,#modal-root')&&(!e.checkVisibility||e.checkVisibility({checkVisibilityCSS:true})));
+  if(h){let anchor=h;
+   for(let n=0;n<4;n++){const p=anchor.parentElement;if(!p||p===page||p===main||p.id==='app'||p.querySelectorAll('*').length>45)break;anchor=p}
+   hideSubs(anchor);anchor.after(el);return true}
+  el.dataset.viFb='1';   /* sin encabezado todavía (la página lo pinta de forma diferida): mount() lo reintentará */
   if(page&&page.parentElement){page.parentElement.insertBefore(el,page);return true}
-  const m=document.querySelector('#app main.main');if(m){m.prepend(el);return true}return false
+  if(main){main.prepend(el);return true}return false
  }
  /* Qué mostrar en la franja según DÓNDE estás. Inicio → lo estratégico (no lo vencido, que ya ven Compromisos y Pagos);
     cada página específica → lo propio de esa página (tarjetas en Wallet, intereses en Préstamos, recurrentes en Suscripciones…).
@@ -59,7 +83,7 @@
   const sorted=l=>[...l].sort((a,b)=>lensScore(b)-lensScore(a));
   const micro=ent?list.filter(h=>h.entity&&h.entity.kind===ent.kind&&String(h.entity.id)===String(ent.id)):[];
   return [...sorted(micro).map(h=>({...h,__micro:true})),...sorted(list.filter(h=>!h.entity))]};
- function rank(page,list,d,mods){
+ function rankAll(page,list,d,mods){
   const strat=STRATEGIC.has(page);const c=[];
   for(const h of lensFor(page,d)){const fake={...h,priority:h.valence==='risk'?'attention':h.valence==='positive'?'recognition':'info',title:h.title,modules:h.modules};c.push({item:fake,disc:h,s:lensScore(h)+.4+(h.__micro?3:0)})}
   for(const f of scoped(page,d))c.push({item:f,s:(PRI[f.priority]||1)+.5});
@@ -71,20 +95,26 @@
   if(d)for(const h of d.discoveries){if(h.repeat)continue;const m=h.modules||['overview'];if(!m.some(x=>mods.includes(x)))continue;
    const fake={...h,priority:h.valence==='risk'?'attention':h.valence==='positive'?'recognition':'info',title:h.title,modules:m};
    c.push({item:fake,disc:h,s:(h.valence==='risk'?2.6:2.3)+(strat?1.8:.6)+(m[0]&&mods.includes(m[0])?.6:0)})}
-  if(!c.length)return null;c.sort((a,b)=>b.s-a.s);return c[0]}
+  c.sort((a,b)=>b.s-a.s);return c}
 
- function mount(){
+ const rank=(page,list,d,mods)=>rankAll(page,list,d,mods)[0]||null;
+ let retry=null;
+ function mount(again){
   try{
+   if(retry){retry.forEach(clearTimeout);retry=null}
+   if(rot){clearInterval(rot);rot=null}
    document.querySelectorAll('.vi-strip').forEach(n=>n.remove());
+   document.querySelectorAll('.vi-sub-off').forEach(n=>n.classList.remove('vi-sub-off'));
    const b=B();if(!b)return;const mods=MAP[b.page()];if(!mods)return;
    const res=b.run();const list=forModule(res,mods);
-   res.__label=({overview:'Inicio',mobilehub:'Inicio',register:'Movimientos',banks:'Bancos',accounts:'Cuentas',wallet:'Tarjetas',cards:'Tarjetas',loans:'Préstamos',patrimony:'Patrimonio',recurring:'Suscripciones',pressure:'Compromisos',income:'Ingresos',budget:'Presupuesto',personal:'Entre personas'})[b.page()]||'';
    let d=null;try{d=B().discover()}catch(_){}
-   let pick=rank(b.page(),list,d,mods);
-   if(!pick&&!STRATEGIC.has(b.page()))pick=rank('overview',forModule(res,['overview']),d,['overview']);   /* sin nada propio, el módulo hereda lo macro (lo más relevante de todo Vive) */
-   if(pick){const top=pick.item;const shown=list.length?list:[top];
-    const el=strip(res,[top,...list.filter(x=>x!==top)],mods);
-    if(el){if(pick.disc)el.querySelector('.vi-copy small').textContent='VIVE Intelligence · '+(pick.disc.kicker||'Descubrimiento');place(el)}}
+   let all=rankAll(b.page(),list,d,mods);
+   if(!all.length&&!STRATEGIC.has(b.page()))all=rankAll('overview',forModule(res,['overview']),d,['overview']);   /* sin nada propio, el módulo hereda lo macro (lo más relevante de todo Vive) */
+   const seen=new Set(),items=[];
+   for(const c of all){const t=c.item.title;if(!t||seen.has(t))continue;seen.add(t);items.push({title:t,priority:c.item.priority||'info'})}
+   if(!items.length)return;
+   const el=strip(items.slice(0,4),items.length,mods);
+   if(el&&place(el)){rotate(el);if(!again)retry=[350,1100].map(ms=>setTimeout(()=>{const s=document.querySelector('.vi-strip');if(!s||s.dataset.viFb)mount(true)},ms))}
   }catch(e){console.warn('[Intelligence] mount',e)}
  }
 
