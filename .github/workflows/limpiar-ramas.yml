@@ -1,0 +1,24 @@
+name: limpiar-ramas (una sola vez)
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/limpiar-ramas.yml']
+permissions:
+  contents: write
+jobs:
+  limpiar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - name: Borrar todas las ramas remotas excepto main
+        run: |
+          set -u
+          git fetch --prune origin
+          for b in $(git for-each-ref --format='%(refname:strip=3)' refs/remotes/origin | grep -vx -e HEAD -e main); do
+            ahead=$(git rev-list --count "origin/main..origin/$b")
+            if [ "$ahead" -gt 0 ]; then echo "OMITIDA $b (+$ahead commits fuera de main)"; continue; fi
+            git push origin --delete "$b" && echo "borrada $b"
+          done
+          echo "--- ramas restantes:"; git ls-remote --heads origin

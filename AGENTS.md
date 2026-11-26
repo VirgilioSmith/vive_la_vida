@@ -2,7 +2,7 @@
 
 **VIVE V1 — una sola verdad.** Menos es más. Siempre.
 
-1. **Una sola rama permanente: `main`.** Todo se integra y se publica desde `main`. Prohibido mantener ramas, versiones o entornos paralelos; una rama de trabajo se fusiona y se borra el mismo día.
+1. **Una sola rama permanente: `main`.** GitHub debe tener **exactamente una rama: `main`**. Todo se integra y se publica desde `main`. Prohibido crear o conservar ramas de cualquier tipo (respaldo, desarrollo, experimentación, correcciones, versiones anteriores) y prohibido crear respaldos dentro del repositorio: la historia de Git en `main` es el único respaldo. Una rama de trabajo, si fuese imprescindible, se fusiona y se borra el mismo día. Al terminar cada tarea se verifica con `git ls-remote --heads origin` que solo queda `main`.
 2. **Una sola versión oficial: VIVE V1.** Un solo repositorio, **un solo despliegue (GitHub Pages)** y **un solo proyecto Supabase (plan Free)**. Prohibido Netlify/Vercel/Firebase u otra publicación, y cualquier servicio de pago.
 3. **Un solo motor de sincronización:** la RPC `finance_apply_changes` + `v405Commit` + `supabase-rpc-guard.js`. **Cero reintentos infinitos** (todo reintento tiene tope y retroceso) y **cero versiones obsoletas autorizadas para escribir** (`app_policy.min_client_version`).
 4. **Datos financieros intocables:** nunca borrar ni reescribir datos del usuario; todo cambio de base de datos lleva rollback y se prueba antes de aplicarse; ninguna operación sin aprobación expresa del titular modifica producción.
