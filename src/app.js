@@ -12173,7 +12173,7 @@ document.addEventListener('keydown',event=>{
    No realiza solicitudes a Supabase. La red se utiliza en f33LoadUser/f33Flush,
    no para cada tarjeta, gráfico ni porcentaje. */
 let v99ModelCache=Object.create(null);
-function v99Invalidate(){v99ModelCache=Object.create(null)}
+function v99Invalidate(){v99ModelCache=Object.create(null);window.__viveIntelRev=(window.__viveIntelRev|0)+1}
 function v99Memo(key,compute){if(Object.prototype.hasOwnProperty.call(v99ModelCache,key))return v99ModelCache[key];return v99ModelCache[key]=compute()}
 
 /* V115: índice local de movimientos para saldos por cuenta y tarjeta.
@@ -20423,6 +20423,124 @@ window.viveIdleTest=(sec=30)=>new Promise(res=>{let busy=0,n=0;const ob='Perform
  const start=()=>{const r=root();if(r)new MutationObserver(q).observe(r,{childList:true,subtree:true})};
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start()}
 window.__viveCore=Object.freeze({loan,account,loanAccounting,xconvert,isTaxableBankPayment,today,toast});
+/* VIVE INTELLIGENCE · puente de SOLO LECTURA. Convierte los datos ya cargados en un snapshot normalizado (RD$ equivalente,
+   con su origen). Reutiliza los cálculos existentes (monthlyTotals, cardStatus, upcoming, capacidad…): no consulta Supabase,
+   no escribe nada y se evalúa bajo demanda, con caché invalidada por eventos (v99Invalidate). */
+function vIntelSnapshot(){
+ const t=today(),ym=t.slice(0,7),[Y,M]=ym.split('-').map(Number),F=Number(db.settings?.fx)||0;
+ const dim=new Date(Y,M,0).getDate(),dom=Number(t.slice(8,10));
+ const cvt=(v,c)=>c==='USD'?num(v)*F:num(v);
+ const txs=db.transactions||[];
+ const hidden=x=>!!(x&&(x.archived||isHidden(x)));
+ const snap={today:t,fx:F,dayOfMonth:dom,daysInMonth:dim,txCount:txs.length,hasUsd:false};
+ // Meses (6 completos + el actual parcial)
+ snap.months=[];
+ for(let i=6;i>=0;i--){const d=new Date(Y,M-1-i,1),y=d.getFullYear(),m=d.getMonth()+1,k=y+'-'+String(m).padStart(2,'0');
+  let mt={};try{mt=monthlyTotals(y,m)||{}}catch(_){}
+  snap.months.push({ym:k,partial:i===0,income:num(mt.income),expense:num(mt.expense),interest:num(mt.interest),expenseBy:mt.expenseBy||{},incomeBy:mt.incomeBy||{},txCount:txs.reduce((n,x)=>n+(String(x.date||'').startsWith(k)?1:0),0)});}
+ // Cuentas
+ snap.accounts=(db.accounts||[]).filter(a=>!hidden(a)).map(a=>{const b=num(getAccountBalance(a));if(a.currency==='USD')snap.hasUsd=true;return {id:a.id,name:a.name||'Cuenta',ccy:a.currency||'DOP',kind:a.kind||'',balance:b,balanceDop:cvt(b,a.currency||'DOP')}});
+ const liquid=snap.accounts.filter(a=>a.kind!=='savings'&&a.kind!=='credit').reduce((s,a)=>s+Math.max(0,a.balanceDop),0);
+ // Tarjetas
+ snap.cards=[];snap.cardsNoLimit=[];let cardDebt=0,usdDebt=0;
+ for(const c of db.cards||[]){if(hidden(c)||/debit|debito/.test(String([c.type,c.cardType,c.kind].join(' ')).toLowerCase()))continue;
+  let any=false;
+  for(const ccy of ['DOP','USD']){let st;try{st=cardStatus(c,ccy)}catch(_){continue}const limit=num(st.limit),debt=Math.max(0,num(st.debt));if(!(limit>0)&&!(debt>0))continue;any=true;if(ccy==='USD')snap.hasUsd=true;
+   cardDebt+=cvt(debt,ccy);if(ccy==='USD')usdDebt+=cvt(debt,ccy);
+   snap.cards.push({id:c.id+'-'+ccy,productId:c.id,name:(c.name||'Tarjeta')+((num(c.limitDOP)>0&&num(c.limitUSD)>0)?' · '+ccy:''),ccy,limit,limitDop:cvt(limit,ccy),debt,debtDop:cvt(debt,ccy),util:limit>0?100*debt/limit:0,billed:num(st.billed),minimum:num(st.minimum)});}
+  if(!any||(num(c.limitDOP)<=0&&num(c.limitUSD)<=0))snap.cardsNoLimit.push(c.name||'Tarjeta');}
+ snap.cardDebtDop=cardDebt;
+ // Préstamos
+ snap.loans=[];let inst=0;
+ for(const l of db.loans||[]){if(hidden(l))continue;let ls;try{ls=loanStatus(l)}catch(_){continue}const bal=cvt(ls.balance,l.currency);if(bal<=0.005)continue;if(l.currency==='USD')snap.hasUsd=true;
+  const i=cvt(ls.installment,l.currency);inst+=i;if(l.currency==='USD')usdDebt+=bal;
+  snap.loans.push({id:l.id,name:l.name||'Préstamo',balanceDop:bal,installmentDop:i,rate:num(l.rate??l.annualRate??l.interestRate)||0,ccy:l.currency||'DOP'});}
+ snap.loanInstallmentsDop=inst;
+ // Posición patrimonial (mismas funciones que Inicio y la Matriz)
+ let cert=0,recv=0,pay=0;try{cert=totalCertificates();const pt=personalTotals();recv=pt.receivable;pay=pt.payable}catch(_){}
+ const totLiquid=(()=>{try{return totalLiquid()}catch(_){return liquid}})();
+ const debtAll=(()=>{try{return totalCardDebt()+totalLoanDebt()+pay}catch(_){return cardDebt+snap.loans.reduce((s,l)=>s+l.balanceDop,0)+pay}})();
+ const assets=totLiquid+cert+recv;
+ snap.position={liquid,assets,debt:debtAll,net:assets-debtAll,series:[]};
+ try{for(let i=3;i>=0;i--){const d=new Date(Y,M-1-i,1),k=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');const end=periodEnd(d.getFullYear(),d.getMonth()+1);const day=end>t?t:end;snap.position.series.push({ym:k,net:Number(historicalPosition(day).net)||0})}}catch(_){}
+ snap.usd={debtDop:usdDebt,assetsDop:snap.accounts.filter(a=>a.ccy==='USD').reduce((s,a)=>s+Math.max(0,a.balanceDop),0)};
+ // Vencimientos (mismo origen que Presión financiera)
+ snap.upcoming=[];try{for(const u of upcoming()||[]){if(!u||!u.date||!(num(u.amount)>0))continue;snap.upcoming.push({id:u.id||u.ref,kind:u.kind,name:String(u.name||'Compromiso').replace(/\s·\s(DOP|USD)$/,''),date:u.date,amount:num(u.amount),ccy:u.currency||'DOP',amountDop:cvt(u.amount,u.currency||'DOP'),days:diffDays(u.date,t)})}}catch(_){}
+ const nm=new Date(Y,M,1),nk=nm.getFullYear()+'-'+String(nm.getMonth()+1).padStart(2,'0');
+ snap.nextMonthObligations=snap.upcoming.filter(u=>u.date.startsWith(nk)).reduce((s,u)=>s+u.amountDop,0);
+ // Capacidad de endeudamiento (mismo modelo que la Matriz y Presión)
+ try{const d=v89DebtCapacity();snap.debt={monthly:num(d.monthly),available:num(d.income),ratio:d.ratio==null?null:num(d.ratio),balance:d.balance==null?null:num(d.balance),basis:d.basis||'full'}}catch(_){snap.debt=null}
+ // Recurrentes
+ snap.recurring=[];snap.annualCharges=[];let recMonthly=0;
+ for(const r of v339ActiveRecurring()){const mo=v339MonthlyEquivalent(r.amount,r.currency,r.frequency);recMonthly+=mo;if(r.currency==='USD')snap.hasUsd=true;
+  const days=r.nextDue?diffDays(r.nextDue,t):null;const item={id:r.id,name:r.name||'Recurrente',monthlyDop:mo,amountDop:cvt(r.amount,r.currency||'DOP'),days:days==null?-1:days,freq:r.frequency||'monthly'};snap.recurring.push(item);
+  if((r.frequency==='annual'||r.frequency==='yearly')&&days!=null&&days>=0&&days<=30)snap.annualCharges.push(item);}
+ snap.recurringMonthlyDop=recMonthly;
+ // Gastos recientes (60 días) para patrones
+ const d60=addDays(t,-60),d30=addDays(t,-30),d90=addDays(t,-90);
+ snap.recentExpenses=[];let wk=0,refunds=0,adv=0,unc=0;
+ for(const x of txs){if(!x||!x.date||x.date<d90||x.date>t)continue;
+  if(x.type==='card_refund'&&x.date>=d30)refunds+=cvt(x.amount,x.currency||'DOP');
+  if(x.type==='card_advance')adv+=cvt(x.amount,x.currency||'DOP');
+  if((x.type==='expense'||x.type==='card_charge')){if(!x.category&&x.date>=d60)unc++;
+   if(x.date>=d60){const a=cvt(x.amount,x.currency||'DOP');snap.recentExpenses.push({id:x.id,date:x.date,amountDop:a,label:String(x.note||x.payee||x.category||'Gasto').slice(0,40)});const wd=new Date(x.date+'T12:00:00Z').getUTCDay();if(wd===0||wd===6)wk++;}}}
+ snap.weekendShare=snap.recentExpenses.length?100*wk/snap.recentExpenses.length:null;
+ snap.refundsLast30=refunds;snap.cashAdvance90=adv;snap.uncategorized=unc;
+ // Gastos repetidos mes a mes que no están como recurrentes
+ snap.recurringCandidates=[];try{const byKey={};const recNames=new Set(snap.recurring.map(r=>String(r.name).toLowerCase().replace(/[^a-z0-9]/g,'')));
+  const d120=addDays(t,-125);for(const x of txs){if(!x||x.date<d120||x.date>t||!(x.type==='expense'||x.type==='card_charge'))continue;const label=String(x.note||x.payee||'').trim();if(label.length<3)continue;const k=label.toLowerCase().replace(/[^a-z0-9áéíóúñ]/g,'');if(!k||[...recNames].some(n=>n&&(k.includes(n)||n.includes(k))))continue;(byKey[k]=byKey[k]||{label,amts:{},months:new Set()}).months.add(x.date.slice(0,7));byKey[k].amts[x.date.slice(0,7)]=cvt(x.amount,x.currency||'DOP')}
+  for(const [k,v] of Object.entries(byKey)){const ms=[...v.months].sort();if(ms.length<3)continue;const last3=ms.slice(-3);const cons=last3.every((m,i)=>i===0||(()=>{const a=new Date(last3[i-1]+'-01'),b=new Date(m+'-01');return (b.getFullYear()-a.getFullYear())*12+b.getMonth()-a.getMonth()===1})());if(!cons)continue;const a=last3.map(m=>v.amts[m]);const mx=Math.max(...a),mn=Math.min(...a);if(mn<=0||mx/mn>1.15||a[0]<500)continue;snap.recurringCandidates.push({key:k,label:v.label,months:last3.length,amountDop:a[2]})}
+ }catch(_){}
+ // Presupuesto (mismo cálculo que Inicio)
+ try{const b=v290BudgetSnapshot(ym);snap.budget=b&&b.allocated>0?{allocated:b.allocated,spent:b.spent,percent:b.percent}:null}catch(_){snap.budget=null}
+ // Certificados
+ snap.certificates=[];try{for(const c of db.certificates||[]){if(hidden(c)||!c.maturityDate)continue;snap.certificates.push({id:c.id,name:c.name||'Certificado',days:diffDays(c.maturityDate,t),capitalDop:cvt(certificateCapital(c),c.currency||'DOP')})}}catch(_){}
+ // Entre personas
+ snap.personal={overdueReceivable:[],soonPayable:[]};try{for(const l of db.personalLoans||[]){const b=personalBalance(l);if(!(b>0.005)||!l.dueDate)continue;const days=diffDays(l.dueDate,t);const it={id:l.id,person:l.person||'Persona',amountDop:cvt(b,l.currency||'DOP')};if(l.direction==='lent'&&days<0)snap.personal.overdueReceivable.push(it);if(l.direction==='borrowed'&&days>=0&&days<=7)snap.personal.soonPayable.push(it)}}catch(_){}
+ snap.pendingOps=(db.pendingOperations||[]).length;
+ return snap;
+}
+const vIntelCache={rev:-1,key:'',res:null};
+function vIntelRun(){
+ const key=(window.__viveIntelRev|0)+'|'+today()+'|'+JSON.stringify((db.settings||{}).intelligence||null);
+ if(vIntelCache.res&&vIntelCache.key===key)return vIntelCache.res;
+ const t0=performance.now();
+ const snap=vIntelSnapshot();const res=window.ViveIntelligence.analyze(snap,(db.settings||{}).intelligence);
+ res.meta.ms=Math.round(performance.now()-t0);res.snapshot=snap;
+ vIntelCache.key=key;vIntelCache.res=res;return res;
+}
+function vIntelFeedback(finding,action){
+ const L=window.ViveIntelligence.engines.learning;
+ db.settings.intelligence=L.record(db.settings.intelligence,finding,action,today());
+ persist(); // una sola escritura por acción del usuario; nunca por lectura ni por animación
+}
+function vIntelSetPref(key,val){const st=window.ViveIntelligence.engines.learning.normalize(db.settings.intelligence);st.prefs[key]=!!val;db.settings.intelligence=st;persist()}
+window.__viveIntel=Object.freeze({run:vIntelRun,invalidate:()=>v99Invalidate(),feedback:vIntelFeedback,setPref:vIntelSetPref,snapshot:vIntelSnapshot,prefs:()=>window.ViveIntelligence.engines.learning.normalize(db.settings.intelligence).prefs,
+ go:id=>{const b=document.createElement('button');b.type='button';b.dataset.act='navigate';b.dataset.id=id;b.hidden=true;document.body.append(b);b.click();b.remove()},
+ render:()=>render(),page:()=>ui.page,toast:m=>toast(m)});
+/* Carga bajo demanda: motor, interfaz y estilos se descargan una sola vez, en reposo, la primera vez que se muestra una página con Intelligence. */
+const vIntelPages=new Set(['overview','mobilehub','register','expenses','categories','income','banks','accounts','wallet','cards','loans','patrimony','certificates','recurring','payments','pressure','budget','personal','benefits','kpis']);
+let vIntelLoading=null;
+function vIntelEnsure(){
+ if(window.ViveIntelligence&&window.ViveIntelUI)return Promise.resolve();
+ if(vIntelLoading)return vIntelLoading;
+ vIntelLoading=new Promise(done=>{
+  try{const css=document.createElement('link');css.rel='stylesheet';css.href='./src/intelligence/intelligence.css?v=2';document.head.appendChild(css)}catch(_){}
+  const load=src=>new Promise((ok,ko)=>{const el=document.createElement('script');el.src=src;el.onload=ok;el.onerror=ko;document.head.appendChild(el)});
+  load('./src/intelligence/engine.js?v=4').then(()=>load('./src/intelligence/ui.js?v=6')).then(()=>done()).catch(()=>done());
+ });
+ return vIntelLoading;
+}
+const vIntelOldRender=render;
+render=function(...args){
+ const out=vIntelOldRender.apply(this,args);
+ try{
+  if(window.ViveIntelUI)window.ViveIntelUI.mount();
+  else if(vIntelPages.has(ui.page))(window.requestIdleCallback||(f=>setTimeout(f,60)))(()=>vIntelEnsure().then(()=>window.ViveIntelUI&&window.ViveIntelUI.mount()));
+ }catch(_){}
+ return out;
+};
+
 /* VIVE_SCORE (experimental): puente de SOLO LECTURA hacia los datos existentes; no escribe nada. */
 if(window.VIVE_SCORE_EXPERIMENTAL)window.__viveScoreBridge=Object.freeze({db:()=>db,today,card,bank,cardStatus,loanStatus,loanAccounting,fullOriginalLoan,xconvert,acquiredOnOf,balanceAt:(a,d)=>getAccountBalance(a,d),isFinancial:b=>v40IsFinancial(b),monthlyFactor:f=>v80MonthlyFactor(f),account,activeRecurring:()=>v339ActiveRecurring(),monthlyEquivalent:(a,c,f)=>v339MonthlyEquivalent(a,c,f),upcoming:()=>upcoming(),payroll:(s,d)=>v40Payroll(s,d),theme:()=>db.settings.theme,go:id=>{ui.page=id;render();window.scrollTo(0,0)},rerender:()=>render()});
 /* V994: los scripts posteriores (vistas previas de formularios, auditoría de Seguridad) usaban `db` y `today`, que solo existían dentro de este bloque → ReferenceError. Se exponen de forma segura (db como lectura viva). */
