@@ -22,7 +22,7 @@ let ok=0;const t=(c,m)=>{assert.ok(c,m);ok++;console.log('✓',m)};
     return {h:r.height,bg:c.backgroundColor,bd:c.borderTopWidth+c.borderLeftWidth,sh:c.boxShadow,bf:c.backdropFilter,rad:c.borderRadius,
      chevRight:rr(chev)&&Math.abs(rr(chev).right-r.right)<=3,moreBeforeChev:!more||rr(more).right<=rr(chev).left+1,textBeforeMore:!more||rr(txt).right<=rr(more).left+1,
      title:!!(prev&&(/^H1$/.test(prev.tagName)||prev.querySelector&&prev.querySelector('h1')||prev.matches('.vive-mobile-greeting,.vwm-head,header'))),
-     subs:[...document.querySelectorAll('.vi-sub-off')].length,subVisible:[...document.querySelectorAll('.top-sub')].some(s=>getComputedStyle(s).display!=='none'),
+     subs:[...document.querySelectorAll('.vi-sub-off')].length,subVisible:[...document.querySelectorAll('.top-sub')].some(s=>getComputedStyle(s).display!=='none'&&s.getBoundingClientRect().height>0),
      extra:more?Number(more.textContent.replace('+','')):0,label:e.getAttribute('aria-label'),w:r.width,top:r.top,vis:r.height>0&&r.width>0};
    });
    if(!m)continue;withLine++;

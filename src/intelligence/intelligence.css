@@ -126,3 +126,7 @@ html.vg-reduce-motion .vi-mark::before{animation:none}
 /* Gana a los estilos genéricos de botón (incluido el tema Black): la línea nunca tiene contenedor */
 html body #app#app#app#app#app#app .vi-strip{min-height:44px;height:auto;padding:0;background:none!important;border:0!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;border-radius:12px}
 html body #app#app#app#app#app#app .vi-strip .vi-more{background:none!important;padding:0;border:0;box-shadow:none}
+/* La barra superior crece lo justo para alojar la línea bajo el título (antes tenía altura fija y la línea quedaba debajo de otros elementos) */
+html body #app#app#app .main>.topbar:has(.vi-strip){height:auto!important;min-height:56px!important;align-items:flex-start!important}
+html body #app#app#app .main>.topbar:has(.vi-strip) .topbar-intro{display:block!important}
+

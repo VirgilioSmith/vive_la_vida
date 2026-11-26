@@ -6,7 +6,7 @@
  const B=()=>window.__viveIntel;
  const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  /* página de la app → etiquetas de módulo que la hacen relevante */
- const MAP={overview:['overview'],mobilehub:['overview'],register:['register'],expenses:['register'],categories:['register'],income:['income'],
+ const MAP={overview:['overview'],mobilehub:['overview'],mobilesearch:['overview'],register:['register'],expenses:['register'],categories:['register'],income:['income'],
   banks:['banks','accounts'],accounts:['accounts','banks'],wallet:['cards','wallet'],cards:['cards','wallet'],loans:['loans'],patrimony:['patrimony'],
   certificates:['patrimony'],recurring:['recurring'],payments:['pressure','recurring'],pressure:['pressure'],budget:['budget'],personal:['personal'],benefits:['cards'],kpis:['overview'],advanced:['analytics','income'],analytics:['analytics','income'],annual:['analytics','income'],flow:['analytics','income'],projection:['patrimony'],vision:['patrimony'],score:['score','cards'],transactions:['register']};
  const ICON={critical:'!',attention:'!',opportunity:'↗',info:'i',recognition:'✓'};
@@ -63,7 +63,7 @@
     cada página específica → lo propio de esa página (tarjetas en Wallet, intereses en Préstamos, recurrentes en Suscripciones…).
     Los hallazgos transversales (aparecen en ≥ 5 módulos, como «pagos vencidos») se rebajan fuera de Inicio para que no repitan el mismo mensaje en todas partes. */
  const PRI={critical:3,attention:2,opportunity:1.6,info:1,recognition:1.2};
- const STRATEGIC=new Set(['overview','mobilehub','kpis']);
+ const STRATEGIC=new Set(['overview','mobilehub','mobilesearch','kpis']);
  const AFF={wallet:['credit'],cards:['credit'],benefits:['credit'],loans:['credit','financial'],recurring:['pattern'],pressure:['risk','prediction'],payments:['risk','prediction'],patrimony:['financial','prediction'],certificates:['financial'],register:['pattern','financial'],expenses:['pattern','financial'],categories:['pattern','financial'],banks:['financial'],accounts:['financial'],budget:['financial','prediction'],income:['financial','prediction'],personal:['risk']};
  /* Vencimientos vistos desde cada página: tarjetas en Wallet, préstamos en Préstamos, recurrentes en Suscripciones */
  const KIND={wallet:['card'],cards:['card'],benefits:['card'],loans:['loan'],recurring:['recurring'],payments:['recurring','card','loan']};

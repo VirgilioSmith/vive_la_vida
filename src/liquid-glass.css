@@ -1,0 +1,126 @@
+/* ============================================================================
+   VIVE · LIQUID GLASS ENGINE (v1)
+   Capa óptica sobre el Glass Engine: el material deja de ser «blanco translúcido» y pasa a tener
+   rim de luz, curvatura, espesor, absorción cromática y reflejo especular que sigue a la luz.
+
+   Capas de una superficie (de abajo arriba, todas sin eventos y por debajo del contenido):
+     0 · cuerpo        → lo pone el Glass Engine (relleno + backdrop-filter)
+     1 · ::after       → volumen: brillo de curvatura, mancha especular, absorción inferior (espesor),
+                          tinte cromático del acento y luz interior (inset) del borde
+     2 · ::before      → rim: borde de 1 px con degradado cónico (esquinas iluminadas, lados que se apagan),
+                          dibujado con máscara (no es un border blanco plano)
+     3 · refracción    → SOLO Chromium: backdrop-filter:url(#vlg-refract) desplaza el fondo en el borde
+                          (lente). En Safari/Firefox esta capa no existe y las demás se ven completas.
+
+   Todo se controla con tokens --vlg-*. Nada se anima en bucle: la luz solo cambia con el puntero/pulsación.
+   Sin consultas a Supabase. Sin WebGL ni Canvas (no aportan aquí; ver docs/liquid-glass.md).
+   ========================================================================== */
+
+@property --vlg-lx{syntax:'<percentage>';inherits:true;initial-value:24%}
+@property --vlg-ly{syntax:'<percentage>';inherits:true;initial-value:-6%}
+
+/* ---------- Tokens ópticos ---------- */
+:root{
+ --vlg-rim:.85;            /* luminosidad máxima del rim */
+ --vlg-rim-min:.10;        /* luminosidad en los lados que se apagan */
+ --vlg-spec:.62;           /* intensidad del reflejo especular */
+ --vlg-sheen:.26;          /* brillo de curvatura superior */
+ --vlg-depth:.10;          /* absorción inferior (espesor) */
+ --vlg-absorb:11%;         /* tinte del entorno/acento dentro del cristal */
+ --vlg-inner:.55;          /* luz interior del borde superior */
+ --vlg-shade:30,50,80;     /* color de las sombras ambientales */
+ --vlg-refract-scale:16;   /* desplazamiento máximo de la refracción (px) */
+ --vlg-bf:9px;             /* desenfoque de las superficies con refracción (bajo: se lee la lente del borde) */
+ --vlg-press:0;            /* 0→1 mientras se pulsa */
+ --vlg-aura-a:.15; --vlg-aura-b:.11; --vlg-aura-c:.09;
+ --vlg-rim-w:1.2px;
+}
+body.theme-black,body.theme-dark{
+ --vlg-rim:.36; --vlg-rim-min:.05; --vlg-spec:.26; --vlg-sheen:.10; --vlg-depth:.34; --vlg-absorb:14%; --vlg-inner:.20; --vlg-shade:0,0,0;
+ --vlg-aura-a:.13; --vlg-aura-b:.06; --vlg-aura-c:.0;
+}
+
+/* ---------- Atmósfera: algo que refractar y absorber (estática, sin animación) ---------- */
+#vlg-aura{position:fixed;inset:0;z-index:-1;pointer-events:none;contain:strict;
+ background:
+  radial-gradient(62% 50% at 6% -4%,color-mix(in srgb,var(--vg-accent,#6d69f1) calc(var(--vlg-aura-a) * 100%),transparent),transparent 70%),
+  radial-gradient(48% 44% at 104% 26%,rgba(96,190,255,var(--vlg-aura-b)),transparent 70%),
+  radial-gradient(56% 44% at 28% 112%,rgba(255,176,128,var(--vlg-aura-c)),transparent 72%)}
+
+/* ---------- Superficies con el material ---------- */
+/* Lista única: para añadir una superficie basta con añadir su selector aquí (y comprobar que no usa ::before/::after). */
+:where([data-vlg]){position:relative}
+[data-vlg]{
+ isolation:isolate;
+ --vlg-rad:inherit;
+}
+[data-vlg]:not([data-vlg~=aft])::before,
+[data-vlg]::after{
+ content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:-1;box-sizing:border-box}
+/* 2 · rim: degradado cónico recortado a un borde de 1 px */
+[data-vlg]:not([data-vlg~=aft])::before{
+ padding:var(--vlg-rim-w);
+ background:conic-gradient(from 218deg at 50% 50%,
+   rgba(255,255,255,calc(var(--vlg-rim) + var(--vlg-press) * .1)) 0deg,
+   rgba(255,255,255,var(--vlg-rim-min)) 62deg,
+   rgba(255,255,255,calc(var(--vlg-rim-min) * .4)) 128deg,
+   rgba(255,255,255,calc(var(--vlg-rim) * .55)) 196deg,
+   rgba(255,255,255,var(--vlg-rim-min)) 262deg,
+   rgba(255,255,255,calc(var(--vlg-rim) + var(--vlg-press) * .1)) 360deg);
+ -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;
+ mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0)}
+/* 1 · volumen: curvatura + especular que sigue a la luz + espesor + absorción + luz interior */
+[data-vlg]::after{
+ background:
+  radial-gradient(58% 46% at var(--vlg-lx) var(--vlg-ly),rgba(255,255,255,calc(var(--vlg-spec) + var(--vlg-press) * .22)),transparent 72%),
+  linear-gradient(180deg,rgba(255,255,255,var(--vlg-sheen)) 0,rgba(255,255,255,0) 36%),
+  radial-gradient(92% 56% at 50% 124%,rgba(var(--vlg-shade),var(--vlg-depth)),transparent 72%),
+  linear-gradient(132deg,color-mix(in srgb,var(--vg-accent,#6d69f1) var(--vlg-absorb),transparent),transparent 58%);
+ box-shadow:inset 0 1.5px 1.5px rgba(255,255,255,var(--vlg-inner)),inset 0 0 0 1px rgba(255,255,255,calc(var(--vlg-inner) * .22)),inset 0 -6px 12px -8px rgba(var(--vlg-shade),calc(var(--vlg-depth) * 1.3));
+ transition:--vlg-lx .35s var(--vg-ease,ease),--vlg-ly .35s var(--vg-ease,ease)}
+
+/* ---------- Refracción real (solo donde el navegador la soporta; JS añade .vlg-refract a <html>) ---------- */
+html.vlg-refract:not(#a):not(#b):not(#c):not(#d):not(#e):not(#f) body [data-vlg~=refract]{
+ -webkit-backdrop-filter:url(#vlg-refract) blur(var(--vlg-bf,14px)) saturate(var(--vlg-sat,1.7))!important;
+ backdrop-filter:url(#vlg-refract) blur(var(--vlg-bf,14px)) saturate(var(--vlg-sat,1.7))!important}
+
+/* ---------- Respuesta a la pulsación (sin animación en bucle) ---------- */
+@media(hover:hover){[data-vlg~=press]:hover{--vlg-press:.35}}
+[data-vlg~=press]:active{--vlg-press:1}
+
+/* ---------- Accesibilidad y degradación ---------- */
+html.vg-reduce-transparency #vlg-aura,html.vg-reduce-transparency .vlg-fx{display:none}
+html.vg-reduce-transparency [data-vlg~=refract]{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+html.vg-reduce-motion [data-vlg]::after{transition:none}
+@media(prefers-reduced-motion:reduce){[data-vlg]::after{transition:none}}
+@media(prefers-contrast:more){:root{--vlg-rim:1;--vlg-spec:.3;--vlg-sheen:.12}#vlg-aura{display:none}}
+/* Sin backdrop-filter: el material pasa a ser más sólido para conservar la legibilidad */
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+ :is(.vive-mobile-dock,.sidebar.rail-sidebar,.modal.vsheet)[data-vlg]{background-color:rgba(var(--vg-tint-rgb,255,255,255),.92)!important}
+}
+/* Modo «aft»: el componente ya usa ::before (p. ej. el dock con su brillo propio). El volumen va en ::after y el rim se
+   emula con luz interior direccional (arriba-izquierda intensa, abajo-derecha tenue) en lugar del degradado cónico. */
+[data-vlg~=aft]::after{
+ box-shadow:inset 1.2px 1.2px 0 rgba(255,255,255,var(--vlg-rim)),inset -1px -1px 0 rgba(255,255,255,calc(var(--vlg-rim) * .42)),
+  inset 0 1.5px 1.5px rgba(255,255,255,var(--vlg-inner)),inset 0 -6px 12px -8px rgba(var(--vlg-shade),calc(var(--vlg-depth) * 1.3))}
+
+/* Buscar: las ilustraciones de cristal ceden espacio al texto de cada tarjeta (antes lo tapaban) */
+html body .world-mobilesearch #page#page .v721-category-grid .v721-category-tile .v721-tile-art{width:49%!important;max-width:118px!important;right:4px!important;bottom:2px!important}
+html body .world-mobilesearch #page#page .v721-category-grid .v721-category-tile[data-v154-category="servicios"] .v721-tile-art{width:54%!important}
+
+/* Buscar · tema Black: las tarjetas de categoría eran pasteles claros con títulos azul oscuro (ilegibles sobre negro).
+   Ahora son cristal oscuro con el color de identidad de cada categoría absorbido en el fondo. */
+html body:is(.theme-black,.theme-dark) #app#app#app .world-mobilesearch #page#page .v721-category-grid .v721-category-tile.v721-category-tile.v154-category-tile{
+ --vlg-t:#6d69f1;color:#f5f6f8!important;
+ background:radial-gradient(85% 75% at 88% 100%,color-mix(in srgb,var(--vlg-t) 38%,transparent),transparent 72%),linear-gradient(158deg,rgba(255,255,255,.085),rgba(255,255,255,.02) 55%),#0b0b0f!important;
+ border:1px solid rgba(255,255,255,.12)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 14px 30px -14px rgba(0,0,0,.8)!important}
+html body:is(.theme-black,.theme-dark) #app#app#app .world-mobilesearch #page#page .v721-category-tile.v721-category-tile[data-v154-category=dinero]{--vlg-t:#3b82f6}
+html body:is(.theme-black,.theme-dark) #app#app#app .world-mobilesearch #page#page .v721-category-tile.v721-category-tile[data-v154-category=tarjetas]{--vlg-t:#8b5cf6}
+html body:is(.theme-black,.theme-dark) #app#app#app .world-mobilesearch #page#page .v721-category-tile.v721-category-tile[data-v154-category=pagos]{--vlg-t:#f97316}
+html body:is(.theme-black,.theme-dark) #app#app#app .world-mobilesearch #page#page .v721-category-tile.v721-category-tile[data-v154-category=servicios]{--vlg-t:#ef4444}
+html body:is(.theme-black,.theme-dark) #app#app#app .world-mobilesearch #page#page .v721-category-tile.v721-category-tile[data-v154-category=movimientos]{--vlg-t:#14b8a6}
+html body:is(.theme-black,.theme-dark) #app#app#app .world-mobilesearch #page#page .v721-category-tile.v721-category-tile[data-v154-category=analitica]{--vlg-t:#2563eb}
+html body:is(.theme-black,.theme-dark) #app#app#app .world-mobilesearch #page#page .v721-category-tile.v721-category-tile :is(.v154-category-title,.v154-category-sub){color:#f5f6f8!important;-webkit-text-fill-color:#f5f6f8!important}
+html body:is(.theme-black,.theme-dark) #app#app#app .world-mobilesearch #page#page .v721-category-tile.v721-category-tile .v154-category-sub{color:#aab3c4!important;-webkit-text-fill-color:#aab3c4!important}
+html body:is(.theme-black,.theme-dark) #app#app#app .world-mobilesearch #page#page .v721-category-tile.v721-category-tile .v711-category-arrow{background:rgba(255,255,255,.1)!important;border:1px solid rgba(255,255,255,.18)!important;color:#fff!important;box-shadow:none!important}
+html body:is(.theme-black,.theme-dark) #app#app#app .world-mobilesearch #page#page .v721-category-tile.v721-category-tile .v711-category-arrow svg{color:#fff!important;stroke:#fff!important}
