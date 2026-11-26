@@ -128,15 +128,12 @@ const plainLabel=l=>String(l).replace(/^z robustos?$/i,'Distancia a lo habitual'
   let disc=null;try{disc=B().discover()}catch(e){console.warn('[Intelligence] discover',e)}
   const dsec=disc&&disc.discoveries.length?`<section class="vi-group"><h3>Descubrimientos<span>${disc.discoveries.length}</span></h3>${disc.discoveries.map(discCard).join('')}</section>`:'';
   const body=GROUPS.map(([p,l])=>{const a=by(p);const g=a.length?`<section class="vi-group"><h3>${l}<span>${a.length}</span></h3>${a.map(card).join('')}</section>`:'';return (p==='attention'?g+dsec:g)}).join('').replace(/^$/,'')||(dsec||'<p class="vi-empty">Por ahora no hay nada que destacar. VIVE Intelligence sigue aprendiendo en silencio y vuelve a evaluar cuando registres o cambies información.</p>');
-  const know=disc?knowHTML(disc):'';
   const bodyFinal=(!/Descubrimientos<span>/.test(body)&&dsec)?dsec+body:body;
   const q=res.meta.quality||{};
   const life=B().prefs().life;
   return `<div class="vi-layer" data-vi="backdrop"><section class="vi-sheet" role="dialog" aria-modal="true" aria-labelledby="vi-title">
    <header class="vi-head"><button type="button" class="vi-back" data-vi="close" aria-label="Volver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><div><h2 id="vi-title">${spark}VIVE Intelligence</h2><p>Observa, relaciona, anticipa y recomienda. No ejecuta pagos ni cambios.</p></div></header>
-   <div class="vi-body">${bodyFinal}${know}</div>
-   <footer class="vi-foot"><label class="vi-life"><input type="checkbox" data-vi="life" ${life?'checked':''}><span><strong>Lecturas de estilo de vida (opcional)</strong><small>Solo cifras registradas; no infiere emociones ni salud.</small></span></label>
-    <small class="vi-meta">${res.meta.rules} reglas · ${res.findings.length} mostrados · cálculo local${res.meta.ms!=null?' · '+res.meta.ms+' ms':''}${q.months!=null?' · '+q.months+' mes(es) completos':''}</small></footer>
+   <div class="vi-body">${bodyFinal}</div>
   </section></div>`;
  }
 

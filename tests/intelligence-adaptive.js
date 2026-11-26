@@ -34,7 +34,7 @@ const SEED=`
   await p.evaluate(g=>window.__T.go(g),'register');await p.waitForTimeout(800);
   await p.evaluate(g=>window.__T.go(g),'overview');await p.waitForTimeout(700);await p.click('.vi-strip');await p.waitForTimeout(600);
   const ui=await p.evaluate(()=>({disc:document.querySelectorAll('.vi-disc').length,how:!!document.querySelector('.vi-disc .vi-how summary'),know:!!document.querySelector('.vi-know summary'),fits:(()=>{const s=document.querySelector('.vi-sheet').getBoundingClientRect();return s.bottom<=innerHeight+1})(),hOver:document.querySelector('.vi-sheet').scrollWidth>document.querySelector('.vi-sheet').clientWidth+1}));
-  check(`[${name}] la hoja muestra el descubrimiento, la explicación y el centro de conocimiento`,ui.disc>=1&&ui.how&&ui.know&&ui.fits&&!ui.hOver,ui);
+  check(`[${name}] la hoja muestra solo descubrimientos y su explicación: sin centro de conocimiento, configuración ni métricas`,ui.disc>=1&&ui.how&&!ui.know&&ui.fits&&!ui.hOver,ui);
   await p.evaluate(()=>document.querySelector('.vi-disc .vi-how summary').click());
   const how=await p.evaluate(()=>document.querySelector('.vi-disc .vi-how-body').innerText);
   check(`[${name}] la explicación responde qué, por qué, con qué datos, incertidumbre y alternativas`,/¿Qué detectamos\?/i.test(how)&&/Evidencia/i.test(how)&&/Metodología/i.test(how)&&/Incertidumbre/i.test(how)&&/Alternativas/i.test(how)&&/no es una probabilidad/.test(how),how.slice(0,200));
@@ -47,18 +47,16 @@ const SEED=`
   await p.evaluate(()=>{const c=document.querySelector('.vi-disc');c.querySelector('.vi-opts summary').click();c.querySelector('[data-a="not_interested"]').click()});await p.waitForTimeout(500);
   const gone=await p.evaluate(k=>!document.querySelector(`.vi-disc[data-vi-dkey="${k}"]`),key);
   check(`[${name}] «No me interesa» retira el descubrimiento y queda registrado`,gone&&await p.evaluate(k=>!!window.__viveIntel.memory().exc[k],key));
-  /* --- centro de conocimiento: consultar, eliminar, exportar --- */
-  const kc=await p.evaluate(()=>{document.querySelector('.vi-know').open=true;return {txt:document.querySelector('.vi-know-body').innerText}});
-  check(`[${name}] centro de conocimiento: madurez, fuentes, hipótesis y excepciones visibles`,/Madurez del aprendizaje/i.test(kc.txt)&&/Fuentes autorizadas/i.test(kc.txt)&&/Excepciones/i.test(kc.txt)&&/Servicios externos de IA[\s\S]*No se usan/i.test(kc.txt)&&!/\d+\s*%\s*de conocimiento/.test(kc.txt));
-  await p.evaluate(()=>{document.querySelector('.vi-know').open=true});
-  const delBefore=await p.evaluate(()=>document.querySelectorAll('.vi-know .vi-del').length);
-  await p.evaluate(()=>document.querySelector('.vi-know .vi-del').click());await p.waitForTimeout(500);
-  check(`[${name}] se puede eliminar un conocimiento específico`,await p.evaluate(n=>document.querySelectorAll('.vi-know .vi-del').length<n,delBefore));
+  /* --- la vista es solo lectura de descubrimientos: nada de configuración ni parámetros --- */
+  const vis=await p.evaluate(()=>{const s=document.querySelector('.vi-sheet');return {txt:s.innerText,controls:s.querySelectorAll('input[type=checkbox],.vi-know,.vi-foot,.vi-meta,[data-vi=life],[data-vi=doff],[data-vi=dsim],[data-vi=sfut]').length}});
+  check(`[${name}] la hoja no muestra madurez, fuentes, hipótesis, interruptores, simulaciones ni estadísticas técnicas`,vis.controls===0&&!/Madurez|Fuentes autorizadas|reglas ·|Lecturas de estilo de vida|Aprendizaje por categoría|Lo que Vive sabe/i.test(vis.txt),vis);
+  /* --- la memoria sigue siendo consultable, corregible, exportable y simulable por API (uso interno / mantenimiento) --- */
+  const keyDel=await p.evaluate(()=>{const m=window.__viveIntel.memory();return Object.keys(m.hyp)[0]});
+  await p.evaluate(k=>window.__viveIntel.memOp('forget',k),keyDel);
+  check(`[${name}] se puede eliminar un conocimiento específico (API interna)`,await p.evaluate(k=>!window.__viveIntel.memory().hyp[k],keyDel));
   check(`[${name}] se puede exportar el conocimiento (JSON válido)`,await p.evaluate(()=>{try{const j=JSON.parse(window.__viveIntel.memOp('export'));return !!j.memory&&j.version}catch(e){return false}}));
-  /* --- simulación bajo demanda --- */
-  await p.evaluate(()=>{document.querySelector('.vi-know').open=true;document.querySelector('[data-vi="dsim"]').click()});
-  const sim=await p.evaluate(()=>document.querySelector('.vi-sim').innerText);
-  check(`[${name}] simulación: escenarios conservador / central / favorable con supuestos`,/Conservador/.test(sim)&&/Central/.test(sim)&&/Favorable/.test(sim)&&/no es una predicción ni un hecho/.test(sim),sim.slice(0,160));
+  const sim=await p.evaluate(()=>window.__viveIntel.simulate({expensePct:10}));
+  check(`[${name}] simulación (API): escenarios conservador / central / favorable con supuestos`,sim.ok&&sim.assumptions.length>0&&sim.conservative<=sim.central&&sim.central<=sim.favorable,sim);
   /* --- aprendizaje por categoría desactivable --- */
   await p.evaluate(()=>{window.__viveIntel.memOp('setOff',{k:'spending',v:true})});
   check(`[${name}] aprendizaje desactivado por categoría: sin descubrimientos de gasto`,await p.evaluate(()=>!window.__viveIntel.discover().discoveries.some(h=>h.category==='spending')));
@@ -77,9 +75,9 @@ const SEED=`
   await p.evaluate(g=>window.__T.go(g),'overview');await p.waitForTimeout(1200);await p.evaluate(SEED);
   await p.evaluate(()=>{const d=window.__viveIntel.discover();const m=JSON.parse(JSON.stringify(d.mem));const y=new Date(today()+'T00:00:00Z');y.setUTCDate(y.getUTCDate()-1);const yd=y.toISOString().slice(0,10);for(const k of Object.keys(m.hyp))m.hyp[k].seen=[yd];db.settings.intelligenceMem=m;window.__viveIntel.invalidate()});
   await p.evaluate(g=>window.__T.go(g),'register');await p.waitForTimeout(500);await p.evaluate(g=>window.__T.go(g),'overview');await p.waitForTimeout(700);
-  await p.click('.vi-strip');await p.waitForTimeout(500);await p.evaluate(()=>{const k=document.querySelector('.vi-know');k&&(k.open=true);const h=document.querySelector('.vi-how');h&&(h.open=true)});
+  await p.click('.vi-strip');await p.waitForTimeout(500);await p.evaluate(()=>{const h=document.querySelector('.vi-how');h&&(h.open=true)});
   const ok2=await p.evaluate(()=>{const s=document.querySelector('.vi-sheet');return s&&s.scrollWidth<=s.clientWidth+1});
-  check(`[${th}] hoja con descubrimiento, explicación y conocimiento sin desbordes`,ok2);
+  check(`[${th}] hoja con descubrimiento y explicación sin desbordes`,ok2);
   await p.screenshot({path:`/tmp/intel2_${th}.png`});await ctx.close();}
  check('sin errores de JavaScript',errs.length===0,errs.slice(0,3));
  await b.close();console.log(`\nINTELLIGENCE ADAPTIVE: ${ok} verificaciones aprobadas${bad?', '+bad+' FALLAN':''}`);process.exit(bad?1:0);

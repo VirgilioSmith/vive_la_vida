@@ -93,3 +93,9 @@ Pruebas: `tests/intelligence-strategy.js` (70) y `tests/intelligence-strategy-ui
 `discover()` con 365 días y 9 motores + creatividad + inversa + convergencia: 12–18 ms en caliente (65 ms la primera vez), cálculo único por revisión y día. Sin consultas ni red.
 
 Pruebas nuevas: `tests/intelligence-strategy.js` (87), `tests/intelligence-integridad.js` (10), `tests/frases-inteligencia.js` (15).
+
+
+---
+
+## Vista de usuario: solo descubrimientos
+La hoja de VIVE Intelligence **no muestra** centro de conocimiento, madurez, fuentes, hipótesis, interruptores de aprendizaje, lecturas de estilo de vida, simulaciones, métricas ni el pie técnico («64 reglas · … ms»). El usuario entra, lee y sale. Todo lo anterior se conserva como API interna para mantenimiento (`window.__viveIntel`: `memory`, `memOp`, `simulate`, `strategic`, `audit`). Las lecturas de estilo de vida quedan apagadas por defecto y ya no se activan desde esta vista.
