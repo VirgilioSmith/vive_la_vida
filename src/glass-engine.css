@@ -605,3 +605,37 @@ body:is(.theme-black,.theme-dark) #app#app#app #page :is(.ff-black-btn,.ff-balan
  background:linear-gradient(135deg,color-mix(in srgb,var(--v424-accent-strong,#4f4cad) 88%,#fff 12%),var(--v424-accent-strong,#4f4cad))!important;
  border-color:color-mix(in srgb,var(--v424-accent-strong,#4f4cad) 60%,#fff 40%)!important;color:#fff!important;
  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 6px 16px color-mix(in srgb,var(--v424-accent-strong,#4f4cad) 38%,transparent)!important}
+
+/* R-fix · detalles
+   1) Chips de Movimientos: la sombra del chip activo se recortaba por el contenedor y dejaba un rectángulo pálido debajo. Se acota a lo que cabe.
+   2) Préstamos (PC): el KPI «Capital pendiente» del héroe llevaba un relleno oscuro rectangular detrás del número. */
+html body #app#app .v708-chips .v708-chip.is-selected{box-shadow:0 3px 8px color-mix(in srgb,var(--v424-accent-strong,#4f4cad) 26%,transparent)!important}
+html body #app#app .v708-chips{padding-bottom:6px}
+html body #app#app#app#app#app#app#app#app#app .bank-hero .v46-global-main.v187-interactive-kpi{background:transparent!important;background-color:transparent!important;border-color:transparent!important;box-shadow:none!important}
+/* R-fix · Wallet PC: el botón de búsqueda mostraba «B…» (texto recortado junto al icono); queda solo el icono, igual que en las demás páginas */
+html body #app#app .btn.v165-search-icon.vWalletPc-search{font-size:0!important;gap:0!important;justify-content:center!important;padding:0!important}
+html body #app#app .btn.v165-search-icon.vWalletPc-search svg{font-size:initial;flex:none}
+/* R-fix · Bancos (PC): nombres de banco legibles (el importe y el % se apilan en una columna), «Certificados» sin pisar su métrica, icono de búsqueda sin deformar */
+html body #app#app .vBanksPc-bank{grid-template-columns:44px minmax(0,1fr) auto!important;column-gap:10px}
+html body #app#app .vBanksPc-bank>.institution-logo{grid-row:1/3}
+html body #app#app .vBanksPc-bank>span:not(.institution-logo){grid-row:1/3;grid-column:2;min-width:0}
+html body #app#app .vBanksPc-bank>span:not(.institution-logo) strong{overflow-wrap:normal!important;word-break:normal!important}
+html body #app#app .vBanksPc-bank>b{grid-column:3;grid-row:1;justify-self:end;align-self:end}
+html body #app#app .vBanksPc-bank>.vBanksPc-share{grid-column:3;grid-row:2;justify-self:end;align-self:start}
+html body #app#app .vBanksPc-bank>svg{display:none}
+html body #app#app#app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview-tile{grid-template-columns:minmax(0,1fr) auto!important;column-gap:12px!important}
+html body #app#app#app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-overview-name{white-space:nowrap}
+html body #app#app#app#app#app .btn.v165-search-icon svg{width:20px!important;height:20px!important;flex:none}
+/* PC · el selector de mes de Suscripciones también flota sobre la franja de Intelligence */
+@media(min-width:791px){.main:has(#page .v1170-tools) .vi-strip{width:calc(100% - 208px)}}
+/* selector de mes: el texto «November 2026» ya no se recorta bajo el icono del calendario */
+html body #app#app :is(.v137-wealth-month-control,.v1170-date,.ff-month-filter){min-width:172px}
+html body #app#app :is(.v137-wealth-month-control,.v1170-date,.ff-month-filter) input{min-width:140px}
+html body #app#app#app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-tile-loans .vBanksPc-overview-metric{white-space:normal!important;max-width:200px}
+html body #app#app#app#app#app .btn.v165-search-icon.vBanksPc-search{gap:0!important;justify-content:center!important;padding:0!important}
+html body #app#app#app#app#app .btn.v165-search-icon.vBanksPc-search>span{display:none!important}
+html body #app#app#app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-tile-loans .vBanksPc-overview-metric{max-width:150px!important}
+html body #app#app#app#app#app main.vBanksPc-world #page#page .vBanksPc-mockup .vBanksPc-tile-loans .vBanksPc-overview-metric *{white-space:normal!important;font-size:13px!important;line-height:1.25}
+/* R-fix · Préstamos (móvil): el contenedor de la lista (cuadrado) no es una tarjeta —lo es cada préstamo—; y en Black no hay bandas grises detrás del título de sección ni del nombre */
+html body #app#app#app .v239-product-list{background:none!important;background-image:none!important;border:0!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+body:is(.theme-black,.theme-dark) #app#app#app .v239-list-head,body:is(.theme-black,.theme-dark) #app#app#app .v239-product-meta{background:transparent!important;background-image:none!important;box-shadow:none!important}

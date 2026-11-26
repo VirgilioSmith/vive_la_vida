@@ -112,5 +112,22 @@ body.theme-black .vi-danger,body.theme-dark .vi-danger{color:#ff7a8e;border-colo
 .vi-strat{margin-top:8px;overflow-x:auto}.vi-strat .vi-t{width:100%;font-size:11.5px}.vi-strat .vi-t td{vertical-align:top}
 .vi-fut{padding:10px 0;border-bottom:1px solid rgba(125,140,170,.22)}.vi-fut>b{display:block;font-size:13px}.vi-fut>small{display:block;margin:2px 0 6px}
 .vi-fut-g{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.vi-fut-g span{display:flex;flex-direction:column;min-width:0}.vi-fut-g i{font-style:normal;font-size:10.5px;color:var(--vg-ink-3,#485c78);text-transform:uppercase;letter-spacing:.04em}.vi-fut-g b{font-size:12.5px}
-/* PC · Resumen: el selector de mes flota sobre la franja; ésta cede ese espacio para no solaparse */
-@media(min-width:791px){.main:has(#page .ff-dashboard-tools) .vi-strip{width:calc(100% - 208px)}}
+
+/* ===== Píldora (reemplaza la franja ancha) =====
+   Se ajusta al contenido (no ocupa una fila entera): en PC vive en la barra superior, junto a las acciones; en móvil, como una píldora corta bajo el saludo.
+   Una sola línea con elipsis; el texto completo y los demás hallazgos están en la hoja. */
+.vi-strip{width:fit-content!important;max-width:min(100%,420px);min-height:0!important;height:38px;margin:0 0 10px!important;padding:0 6px 0 5px!important;gap:8px!important;border-radius:999px!important;align-self:flex-start}
+.vi-strip .vi-mark{flex:0 0 28px!important;height:28px!important;border-radius:50%!important}
+.vi-strip .vi-spark{width:17px;height:17px}
+.vi-strip .vi-copy{display:block!important;flex:0 1 auto!important}
+.vi-strip .vi-copy small{display:none!important}
+.vi-strip .vi-copy strong{display:block!important;-webkit-line-clamp:unset!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px;line-height:1.1}
+.vi-strip .vi-more{font-size:11.5px;padding:2px 7px}
+.vi-strip .vi-chev{display:none!important}
+.vi-strip:not(:has(.vi-more)){padding-right:12px!important}
+@media(min-width:791px){
+ .vi-strip.vi-in-top{height:42px;margin:0 8px 0 0!important;max-width:clamp(150px,26vw,400px);align-self:center;flex:0 1 auto;min-width:0}
+ .top-actions:has(.vi-in-top){display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:nowrap}
+}
+@media(min-width:791px) and (max-width:1180px){.vi-strip.vi-in-top .vi-copy{display:none!important}.vi-strip.vi-in-top{padding-right:6px!important}}
+@media(max-width:790px){.vi-strip .vi-copy{max-width:min(62vw,250px)}}

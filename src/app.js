@@ -19934,7 +19934,7 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
      const cards=ordered.map(([k,l])=>{const mo=l.reduce((n,r)=>n+monthlyDop(r),0);const ic=k==='En pausa'?'cycle':v255TaxonomyIconName('gasto',k,'');return `<button type="button" class="v1170-card${open===k?' is-open':''}" data-v1170-cat="${esc(k)}" aria-expanded="${open===k}"><span class="v1170-ic">${icon(ic||'cycle')}</span><span class="v1170-main"><strong>${esc(k)}</strong><small>${l.length} ${l.length===1?'servicio':'servicios'}${k==='En pausa'?' en pausa':''}</small></span><span class="v1170-amt"><b>${rd(mo,0)}<i>/mes</i></b><small>${rd(mo*12,0)}/año</small></span>${chev}</button>`}).join('');
      const detail=open?`<section class="v1170-detail"><header><h3>${esc(open)}</h3><button type="button" class="v1170-close" data-v1170-cat="${esc(open)}" aria-label="Cerrar">${G('<path d="M6 6l12 12M18 6 6 18"/>')}</button></header>${groups.get(open).map(r=>serviceItem(r,open==='En pausa')).join('')}</section>`:'';
      return `<div class="v911 v1170 v1170-sub" data-v1170="sub"><div class="v1170-tools">${v1170Date(m)}</div>
-      <section class="v1170-hero"><div class="v1170-hero-main"><div class="v1170-hero-title"><span>SUSCRIPCIONES</span></div><strong class="v1170-big">${rd(paid,0)}</strong><div class="v1170-vs"><span>Frente al mes anterior:</span> ${v1170Chip(paid,prev,true)}</div><button type="button" class="v1170-add v1170-add-hero" data-act="addRecurring">${G('<path d="M12 5v14M5 12h14"/>')}<span>Nueva suscripción</span></button></div>
+      <section class="v1170-hero"><div class="v1170-hero-main"><div class="v1170-hero-title"><span>SUSCRIPCIONES · PAGADO ESTE MES</span></div><strong class="v1170-big">${rd(paid,0)}</strong><div class="v1170-vs"><span>Frente al mes anterior:</span> ${v1170Chip(paid,prev,true)}</div><button type="button" class="v1170-add v1170-add-hero" data-act="addRecurring">${G('<path d="M12 5v14M5 12h14"/>')}<span>Nueva suscripción</span></button></div>
        <div class="v1170-kpis">${kpi(G('<rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M8 3v4M16 3v4M3.5 10h17"/>','Pago mensual'),'Pago mensual',rd(mes,0),'Compromiso mensual actual')}${kpi(G('<path d="M5 20v-6M12 20V6M19 20v-10"/>'),'Proyección anual',rd(mes*12,0),'Equivalente a 12 meses')}${kpi(G('<path d="M12 3 3 8l9 5 9-5-9-5Z"/><path d="m3 13 9 5 9-5"/>'),'Activas',String(act.length),'Suscripciones vigentes')}${kpi(G('<circle cx="12" cy="12" r="9"/><path d="m5.600 5.600 12.800 12.800"/>'),'Canceladas',String(inactive),'Pausadas o terminadas')}</div></section>
       <h2 class="v1170-eyebrow">TUS SUSCRIPCIONES POR CATEGORÍA</h2>
       ${cards?`<div class="v1170-grid">${cards}</div>`:'<p class="v911-empty">Aún no tienes suscripciones. Añade la primera con «Nueva suscripción».</p>'}${detail}</div>`;
@@ -20571,9 +20571,9 @@ function vIntelEnsure(){
  if(window.ViveIntelligence&&window.ViveIntelUI)return Promise.resolve();
  if(vIntelLoading)return vIntelLoading;
  vIntelLoading=new Promise(done=>{
-  try{const css=document.createElement('link');css.rel='stylesheet';css.href='./src/intelligence/intelligence.css?v=7';document.head.appendChild(css)}catch(_){}
+  try{const css=document.createElement('link');css.rel='stylesheet';css.href='./src/intelligence/intelligence.css?v=10';document.head.appendChild(css)}catch(_){}
   const load=src=>new Promise((ok,ko)=>{const el=document.createElement('script');el.src=src;el.onload=ok;el.onerror=ko;document.head.appendChild(el)});
-  load('./src/intelligence/engine.js?v=4').then(()=>load('./src/intelligence/stats.js?v=2')).then(()=>load('./src/intelligence/strategy.js?v=3')).then(()=>load('./src/intelligence/discovery.js?v=4')).then(()=>load('./src/intelligence/ui.js?v=16')).then(()=>done()).catch(()=>done());
+  load('./src/intelligence/engine.js?v=4').then(()=>load('./src/intelligence/stats.js?v=2')).then(()=>load('./src/intelligence/strategy.js?v=3')).then(()=>load('./src/intelligence/discovery.js?v=4')).then(()=>load('./src/intelligence/ui.js?v=17')).then(()=>done()).catch(()=>done());
  });
  return vIntelLoading;
 }

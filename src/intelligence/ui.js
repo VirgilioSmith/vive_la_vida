@@ -19,7 +19,7 @@
  function strip(res,list,mods){
   const top=list[0];if(!top)return null;
   const el=document.createElement('button');el.type='button';el.className='vi-strip vi-p-'+top.priority;el.dataset.vi='open';el.dataset.viModule=mods[0];
-  el.setAttribute('aria-haspopup','dialog');el.setAttribute('aria-label','VIVE Intelligence: '+top.title+(list.length>1?'. '+(list.length-1)+' más.':''));
+  el.setAttribute('aria-haspopup','dialog');el.title=top.title;el.setAttribute('aria-label','VIVE Intelligence: '+top.title+(list.length>1?'. '+(list.length-1)+' más.':''));
   el.innerHTML=`<span class="vi-mark">${spark}</span><span class="vi-copy"><small>VIVE Intelligence · ${esc(res.__label||'')}</small><strong>${esc(top.title)}</strong></span>${list.length>1?`<span class="vi-more">+${list.length-1}</span>`:''}<span class="vi-chev" aria-hidden="true">›</span>`;
   return el;
  }
@@ -29,7 +29,9 @@
   /* Sin lecturas de layout (getBoundingClientRect forzaría un reflow de toda la página en cada render):
      la portada móvil de Inicio existe en el DOM solo en móvil; en el resto se usa #page. */
   const home=document.querySelector('.vive-mobile-home'),page=document.getElementById('page');
-  if(home&&window.matchMedia('(max-width:790px)').matches){const g=home.querySelector('.vive-mobile-greeting');if(g&&g.nextSibling)home.insertBefore(el,g.nextSibling);else home.prepend(el);return true}
+  const wide=!window.matchMedia('(max-width:790px)').matches;const ta=wide?document.querySelector('.topbar .top-actions'):null;
+  if(ta){el.classList.add('vi-in-top');ta.prepend(el);return true}
+  if(home&&!wide){const g=home.querySelector('.vive-mobile-greeting');if(g&&g.nextSibling)home.insertBefore(el,g.nextSibling);else home.prepend(el);return true}
   if(page&&page.parentElement){page.parentElement.insertBefore(el,page);return true}
   const m=document.querySelector('#app main.main');if(m){m.prepend(el);return true}return false
  }
