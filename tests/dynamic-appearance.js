@@ -104,6 +104,8 @@ async function themeMatrix(browser,width,mode,activePalettes){
       await sel.click();const picker=p.getByRole('dialog',{name:'Seleccionar institución'});await picker.locator('.v789-picker-row').nth(1).click();
       if(await picker.locator('.v789-picker-confirm').isVisible())await picker.locator('.v789-picker-confirm').click();
       assert.equal(await style(p,'.vBanks-mobile-hero','backgroundImage'),colour,'Selected bank retains user accent');
+      /* Elegir una institución abre su pantalla propia (sin selector): se vuelve a Bancos antes de reabrir el selector */
+      if(!(await sel.count())){await p.locator('.vBanks-back:visible').first().click();await sel.waitFor()}
       await sel.click();await picker.locator('.v789-picker-row').first().click();if(await picker.locator('.v789-picker-confirm').isVisible())await picker.locator('.v789-picker-confirm').click();
      }
      if(route==='wallet'&&mobile){
