@@ -285,7 +285,7 @@ const moneyText=s=>Number(s.replace(/[^\d.\-]/g,''));
     assert.deepEqual(await state.locator('.v1244-ccy span').allTextContents().then(a=>a.map(moneyText)),[470001,3000]);
     assert.deepEqual(await limits.locator('.v1301-equivalent').allTextContents().then(a=>a.map(moneyText)),[330001,320001]);
     const share=await consumption.locator('.v1301-rank .v1301-meter i').first().evaluate(el=>parseFloat(el.style.width));
-    assert.ok(Math.abs(share-(30951.09/47952.18*100))<1e-8,'Participación calculada con los centavos');
+    assert.ok(Math.abs(share-(30951.09/47952.18*100))<1e-3,'Participación calculada con los centavos (la barra guarda 4 decimales)');
     assert.deepEqual(await donutColors(),colors);
     const restored=await p.evaluate(()=>{
      const t=window.__T,d=t.dbg(),tx=d.transactions.find(x=>x.id==='h2'),amount=tx.amount;
