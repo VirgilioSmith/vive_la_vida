@@ -1,3 +1,4 @@
+-- APLICADA a producción el 2026-11-26 (verificado: sin índices redundantes, políticas select_own, datos intactos).
 -- Limpieza de malas prácticas detectadas en la auditoría (advisors + inspección):
 -- 1) Índices redundantes en apple_pay_* (cubiertos por otros índices o claves únicas).
 -- 2) Políticas «ALL» sobre tablas que solo conceden SELECT: se sustituyen por SELECT (mismo efecto, intención explícita).

@@ -9429,6 +9429,8 @@ v10LiveStart=function(){
   if(status==='SUBSCRIBED'){v720RealtimeFailures=0;v720Catchup();v11ScheduleAppleSync(1500);return;}
   if(['CHANNEL_ERROR','TIMED_OUT','CLOSED'].includes(status)){
    if(v11LiveRetryTimer)return;
+   /* Cero reintentos infinitos: tras 8 fallos seguidos se detiene la reconexión automática hasta que el usuario vuelva a la app (visibilidad/conexión). */
+   if(v720RealtimeFailures>=8){v10LiveStop();return}
    const delay=Math.min(120000,5000*2**Math.min(v720RealtimeFailures++,5));
    v10LiveStop();
    v11LiveRetryTimer=setTimeout(()=>{v11LiveRetryTimer=0;v10LiveStart()},delay);
@@ -9440,7 +9442,7 @@ function v720PauseLive(){
  v10LiveStop();
  if(f33Api?.realtime?.disconnect)f33Api.realtime.disconnect();
 }
-document.addEventListener('visibilitychange',()=>{if(document.hidden)v720PauseLive();else v10LiveStart()});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)v720PauseLive();else{v720RealtimeFailures=0;v10LiveStart()}});
 window.addEventListener('pagehide',v720PauseLive);
 window.addEventListener('pageshow',()=>{if(!document.hidden)v10LiveStart()});
 window.addEventListener('offline',v720PauseLive);
