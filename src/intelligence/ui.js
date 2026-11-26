@@ -53,7 +53,7 @@
   return out}
  const LENS={wallet:'cards',cards:'cards',benefits:'cards',loans:'loans',recurring:'recurring',payments:'recurring',banks:'banks',accounts:'banks',register:'register',expenses:'register',categories:'register',income:'income',patrimony:'patrimony',certificates:'patrimony'};
  const lensScore=h=>2.3+(h.valence==='risk'?.7:h.valence==='positive'?.3:.1)+(h.urgency||0)*2+(h.confidence?h.confidence.score*.4:0);
- const lensFor=(page,d)=>{const dom=LENS[page];return dom&&d&&d.lens&&d.lens[dom]?[...d.lens[dom]].sort((a,b)=>lensScore(b)-lensScore(a)):[]};
+ const lensFor=(page,d)=>{if(STRATEGIC.has(page))return d&&d.digest?[...d.digest]:[];const dom=LENS[page];return dom&&d&&d.lens&&d.lens[dom]?[...d.lens[dom]].sort((a,b)=>lensScore(b)-lensScore(a)):[]};
  function rank(page,list,d,mods){
   const strat=STRATEGIC.has(page);const c=[];
   for(const h of lensFor(page,d)){const fake={...h,priority:h.valence==='risk'?'attention':h.valence==='positive'?'recognition':'info',title:h.title,modules:h.modules};c.push({item:fake,disc:h,s:lensScore(h)+.4})}
@@ -162,10 +162,10 @@ const plainLabel=l=>String(l).replace(/^z robustos?$/i,'Distancia a lo habitual'
   let disc=null;try{disc=B().discover()}catch(e){console.warn('[Intelligence] discover',e)}
   try{const pk=mods?rank(B().page(),mine,disc,mods):null;if(pk&&!pk.disc){const i=ordered.indexOf(pk.item);if(i>0){ordered.splice(i,1);ordered.unshift(pk.item)}}}catch(_){}
   const by=p=>ordered.filter(f=>f.priority===p);
-  const lensList=lensFor(B().page(),disc);const dlist=[...lensList,...(disc?disc.discoveries:[]).filter(h=>!lensList.some(l=>l.key===h.key))];
+  const lensList=lensFor(B().page(),disc);const gl=(disc?disc.discoveries:[]).filter(h=>!lensList.some(l=>l.key===h.key));const dlist=STRATEGIC.has(B().page())?[...gl,...lensList]:[...lensList,...gl];
   const dsec=dlist.length?`<section class="vi-group"><h3>Descubrimientos<span>${dlist.length}</span></h3>${dlist.map(discCard).join('')}</section>`:'';
-  const body=GROUPS.map(([p,l])=>{const a=by(p);const g=a.length?`<section class="vi-group"><h3>${l}<span>${a.length}</span></h3>${a.map(card).join('')}</section>`:'';return (p==='attention'&&!lensList.length?g+dsec:g)}).join('').replace(/^$/,'')||(dsec||'<p class="vi-empty">Por ahora no hay nada que destacar. VIVE Intelligence sigue aprendiendo en silencio y vuelve a evaluar cuando registres o cambies información.</p>');
-  const bodyFinal=(lensList.length||!/Descubrimientos<span>/.test(body))&&dsec?dsec+body:body;
+  const body=GROUPS.map(([p,l])=>{const a=by(p);const g=a.length?`<section class="vi-group"><h3>${l}<span>${a.length}</span></h3>${a.map(card).join('')}</section>`:'';return (p==='attention'&&(!lensList.length||STRATEGIC.has(B().page()))?g+dsec:g)}).join('').replace(/^$/,'')||(dsec||'<p class="vi-empty">Por ahora no hay nada que destacar. VIVE Intelligence sigue aprendiendo en silencio y vuelve a evaluar cuando registres o cambies información.</p>');
+  const bodyFinal=((lensList.length&&!STRATEGIC.has(B().page()))||!/Descubrimientos<span>/.test(body))&&dsec?dsec+body:body;   /* en Inicio lo urgente va primero; en cada módulo, lo propio del módulo */
   const q=res.meta.quality||{};
   const life=B().prefs().life;
   return `<div class="vi-layer" data-vi="backdrop"><section class="vi-sheet" role="dialog" aria-modal="true" aria-labelledby="vi-title">
@@ -192,7 +192,7 @@ const plainLabel=l=>String(l).replace(/^z robustos?$/i,'Distancia a lo habitual'
   if(k==='close'){closeSheet();return}
   if(k==='go'){const id=t.dataset.target;closeSheet();B().go(id);return}
   if(k==='why'){const c=t.closest('.vi-card');const w=c.querySelector('.vi-why');w.hidden=!w.hidden;t.closest('details')?.removeAttribute('open');return}
-  if(k==='dfb'){const c=t.closest('.vi-card');const d=B().discover();const h=[...d.discoveries,...d.internal].find(x=>x.key===c.dataset.viDkey);
+  if(k==='dfb'){const c=t.closest('.vi-card');const d=B().discover();const h=[...d.discoveries,...d.internal,...Object.values(d.lens||{}).flat()].find(x=>x.key===c.dataset.viDkey);
    if(h){B().discFeedback(h,t.dataset.a);B().toast(({correct:'Patrón confirmado y recordado.',incorrect:'Anotado: lo descartamos y ajustamos.',exception:'Excepción anotada: no altera tu línea base.',intentional:'Decisión intencional registrada.',known:'Entendido: lo silenciamos por un tiempo.',not_interested:'Listo: no lo mostraremos por un tiempo.',follow:'Lo seguiremos observando.',improve:'Meta de mejora creada.',helped:'Gracias: priorizaremos este tipo de hallazgo.',never:'No volverás a ver este tipo de hallazgo.'})[t.dataset.a]);}
    const mods=MAP[B().page()]||null;openSheet(mods);mount();return}
   if(k==='dforget'){B().memOp('forget',t.dataset.key);openSheet(MAP[B().page()]||null);mount();return}

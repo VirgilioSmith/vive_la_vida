@@ -355,7 +355,7 @@
  }
  /* Convergencia de señales débiles: varias lecturas pequeñas, de distinto tipo, apuntando en la misma dirección */
  function converge(raw,F,conf){
-  const ok=raw.filter(h=>h.engine!=='shadow'||!/^(conv|reverse)/.test(h.key)).filter(h=>h.type!=='possible-data-error'&&h.confidence&&h.confidence.score>=.3);
+  const ok=raw.filter(h=>h.engine!=='lens'&&(h.engine!=='shadow'||!/^(conv|reverse)/.test(h.key))).filter(h=>h.type!=='possible-data-error'&&h.confidence&&h.confidence.score>=.4);   /* las lecturas de estado (lente) no son señales de cambio */
   const risk=ok.filter(h=>h.valence==='risk'&&(h.urgency||0)<.7),pos=ok.filter(h=>h.valence==='positive');const out=[];
   const grp=(list,val)=>{const types=[...new Set(list.map(h=>h.type))];if(types.length<3)return;const cats=[...new Set(list.map(h=>h.category))];
    const titles=list.slice(0,4).map(h=>h.title);out.push(Hh({key:'conv.'+val,engine:'shadow',type:'convergence-'+val,category:'liquidity',valence:val==='risk'?'risk':'positive',
@@ -417,7 +417,32 @@
   {const ms=(snap.months||[]).filter(m=>!m.partial&&m.txCount>0).map(m=>num(m.income));if(ms.length>=4&&S.mean(ms)>0){const cv=S.stdev(ms)/S.mean(ms);if(cv<=.1)L('income','stability','income-stable','positive','Tus ingresos son muy estables',`Varían solo ${Math.round(cv*100)} % de un mes a otro (≈ ${fmt(S.mean(ms))}). Eso facilita planear.`,[['Variación mensual',Math.round(cv*100)+' %'],['Ingreso mensual medio',fmt(S.mean(ms))]],'La previsibilidad del ingreso es una forma de libertad.',['Mantenerlo'],['Ver ingresos','income'],['income'],{urg:.02,str:.8,cat:'income',periods:`${ms.length} meses`});else if(cv>=.35)L('income','variable','income-variable','neutral','Tus ingresos cambian bastante de un mes a otro',`Varían ${Math.round(cv*100)} % alrededor de ${fmt(S.mean(ms))}. Conviene que tu colchón considere el mes más bajo (${fmt(Math.min(...ms))}).`,[['Variación mensual',Math.round(cv*100)+' %'],['Mes más bajo',fmt(Math.min(...ms))]],'Con ingresos variables, la reserva pesa más que el promedio.',['Calcular reserva con el mes bajo'],['Ver ingresos','income'],['income'],{urg:.2,str:.8,cat:'income',periods:`${ms.length} meses`})}}
   /* ---- PATRIMONIO ---- */
   {const pos=snap.position||{};if(num(pos.assets)>0&&num(pos.debt)>=0){const r=num(pos.debt)/num(pos.assets);L('patrimony','leverage','debt-to-assets',r<=.2?'positive':r>=.5?'risk':'neutral',`Tus deudas son ${Math.round(r*100)} % de tus activos`,`${fmt(pos.debt)} de deuda frente a ${fmt(pos.assets)} en activos: patrimonio neto de ${fmt(pos.net)}.`,[['Deuda',fmt(pos.debt)],['Activos',fmt(pos.assets)],['Patrimonio neto',fmt(pos.net)]],'La relación deuda/activos resume qué parte de lo que tienes es realmente tuya.',r>=.5?['Priorizar reducir deuda']:['Mantenerlo'],['Ver patrimonio','patrimony'],['patrimony'],{urg:r>=.5?.4:.02,str:.9,cat:'liquidity',n:12})}}
-  return out;
+  /* ---- Conocimiento universal → inteligencia localizada: cada hallazgo se enriquece con lo que SE SABE del resto de Vive ---- */
+  const ob30=S.sum((snap.upcoming||[]).filter(u=>u.days>=0&&u.days<=30).map(u=>num(u.amountDop)));
+  const instAll=S.sum((snap.loans||[]).map(l=>num(l.installmentDop)));
+  const fixedAll=instAll+num(snap.recurringMonthlyDop);
+  const ctx={
+   cards:()=>{const d=S.sum((snap.cards||[]).map(c=>num(c.debtDop)));return d>0&&liq>0?`Tu liquidez (${fmt(liq)}) cubre ${(liq/d).toFixed(1)}× tu deuda de tarjetas.`:null},
+   loans:()=>inc3>0?`Con tus recurrentes, tus compromisos fijos suman ${Math.round(100*fixedAll/inc3)} % de tu ingreso mensual.`:null,
+   recurring:()=>inc3>0&&instAll>0?`Junto a tus cuotas de préstamos (${fmt(instAll)}), lo fijo suma ${Math.round(100*fixedAll/inc3)} % del ingreso.`:null,
+   banks:()=>liq>0&&ob30>0?`Tus compromisos de los próximos 30 días (${fmt(ob30)}) equivalen a ${Math.round(100*ob30/liq)} % de esa liquidez.`:null,
+   register:()=>inc3>0&&sp3>0?`Tu gasto mensual promedio es ${Math.round(100*sp3/inc3)} % de tu ingreso.`:null,
+   income:()=>sp3>0&&inc3>0?`Tus gastos de 90 días equivalen a ${Math.round(100*sp3/inc3)} % de ese ingreso.`:null,
+   patrimony:()=>fixedAll>0&&liq>0?`Tu liquidez cubre ${(liq/fixedAll).toFixed(1)} meses de cuotas y recurrentes.`:null};
+  for(const h of out){const f=ctx[h.lens];const t=f&&f();if(t&&!h.summary.includes(t)){h.context=t;h.summary=h.summary+' '+t}}
+  /* ---- Prescripción: números concretos y reproducibles (siempre con su supuesto; Vive no ejecuta nada) ---- */
+  const pres=(key,text,assume)=>{const h=out.find(x=>x.key===key);if(h){h.prescription=text;h.prescriptionBasis=assume;h.summary=h.summary+' '+text}};
+  { const hi=[...cards].sort((a,b)=>b.util-a.util)[0];
+    if(hi&&hi.util>30&&hi.limitDop>0){const pay=hi.debtDop-.3*hi.limitDop;if(pay>0)pres('lens.cards.util',`Pagar ≈ ${fmt(pay)} antes del corte la llevaría al 30 %.`,'Utilización = deuda ÷ límite; objetivo 30 %.')}}
+  { const lo=[...loans].filter(l=>l.rate>0&&l.installmentDop>0).sort((a,b)=>b.balanceDop-a.balanceDop)[0];
+    if(lo){const r=lo.rate/1200,B=lo.balanceDop,P=lo.installmentDop;const nper=(Pm)=>(Pm>r*B)?-Math.log(1-r*B/Pm)/Math.log(1+r):null;const n0=nper(P);const E=Math.max(500,Math.round(P*.2/500)*500);const n1=nper(P+E);
+     if(n0&&n1&&n0-n1>=1){const saved=P*n0-(P+E)*n1;if(saved>0)pres('lens.loans.payoff',`Sumar ${fmt(E)} a cada cuota la terminaría ≈ ${Math.round(n0-n1)} cuotas antes y ahorraría ≈ ${fmt(saved)} en intereses.`,`Supuesto: tasa ${lo.rate}% anual constante y cuota fija; es una estimación.`)}}}
+  { const h=out.find(x=>x.key==='lens.banks.coverage');if(h&&sp3>0&&liq/sp3<3){const need=3*sp3-liq,sav=inc3-sp3;
+     h.prescription=need>0?`Reunir ${fmt(need)} más completaría 3 meses de gasto${sav>0?`; con tu margen actual (${fmt(sav)} al mes) tardarías ≈ ${Math.ceil(need/sav)} meses`:''}.`:null;if(h.prescription){h.prescriptionBasis='Meta de 3 meses de gasto (convención editable); margen = ingreso − gasto de 90 días.';h.summary=h.summary+' '+h.prescription}}}
+  { const h=out.find(x=>x.key==='lens.recurring.weight');if(h&&rec.length>=2){const top=[...rec].sort((a,b)=>b.monthlyDop-a.monthlyDop)[0];h.prescription=`Si «${top.name}» bajara a la mitad, liberarías ≈ ${fmt(top.monthlyDop*6)} al año.`;h.prescriptionBasis='Monto mensual equivalente × 6 meses.';h.summary=h.summary+' '+h.prescription}}
+  /* ---- Coherencia: no celebrar flexibilidad si la liquidez está en riesgo ---- */
+  const covRisk=out.some(x=>x.type==='liquidity-coverage'&&x.valence==='risk');
+  return covRisk?out.filter(x=>x.type!=='credit-headroom'):out;
  }
 
  /* ==========================================================================

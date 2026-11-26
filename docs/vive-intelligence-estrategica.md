@@ -111,3 +111,33 @@ Antes, un hallazgo transversal («pagos vencidos», presente en 8 módulos) gana
   - Suscripciones: peso de lo recurrente y cobros anuales próximos. Bancos: concentración en una cuenta y cobertura de liquidez en meses. Movimientos: categoría que crece frente a su mediana. Ingresos: estabilidad o variabilidad. Patrimonio: deuda/activos.
 - La hoja abre con los hallazgos de la pantalla primero; los transversales («pagos vencidos») quedan debajo. Pruebas: 10 de lente en `tests/intelligence-strategy.js` y 15 en `tests/intelligence-contexto.js`.
 - Limitación: validado con datos de prueba; el valor de cada lente depende de que existan datos de esa pantalla (si no hay, la píldora no aparece).
+
+---
+
+## Conocimiento universal, inteligencia localizada — validación (nov 2026)
+
+**Qué se añadió (sin pantallas ni módulos nuevos)**
+- **Contexto global en cada módulo:** cada hallazgo de una pantalla incorpora lo que se sabe del resto de Vive (p. ej. Wallet: «tu liquidez cubre N× tu deuda de tarjetas»; Bancos: compromisos de 30 días vs liquidez; Préstamos: compromisos fijos totales vs ingreso).
+- **Prescripción numérica y reproducible** (con su supuesto declarado; Vive no ejecuta nada): pago que deja una tarjeta en 30 %, efecto de sumar a la cuota de un préstamo (cuotas ahorradas e intereses, fórmula de amortización), cuánto falta para 3 meses de gasto y en cuánto tiempo, y qué libera reducir el recurrente más grande.
+- **Inicio = cerebro:** resumen transversal con lo más relevante de cada módulo (uno por módulo, máx. 4). Lo urgente sigue primero en la hoja; la píldora de Inicio prioriza lo estratégico.
+- **Coherencia:** no se celebra el margen de crédito si la liquidez cubre menos de un mes; las lecturas de estado no alimentan la convergencia de señales; una deriva descrita por dos detectores se comunica una sola vez.
+- **Entrada segura** (`cleanSnap`): tipos erróneos, NaN/Infinity, fechas inválidas y valores absurdos se normalizan antes de analizar.
+
+**Evidencia (pruebas reproducibles, semillas fijas)** — `tests/intelligence-validacion.js` (10), `tests/intelligence-robustez.js` (15), `tests/intelligence-strategy.js` (97), `tests/intelligence-contexto.js` (16):
+
+| Fenómeno plantado en datos sintéticos | Recall (visible para el usuario) |
+|---|---|
+| Día de la semana con gasto ×3,4 | 100 % (20/20) |
+| Cambio de nivel +50 % (últimas 10 semanas) | 85 % (17/20) |
+| Deriva lenta del gasto | 100 % (20/20) |
+| Excepción que se repite (→ hábito) | 100 % (20/20) |
+| Ingreso quincenal que se retrasa | 100 % (20/20) |
+| Suscripción que deja de cobrarse | 100 % (20/20) |
+
+Sin fenómeno real (40 usuarios sintéticos): 15 % vio algún descubrimiento falso (0,17 por usuario); ningún tipo superó el 12 %; no se inventaron patrones de día de la semana ni correlaciones. Antes de esta ronda, «Estás mejorando sin darte cuenta» daba falsos positivos por ruido binomial; ahora exige z ≥ 2,3 y estar por debajo del ritmo de 90 días. Robustez: 1.500 entradas corruptas sin una sola excepción ni error de motor; < 400 ms por evaluación. Las cifras de las prescripciones se contrastaron con una implementación independiente de la fórmula.
+
+**Lo que NO está certificado**
+- Los datos de validación son sintéticos y el generador es de la misma familia que el usado para calibrar: las tasas reales con tus datos pueden ser peores. Medir con datos reales requiere tu historial y tus correcciones (el sistema ya registra la retroalimentación para calibrarse).
+- Predicción: con 6 meses completos solo se puede evaluar, no promover un modelo (ver Metacognición). La capacidad predictiva de liquidez se verificó en escenarios construidos (riesgo planificado vs holgura), no contra el futuro real.
+- Utilidad percibida y precisión «en la vida real»: pendientes hasta acumular retroalimentación voluntaria.
+- No probado en iPhone real.

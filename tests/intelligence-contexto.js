@@ -18,5 +18,8 @@ let ok=0,bad=0;const check=(n,c,x)=>{if(c){ok++;console.log('✓',n)}else{bad++;
   const sheet=await p.evaluate(()=>({strip:null,first:document.querySelector('.vi-sheet .vi-card h4')?.textContent}));
   check(`[${name}] la hoja abre sin errores y con contenido`,!!sheet.first,sheet);
  }
+ { const {p}=await open(b,1280,860);p.on('pageerror',e=>errs.push(e.message));await p.evaluate(g=>window.__viveIntel.go(g),'overview');await p.waitForTimeout(1200);await p.click('.vi-strip');await p.waitForTimeout(600);
+  const inicio=await p.evaluate(()=>({lens:[...document.querySelectorAll('.vi-disc')].filter(c=>/Aquí y ahora/i.test(c.innerText)).length,order:[...document.querySelectorAll('.vi-group h3')].map(h=>h.childNodes[0].textContent)}));
+  check('Inicio (cerebro): la hoja reúne hallazgos de varios módulos (≥ 2) y lo urgente sigue primero',inicio.lens>=2&&inicio.order[0]==='Crítico',inicio); }
  check('sin errores de página',errs.length===0,errs);
  console.log(`\nINTELLIGENCE CONTEXTO: ${ok} verificaciones aprobadas${bad?`, ${bad} FALLARON`:''}`);await b.close();process.exit(bad?1:0)})();
