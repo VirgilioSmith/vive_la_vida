@@ -20229,6 +20229,7 @@ function vIntelSnapshot(){
  snap.certificates=[];try{for(const c of db.certificates||[]){if(hidden(c)||!c.maturityDate)continue;snap.certificates.push({id:c.id,name:c.name||'Certificado',days:diffDays(c.maturityDate,t),capitalDop:cvt(certificateCapital(c),c.currency||'DOP')})}}catch(_){}
  // Entre personas
  snap.personal={overdueReceivable:[],soonPayable:[]};try{for(const l of db.personalLoans||[]){const b=personalBalance(l);if(!(b>0.005)||!l.dueDate)continue;const days=diffDays(l.dueDate,t);const it={id:l.id,person:l.person||'Persona',amountDop:cvt(b,l.currency||'DOP')};if(l.direction==='lent'&&days<0)snap.personal.overdueReceivable.push(it);if(l.direction==='borrowed'&&days>=0&&days<=7)snap.personal.soonPayable.push(it)}}catch(_){}
+ try{const open=[];let recv=0,pay=0;for(const l of db.personalLoans||[]){const b=personalBalance(l);if(!(b>0.005))continue;const d=cvt(b,l.currency||'DOP');const days=l.dueDate?diffDays(l.dueDate,t):null;const dir=l.direction==='lent'?'lent':'borrowed';if(dir==='lent')recv+=d;else pay+=d;open.push({id:l.id,contactId:l.contactId||null,person:l.person||'Persona',dir,amountDop:d,days})}snap.personal.open=open;snap.personal.receivableDop=recv;snap.personal.payableDop=pay}catch(_){}
  snap.pendingOps=(db.pendingOperations||[]).length;
  /* Libro mayor normalizado para el motor de descubrimiento (mismas reglas contables que monthlyTotals):
     gasto = gasto + compra con tarjeta − devolución; ingreso = ingreso. Se EXCLUYEN transferencias propias, pagos de tarjeta,
@@ -20294,9 +20295,9 @@ function vIntelForMomentos(){
 }
 window.__viveIntel=Object.freeze({run:vIntelRun,discover:vIntelDiscover,discFeedback:vIntelDiscFeedback,memOp:vIntelMemOp,simulate:vIntelSimulate,strategic:vIntelStrategic,audit:()=>{const d=vIntelDiscover();return d&&{audit:d.audit,strategy:d.strategy&&d.strategy.benchmark,governance:d.strategy&&d.strategy.governance}},answer:vIntelAnswer,forMomentos:vIntelForMomentos,memory:vIntelMem,invalidate:()=>v99Invalidate(),feedback:vIntelFeedback,setPref:vIntelSetPref,snapshot:vIntelSnapshot,prefs:()=>window.ViveIntelligence.engines.learning.normalize(db.settings.intelligence).prefs,
  go:id=>{const b=document.createElement('button');b.type='button';b.dataset.act='navigate';b.dataset.id=id;b.hidden=true;document.body.append(b);b.click();b.remove()},
- render:()=>render(),page:()=>{if(ui.page==='banks'){const t=ui.vBanksPcProduct;if(t==='accounts'||t==='loans'||t==='certificates'||t==='cards')return t}return ui.page},toast:m=>toast(m)});
+ render:()=>render(),entity:()=>{try{const d=ui.vBanksProductDetail;if(ui.page==='banks'&&d&&d.id)return {kind:d.kind,id:d.id};if(ui.page==='cards'&&ui.cardId)return {kind:'cards',id:ui.cardId};if(ui.page==='wallet'&&ui.vWalletPcCard&&ui.vWalletPcCard!=='all'&&ui.vWalletPcOpenedCard)return {kind:'cards',id:ui.vWalletPcCard};if(ui.page==='personal'&&(ui.v56LoanId||ui.v56ContactId))return {kind:'personal',id:ui.v56LoanId||ui.v56ContactId,contact:!!ui.v56ContactId&&!ui.v56LoanId}}catch(_){}return null},page:()=>{if(ui.page==='banks'){const t=ui.vBanksPcProduct;if(t==='accounts'||t==='loans'||t==='certificates'||t==='cards')return t}return ui.page},toast:m=>toast(m)});
 /* Carga bajo demanda: motor, interfaz y estilos se descargan una sola vez, en reposo, la primera vez que se muestra una página con Intelligence. */
-const vIntelPages=new Set(['overview','mobilehub','register','expenses','categories','income','banks','accounts','wallet','cards','loans','patrimony','certificates','recurring','payments','pressure','budget','personal','benefits','kpis']);
+const vIntelPages=new Set(['overview','mobilehub','register','expenses','categories','income','banks','accounts','wallet','cards','loans','patrimony','certificates','recurring','payments','pressure','budget','personal','benefits','kpis','advanced','analytics','annual','flow','projection','vision','score','transactions']);
 let vIntelLoading=null;
 function vIntelEnsure(){
  if(window.ViveIntelligence&&window.ViveIntelUI)return Promise.resolve();
@@ -20304,7 +20305,7 @@ function vIntelEnsure(){
  vIntelLoading=new Promise(done=>{
   try{const css=document.createElement('link');css.rel='stylesheet';css.href='./src/intelligence/intelligence.css?v=10';document.head.appendChild(css)}catch(_){}
   const load=src=>new Promise((ok,ko)=>{const el=document.createElement('script');el.src=src;el.onload=ok;el.onerror=ko;document.head.appendChild(el)});
-  load('./src/intelligence/engine.js?v=4').then(()=>load('./src/intelligence/stats.js?v=2')).then(()=>load('./src/intelligence/strategy.js?v=5')).then(()=>load('./src/intelligence/discovery.js?v=7')).then(()=>load('./src/intelligence/ui.js?v=23')).then(()=>done()).catch(()=>done());
+  load('./src/intelligence/engine.js?v=4').then(()=>load('./src/intelligence/stats.js?v=2')).then(()=>load('./src/intelligence/strategy.js?v=6')).then(()=>load('./src/intelligence/discovery.js?v=9')).then(()=>load('./src/intelligence/ui.js?v=25')).then(()=>done()).catch(()=>done());
  });
  return vIntelLoading;
 }

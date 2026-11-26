@@ -141,3 +141,16 @@ Sin fenómeno real (40 usuarios sintéticos): 15 % vio algún descubrimiento fal
 - Predicción: con 6 meses completos solo se puede evaluar, no promover un modelo (ver Metacognición). La capacidad predictiva de liquidez se verificó en escenarios construidos (riesgo planificado vs holgura), no contra el futuro real.
 - Utilidad percibida y precisión «en la vida real»: pendientes hasta acumular retroalimentación voluntaria.
 - No probado en iPhone real.
+
+---
+
+## De lo macro a lo micro — cobertura total (Entre personas, Analítica avanzada, Score y el resto)
+Vive Intelligence está ahora en **todas** las pantallas y submódulos financieros (16 comprobadas en PC y móvil): Inicio, Wallet, Préstamos, Bancos, Patrimonio, Suscripciones, Movimientos, Ingresos, Presupuesto, Compromisos, **Entre personas, Analítica avanzada, Score, Anual, Flujo, Proyección**. No se muestra en Ajustes ni en el buscador (no tienen contexto financiero).
+
+Tres niveles, un solo cerebro:
+1. **Macro (Inicio):** resumen transversal con lo más relevante de cada módulo (uno por módulo, máx. 4).
+2. **Módulo:** lente propia (nuevas: Entre personas —por cobrar vencido, por pagar, posición neta—, Analítica —tasa de ahorro, variabilidad, mejor/peor mes, tendencia del margen, cambio de peso por categoría—, Score —utilización con prescripción exacta al 30 %, pagos vencidos, carga de cuotas, mezcla de crédito— y Presupuesto —ritmo del mes y gasto diario máximo—). Si un módulo no tiene nada propio, **hereda lo macro** en lugar de quedarse mudo.
+3. **Micro (detalle):** al abrir una tarjeta, préstamo, cuenta, certificado o persona concreta, la píldora y la hoja pasan a hablar de **ese** producto (utilización y pagos de esa tarjeta, cuotas restantes y abono extra de ese préstamo, vencimiento de ese certificado, saldo con esa persona).
+
+Pruebas: `intelligence-strategy.js` (107), `intelligence-contexto.js` (24: presencia en 16 pantallas y paso macro→micro en PC y móvil).
+Limitación: el micro de «persona» se verificó en el motor (H2); en la interfaz se verificó el nivel módulo de Entre personas, no el detalle de una persona concreta.

@@ -424,7 +424,7 @@
   if(QA.q){const h=show.find(x=>x.key===QA.q.key);if(h&&QMAP[h.type])h.question={text:QMAP[h.type][0],options:QMAP[h.type][1]}}
   /* Inicio = cerebro de todo Vive: resumen transversal con lo más relevante de cada módulo (a lo sumo 4, uno por módulo) */
   const lensScoreD=h=>(h.valence==='risk'?1.0:h.valence==='positive'?.4:.2)+(h.urgency||0)*2+h.confidence.score*.4;
-  const digest=Object.entries(lensOut).map(([dom,list])=>[...list].sort((a,b)=>lensScoreD(b)-lensScoreD(a))[0]).filter(h=>h&&(h.valence==='risk'||(h.urgency||0)>=.15||h.valence==='positive')).sort((a,b)=>lensScoreD(b)-lensScoreD(a)).slice(0,4);
+  const digest=Object.entries(lensOut).filter(([dom])=>dom!=='score').map(([dom,list])=>list.filter(h=>!h.entity)).map(list=>[...list].sort((a,b)=>lensScoreD(b)-lensScoreD(a))[0]).filter(h=>h&&(h.valence==='risk'||(h.urgency||0)>=.15||h.valence==='positive')).sort((a,b)=>lensScoreD(b)-lensScoreD(a)).slice(0,4);
   let strategy=null;
   if(stg&&!o.noStrategy){try{
    const producedKeys=new Set(raw.map(h=>h.key));const unlearned=stg.unlearn(mem,producedKeys,today);

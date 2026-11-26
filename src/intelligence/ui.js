@@ -8,7 +8,7 @@
  /* página de la app → etiquetas de módulo que la hacen relevante */
  const MAP={overview:['overview'],mobilehub:['overview'],register:['register'],expenses:['register'],categories:['register'],income:['income'],
   banks:['banks','accounts'],accounts:['accounts','banks'],wallet:['cards','wallet'],cards:['cards','wallet'],loans:['loans'],patrimony:['patrimony'],
-  certificates:['patrimony'],recurring:['recurring'],payments:['pressure','recurring'],pressure:['pressure'],budget:['budget'],personal:['personal'],benefits:['cards'],kpis:['overview']};
+  certificates:['patrimony'],recurring:['recurring'],payments:['pressure','recurring'],pressure:['pressure'],budget:['budget'],personal:['personal'],benefits:['cards'],kpis:['overview'],advanced:['analytics','income'],analytics:['analytics','income'],annual:['analytics','income'],flow:['analytics','income'],projection:['patrimony'],vision:['patrimony'],score:['score','cards'],transactions:['register']};
  const ICON={critical:'!',attention:'!',opportunity:'↗',info:'i',recognition:'✓'};
  const GROUPS=[['critical','Crítico'],['attention','Requiere atención'],['opportunity','Oportunidades'],['info','Informativo'],['recognition','Reconocimiento']];
  const spark='<svg class="vi-spark" viewBox="0 0 24 24" aria-hidden="true"><path class="vi-spark-a" d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><circle class="vi-spark-b" cx="19" cy="17" r="1.6"/><circle class="vi-spark-c" cx="5.5" cy="18" r="1.1"/></svg>';
@@ -51,12 +51,17 @@
   if(od.length)out.push({id:'sc-od',key:'sc-od',rule:'scoped.overdue',engine:'risk',kind:'fact',priority:'critical',modules:[page],title:`${od.length} pago${od.length===1?'':'s'} ${ks.length===1?w[0]+' ':''}vencido${od.length===1?'':'s'} por ${f(od.reduce((s,x)=>s+x.amountDop,0))}`,confidence:{level:'alta'}});
   else if(soon.length)out.push({id:'sc-soon',key:'sc-soon',rule:'scoped.soon',engine:'risk',kind:'fact',priority:'attention',modules:[page],title:`${soon[0].name} vence ${soon[0].days===0?'hoy':'en '+soon[0].days+' día'+(soon[0].days===1?'':'s')}: ${f(soon[0].amountDop)}`,confidence:{level:'alta'}});
   return out}
- const LENS={wallet:'cards',cards:'cards',benefits:'cards',loans:'loans',recurring:'recurring',payments:'recurring',banks:'banks',accounts:'banks',register:'register',expenses:'register',categories:'register',income:'income',patrimony:'patrimony',certificates:'patrimony'};
+ const LENS={personal:'personal',advanced:'analytics',analytics:'analytics',annual:'analytics',flow:'analytics',projection:'patrimony',vision:'patrimony',score:'score',transactions:'register',budget:'budget',wallet:'cards',cards:'cards',benefits:'cards',loans:'loans',recurring:'recurring',payments:'recurring',banks:'banks',accounts:'banks',register:'register',expenses:'register',categories:'register',income:'income',patrimony:'patrimony',certificates:'patrimony'};
  const lensScore=h=>2.3+(h.valence==='risk'?.7:h.valence==='positive'?.3:.1)+(h.urgency||0)*2+(h.confidence?h.confidence.score*.4:0);
- const lensFor=(page,d)=>{if(STRATEGIC.has(page))return d&&d.digest?[...d.digest]:[];const dom=LENS[page];return dom&&d&&d.lens&&d.lens[dom]?[...d.lens[dom]].sort((a,b)=>lensScore(b)-lensScore(a)):[]};
+ /* De lo macro a lo micro: Inicio (todo Vive) → módulo (su escenario) → producto o persona abierta (su detalle) */
+ const lensFor=(page,d)=>{if(STRATEGIC.has(page))return d&&d.digest?[...d.digest]:[];const dom=LENS[page];const list=dom&&d&&d.lens&&d.lens[dom]?d.lens[dom]:[];if(!list.length)return [];
+  let ent=null;try{ent=B().entity&&B().entity()}catch(_){}
+  const sorted=l=>[...l].sort((a,b)=>lensScore(b)-lensScore(a));
+  const micro=ent?list.filter(h=>h.entity&&h.entity.kind===ent.kind&&String(h.entity.id)===String(ent.id)):[];
+  return [...sorted(micro).map(h=>({...h,__micro:true})),...sorted(list.filter(h=>!h.entity))]};
  function rank(page,list,d,mods){
   const strat=STRATEGIC.has(page);const c=[];
-  for(const h of lensFor(page,d)){const fake={...h,priority:h.valence==='risk'?'attention':h.valence==='positive'?'recognition':'info',title:h.title,modules:h.modules};c.push({item:fake,disc:h,s:lensScore(h)+.4})}
+  for(const h of lensFor(page,d)){const fake={...h,priority:h.valence==='risk'?'attention':h.valence==='positive'?'recognition':'info',title:h.title,modules:h.modules};c.push({item:fake,disc:h,s:lensScore(h)+.4+(h.__micro?3:0)})}
   for(const f of scoped(page,d))c.push({item:f,s:(PRI[f.priority]||1)+.5});
   for(const f of list){let s=PRI[f.priority]||1;const broad=f.modules.length>=5;
    if(!strat&&broad&&!['pressure','payments'].includes(page))continue;
@@ -75,7 +80,8 @@
    const res=b.run();const list=forModule(res,mods);
    res.__label=({overview:'Inicio',mobilehub:'Inicio',register:'Movimientos',banks:'Bancos',accounts:'Cuentas',wallet:'Tarjetas',cards:'Tarjetas',loans:'Préstamos',patrimony:'Patrimonio',recurring:'Suscripciones',pressure:'Compromisos',income:'Ingresos',budget:'Presupuesto',personal:'Entre personas'})[b.page()]||'';
    let d=null;try{d=B().discover()}catch(_){}
-   const pick=rank(b.page(),list,d,mods);
+   let pick=rank(b.page(),list,d,mods);
+   if(!pick&&!STRATEGIC.has(b.page()))pick=rank('overview',forModule(res,['overview']),d,['overview']);   /* sin nada propio, el módulo hereda lo macro (lo más relevante de todo Vive) */
    if(pick){const top=pick.item;const shown=list.length?list:[top];
     const el=strip(res,[top,...list.filter(x=>x!==top)],mods);
     if(el){if(pick.disc)el.querySelector('.vi-copy small').textContent='VIVE Intelligence · '+(pick.disc.kicker||'Descubrimiento');place(el)}}
