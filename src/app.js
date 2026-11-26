@@ -20573,7 +20573,7 @@ function vIntelEnsure(){
  vIntelLoading=new Promise(done=>{
   try{const css=document.createElement('link');css.rel='stylesheet';css.href='./src/intelligence/intelligence.css?v=7';document.head.appendChild(css)}catch(_){}
   const load=src=>new Promise((ok,ko)=>{const el=document.createElement('script');el.src=src;el.onload=ok;el.onerror=ko;document.head.appendChild(el)});
-  load('./src/intelligence/engine.js?v=4').then(()=>load('./src/intelligence/stats.js?v=2')).then(()=>load('./src/intelligence/strategy.js?v=2')).then(()=>load('./src/intelligence/discovery.js?v=3')).then(()=>load('./src/intelligence/ui.js?v=11')).then(()=>done()).catch(()=>done());
+  load('./src/intelligence/engine.js?v=4').then(()=>load('./src/intelligence/stats.js?v=2')).then(()=>load('./src/intelligence/strategy.js?v=3')).then(()=>load('./src/intelligence/discovery.js?v=4')).then(()=>load('./src/intelligence/ui.js?v=12')).then(()=>done()).catch(()=>done());
  });
  return vIntelLoading;
 }
@@ -23639,7 +23639,7 @@ window.__v866Runners.v865=run;
   return {text:list[k],kind:'reflection',theme:'bienestar',repeatable:false};
  }
  /* V1269 · Tarjeta «Recuerda vivir»: una frase breve y un subtítulo del mismo banco, para el lector Vive y la esquina de Resumen. */
- function rememberPair(m){if(m==='joseo'){let t=joseoText(80),u=joseoText(90);return {t,u,joseo:true}}let t='',u='';for(let i=0;i<12;i++){t=bienPiece().text;if(t.length<=95)break}for(let i=0;i<12;i++){u=bienPiece().text;if(u!==t&&u.length<=125)break}return {t,u}}
+ function rememberPair(m){if(m==='joseo'){let t=joseoText(80),u=joseoText(90);return {t,u,joseo:true}}let t='',u='';for(let i=0;i<12;i++){t=bienPiece().text;if(t.length<=95&&phOk(t,'bienestar'))break}phNote(t,'bienestar');for(let i=0;i<12;i++){u=bienPiece().text;if(u!==t&&u.length<=125&&phOk(u,'bienestar'))break}phNote(u,'bienestar');return {t,u}}
  let cornerCache=null,cornerAt=0;
  function cardHtml(kind,pair,mode){const c=pair||rememberPair(mode),e=x=>String(x??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
   return `<aside class="v1269-remember ${kind}" aria-label="Recuerda vivir"><div class="v1269-copy"><span>${c.label||(c.joseo?'JOSEO':'RECUERDA VIVIR')}</span><strong>${c.raw?e(c.t):'«'+e(c.t.replace(/[.]$/,''))+'».'}</strong>${c.u?'<p>'+e(c.u)+'</p>':''}</div><svg class="v1269-art" viewBox="0 0 200 90" aria-hidden="true"><circle cx="150" cy="22" r="14" class="sun"/><path d="M0 70c20-8 40-8 60 0s40 8 60 0 40-8 80 0v20H0z" class="w1"/><path d="M0 78c20-6 40-6 60 0s40 6 60 0 40-6 80 0v12H0z" class="w2"/><path d="M92 58h60l-8 10H88z" class="hull"/><path d="M104 58l6-10h28l6 10z" class="cab"/></svg>${kind==='is-corner'?'<button type="button" class="v1269-x" data-v1269-close aria-label="Cerrar frase">×</button>':''}</aside>`}
@@ -23662,7 +23662,12 @@ window.__v866Runners.v865=run;
   if(cl>=0)s+=' '+CLOSE[cl];
   return s.replace(/ a el /g,' al ').replace(/ de el /g,' del ');
  }
- function newPiece(){
+ const PH_KEY='vive.recentp.v1';let phRecent=[];try{const r=JSON.parse(localStorage.getItem(PH_KEY)||'[]');if(Array.isArray(r))phRecent=r.slice(-60)}catch(_){}
+ const phOk=(t,th)=>!window.VivePhrases||window.VivePhrases.ok(t,th,phRecent).ok;
+ const phNote=(t,th)=>{if(!window.VivePhrases||!t)return;phRecent=window.VivePhrases.remember(phRecent,t,th,today());try{localStorage.setItem(PH_KEY,JSON.stringify(phRecent))}catch(_){}};
+ function newPiece(){let p=null;for(let i=0;i<10;i++){p=newPieceRaw();if(!p||!p.text||phOk(p.text,p.theme))break}if(p)phNote(p.text,p.theme);return p}
+ window.__vivePhrases=Object.freeze({recent:()=>[...phRecent],diversity:()=>window.VivePhrases&&window.VivePhrases.diversity(phRecent),next:()=>newPiece(),bank:()=>({...BIEN,joseo:JOSEO})});
+ function newPieceRaw(){
   if(viveMode==='joseo')return {text:joseoText(),kind:'reflection',theme:'joseo',repeatable:false};
   if(state.theme==='all')return Math.random()<.35?{text:joseoText(),kind:'reflection',theme:'joseo',repeatable:false}:bienPiece();
   if(state.theme==='bienestar')return bienPiece();

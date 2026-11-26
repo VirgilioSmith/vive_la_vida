@@ -111,7 +111,7 @@ const plainLabel=l=>String(l).replace(/^z robustos?$/i,'Distancia a lo habitual'
   const fbCount=m.fb.length;
   return `<details class="vi-know"><summary>Lo que Vive sabe de ti</summary><div class="vi-know-body">
    <h5>Madurez del aprendizaje</h5><p><b>${esc(prof.maturity)}</b> — ${esc(prof.maturityBasis)}</p>
-   <h5>Fuentes autorizadas</h5><ul class="vi-kl"><li><span>Finanzas (movimientos, cuentas, tarjetas, préstamos, suscripciones)</span><b>Activa · solo en tu dispositivo</b></li><li><span>Bienestar, Mi garaje, Metas, VIVE Consciente</span><b>Sin datos guardados en la app</b></li><li><span>Servicios externos de IA</span><b>No se usan</b></li></ul>
+   <h5>Fuentes autorizadas</h5><ul class="vi-kl"><li><span>Finanzas (movimientos, cuentas, tarjetas, préstamos, suscripciones)</span><b>Activa · solo en tu dispositivo</b></li><li><span>Frases</span><b>Sin relación con tus datos financieros</b></li><li><span>Servicios externos de IA</span><b>No se usan</b></li></ul>
    <h5>Patrones confirmados</h5>${li(L.patterns,x=>`<li><span>${esc(x.title)}</span>${del(x.key)}</li>`)}
    <h5>Hipótesis en observación (aún no se comunican)</h5>${li([...disc.internal.filter(h=>!['discarded','resolved'].includes(h.state)).map(h=>({key:h.key,title:h.title,n:h.seenDays,need:h.minSeen||2})),...L.hypotheses.filter(h=>!disc.internal.some(i=>i.key===h.key)).map(h=>({key:h.key,title:h.title,n:(h.seen||[]).length,need:2}))].slice(0,6),x=>`<li><span>${esc(x.title)}<small> · ${x.n}/${x.need} evaluaciones</small></span>${del(x.key)}</li>`)}
    <h5>En seguimiento y metas</h5>${li([...L.following,...L.goals],x=>`<li><span>${esc(x.title)}</span>${del(x.key)}</li>`)}

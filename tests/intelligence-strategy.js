@@ -145,6 +145,47 @@ const creativeOf=(L,mm)=>{const s=snap({ledger:L,months:mm||months(8)});const F=
  check('R10 · el segundo día no supera el máximo de descubrimientos (sin saturar)',c.discoveries.length<=4);
  check('R10 · todo lo ya comunicado queda marcado como repetido (no genera ruido)',c.discoveries.filter(h=>b.discoveries.some(x=>x.key===h.key)).every(h=>h.repeat));}
 
+
+/* ===== F · evolución maestra: ausencias, adelanto al cobro, convergencia, vigencia, percentiles ===== */
+/* F1 · ingreso esperado que no aparece (retraso) vs ausencia prolongada */
+{const mk=(stopAgo)=>{const L=ledger({days:300,seed:21,incomeEvery:14}).filter(e=>!(e.k==='i'&&e.d>addDays(T,-stopAgo)));return creativeOfAll(L)};
+ function creativeOfAll(L){const s=snap({ledger:L});const F=D.buildFeatures(s,D.Memory.empty());return G.reverse(F,s,{},D.confidence)}
+ const late=mk(24).find(x=>x.type==='income-late'),absent=mk(60).find(x=>x.type==='income-absent');
+ check('F1 · el ingreso habitual se retrasa: se señala como «retraso» sin asumir que dejó de existir',late&&/retraso/.test(late.summary)&&late.alternatives.length===3,late&&late.title);
+ check('F1 · si la ausencia se prolonga, cambia la lectura («ausencia») y sigue sin afirmar causa',absent&&/información sin registrar|cambio real/.test(absent.summary),absent&&absent.title);
+ check('F1 · con un ingreso al día no se dice nada',!creativeOfAll(ledger({days:300,seed:21,incomeEvery:14})).some(x=>x.type.startsWith('income')));}
+/* F2 · cobro recurrente que dejó de registrarse */
+{const L=ledger({days:300,seed:22});for(let i=0;i<8;i++)L.push({d:addDays(T,-300+i*30),a:899,k:'x',c:'Suscripciones',l:'Streamify',p:'c'});
+ const s=snap({ledger:L});const F=D.buildFeatures(s,D.Memory.empty());const h=G.reverse(F,s,{},D.confidence).find(x=>x.type==='recurring-stopped');
+ check('F2 · una suscripción regular que dejó de cobrarse se detecta con su ciclo habitual y alternativas (cancelada / otra forma de pago / sin registrar)',h&&/Streamify/.test(h.title)&&h.alternatives.length===3&&h.valence==='neutral',h&&h.title);
+ const L2=ledger({days:300,seed:22});for(let i=0;i<10;i++)L2.push({d:addDays(T,-300+i*30),a:899,k:'x',c:'Suscripciones',l:'Streamify',p:'c'});
+ check('F2 · control: si sigue cobrándose, no se dice nada',!G.reverse(D.buildFeatures(snap({ledger:L2}),D.Memory.empty()),snap({ledger:L2}),{},D.confidence).some(x=>x.type==='recurring-stopped'));
+ const L3=ledger({days:300,seed:22});[3,11,40,75,130,190].forEach(a=>L3.push({d:addDays(T,-a),a:100+a*7,k:'x',c:'Compras',l:'Tienda',p:'a'}));
+ check('F2 · control: compras irregulares con el mismo nombre no se confunden con una recurrencia',!G.reverse(D.buildFeatures(snap({ledger:L3}),D.Memory.empty()),snap({ledger:L3}),{},D.confidence).some(x=>x.type==='recurring-stopped'));}
+/* F3 · el dinero se adelanta al cobro */
+{const s=snap({ledger:ledger({days:300,seed:23,incomeEvery:14}),position:{liquid:60000,assets:60000,debt:0,net:60000},upcoming:[{name:'Tarjeta',days:2,amountDop:30000},{name:'Préstamo',days:5,amountDop:25000},{name:'Renta',days:40,amountDop:20000}]});
+ const F=D.buildFeatures(s,D.Memory.empty());const h=G.salaryRace(F,s,D.confidence);
+ check('F3 · «Tu dinero se está adelantando a tu salario»: compromisos antes del próximo cobro esperado ≥ 80 % de la liquidez',h.length===1&&h[0].immediate&&/%/.test(h[0].summary),h[0]&&h[0].summary);
+ const s2={...s,position:{liquid:400000,assets:4e5,debt:0,net:4e5}};check('F3 · control: con liquidez holgada no se dice nada',G.salaryRace(D.buildFeatures(s2,D.Memory.empty()),s2,D.confidence).length===0);}
+/* F4 · convergencia de señales débiles */
+{const mk=(type,val)=>({type,valence:val,category:'x',title:'Señal '+type,urgency:.2,confidence:{score:.5},engine:'pattern'});const F=D.buildFeatures(snap({}),D.Memory.empty());
+ const c3=G.converge([mk('a','risk'),mk('b','risk'),mk('c','risk')],F,D.confidence);check('F4 · tres señales de riesgo de distinto tipo convergen en una lectura conjunta',c3.length===1&&c3[0].valence==='risk'&&/Varias señales/.test(c3[0].title),c3.map(x=>x.title));
+ check('F4 · dos señales no bastan; señales del mismo tipo no se suman',G.converge([mk('a','risk'),mk('b','risk')],F,D.confidence).length===0&&G.converge([mk('a','risk'),mk('a','risk'),mk('a','risk')],F,D.confidence).length===0);
+ check('F4 · la convergencia positiva reconoce avances sumados («Varias mejoras pequeñas»)',G.converge([mk('a','positive'),mk('b','positive'),mk('c','positive')],F,D.confidence)[0].valence==='positive');
+ check('F4 · las señales fuertes (urgentes) no cuentan como «débiles»',G.converge([{...mk('a','risk'),urgency:.9},mk('b','risk'),mk('c','risk')],F,D.confidence).length===0);}
+/* F5 · vigencia del conocimiento: desactualizado → reaparecido */
+{const s=snap({ledger:gen({seed:8,fn:(i,d,R)=>[{a:Math.round(1500*(1+(R()-.5)*.4))},...(dayOf(d)===5?[{a:6000}]:[])]})});
+ let m=JSON.parse(JSON.stringify(run(s,{}).mem));for(const k of Object.keys(m.hyp))m.hyp[k].seen=[addDays(T,-1)];
+ const a=run(s,m);const key=a.discoveries.find(h=>h.key.startsWith('pat.weekday')).key;let mm=a.mem;mm.know[key]={kind:'pattern',title:'t'};
+ const old=JSON.parse(JSON.stringify(mm));old.hyp[key].last=addDays(T,-40);
+ const un=G.unlearn(old,new Set(),T);check('F5 · un patrón que deja de observarse 28 días pasa a «desactualizado» (se conserva la memoria histórica)',un.includes(key)&&old.know[key].status==='desactualizado');
+ check('F5 · el conocimiento desactualizado no figura como vigente en la lista de patrones',!D.Memory.list(old).patterns.some(p=>p.key===key));
+ const r=run(s,old);const h=[...r.discoveries,...r.internal].find(x=>x.key===key);check('F5 · si el patrón reaparece, vuelve a vigente y se marca como «reaparecido»',h&&h.reappeared===true&&r.mem.know[key].status==='vigente',h&&[h.reappeared,h.state]);}
+/* F6 · percentiles personales */
+{const arr=Array.from({length:100},(_,i)=>i+1);check('F6 · banda de percentil: muy por debajo / dentro / extraordinariamente por encima',G.band(3,arr).label==='muy por debajo de lo habitual'&&G.band(50,arr).label==='dentro de lo habitual'&&G.band(99,arr).label==='extraordinariamente por encima de lo habitual'&&G.band(1,[1,2])===null);}
+/* F7 · rendimiento: ejecución completa con 365 días y muchas señales */
+{const s=snap({ledger:ledger({days:365,seed:31}),loans:[{id:'l',name:'P',balanceDop:3e5,installmentDop:9e3,rate:12}]});const t0=Date.now();const r=run(s,{});const ms=Date.now()-t0;check(`F7 · evaluación completa de 365 días en < 400 ms (${ms} ms) y sin errores en ningún motor`,ms<400&&r.audit.engines.every(e=>!e.error),r.audit.engines.filter(e=>e.error));}
+
 /* ===== D · integración con discover() ===== */
 const R1=run(S0,{});check('discover(): incluye revisión estratégica sin errores de motor y con 9 motores',R1.strategy&&R1.audit.engines.every(e=>!e.error)&&R1.audit.engines.filter(e=>e.id!=='strategy').length===9,R1.audit.engines.filter(e=>e.error));
 check('discover(): memoria < 8 KB tras varias ejecuciones y registro de predicciones acotado',(()=>{let m={};for(let i=0;i<6;i++){const s=snap({ledger:ledger({days:300,seed:11}),today:addDays(T,i)});s.today=addDays(T,i);m=run(s,m).mem}return JSON.stringify(m).length<8192&&(m.pred||[]).length<=14})());

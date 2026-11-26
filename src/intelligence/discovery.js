@@ -50,7 +50,7 @@
   },
   size:m=>JSON.stringify(m).length,
   /* consultas y gestión */
-  list(m){return {patterns:Object.entries(m.know).filter(([,v])=>v.kind==='pattern').map(([k,v])=>({key:k,...v})),
+  list(m){return {patterns:Object.entries(m.know).filter(([,v])=>v.kind==='pattern'&&v.status!=='desactualizado').map(([k,v])=>({key:k,...v})),
     exceptions:Object.entries(m.exc).map(([k,v])=>({key:k,...v})),
     hypotheses:Object.entries(m.hyp).filter(([k,h])=>!m.know[k]&&['hypothesis','observation','learning'].includes(h.state)).map(([k,h])=>({key:k,...h})),
     following:Object.entries(m.hyp).filter(([,h])=>h.state==='following').map(([k,h])=>({key:k,...h})),
@@ -113,7 +113,7 @@
  const H=(o)=>Object.assign({kind:'fact',valence:'neutral',urgency:.2,impact:0,modules:['overview'],category:'habits',alternatives:[],evidence:[],minSeen:2},o);
 
  const Engines={};
- Engines.shadow=(F,snap,mem)=>{const st=ST();return st?st.shadow(F,snap,mem,confidence).concat(st.creative(F,snap,mem,confidence)):[]};
+ Engines.shadow=(F,snap,mem)=>{const st=ST();return st?st.shadow(F,snap,mem,confidence).concat(st.creative(F,snap,mem,confidence),st.reverse(F,snap,mem,confidence),st.salaryRace(F,snap,confidence)):[]};
  /* --- Pattern: día de la semana y ventana posterior al cobro --- */
  Engines.pattern=F=>{
   const out=[];const d=F.days.filter(r=>!r.ex);if(F.profile.historyDays<70)return out;
@@ -163,7 +163,7 @@
    const conf=confidence({n:base.length,needed:60,strength:Math.min(1,f.z/8),stability:f.iso,completeness:F.profile.coverage+.3});if(ctxNotes.length)conf.score=+Math.max(.3,conf.score-.1).toFixed(2);
    out.push(H({key:'anom.day.'+f.d,engine:'anomaly',type:kind,category:'spending',title:kind==='possible-data-error'?`Dos cargos idénticos el ${f.d.slice(8)}/${f.d.slice(5,7)}`:`Un día fuera de tu rango habitual: ${f.d.slice(8)}/${f.d.slice(5,7)}`,
     summary:`${fmt(f.x)} en un día; tu mediana de días con gasto es ${fmt(S.median(vals))}. Clasificación: ${cls}${ctxNotes.length?' · contexto: '+ctxNotes.join(', '):''}.`,observed:f.x,baseline:S.median(vals),deviation:f.z,impact:f.x-S.median(vals),dates:[f.d],
-    confidence:conf,evidence:[['Gasto del día',fmt(f.x)],['Mediana personal',fmt(S.median(vals))],['z robusto',f.z.toFixed(1)],['Aislamiento (Isolation Forest)',f.iso.toFixed(2)],['Mayor movimiento del día',tx[0]?fmt(tx[0].a)+' · '+(tx[0].l||'sin detalle'):'—']],
+    confidence:conf,evidence:[['Gasto del día',fmt(f.x)],['Mediana personal',fmt(S.median(vals))],['z robusto',f.z.toFixed(1)],['Aislamiento (Isolation Forest)',f.iso.toFixed(2)],['Percentil personal','P'+Math.round(100*vals.filter(v=>v<=f.x).length/vals.length)],['Mayor movimiento del día',tx[0]?fmt(tx[0].a)+' · '+(tx[0].l||'sin detalle'):'—']],
     method:'Un día se marca solo si coinciden dos métodos: z robusto (mediana/MAD) ≥ 3,5 e Isolation Forest ≥ 0,60 (64 árboles, semilla fija). Una anomalía no es un problema por sí misma: se clasifica.',
     periods:`${base.length} días con gasto`,comparison:'frente a tu propia distribución diaria',recurrence:'evento puntual',valence:kind==='possible-data-error'?'neutral':'neutral',
     why:kind==='possible-data-error'?'Un duplicado distorsiona tus saldos y tus indicadores.':'Entender si fue una excepción o el inicio de un cambio evita sacar conclusiones equivocadas.',ifContinues:'Si no se repite, no cambia tu patrón; si se repite, se evaluará como cambio de comportamiento.',
@@ -353,6 +353,7 @@
    try{const r=Engines[name](F,snap,mem)||[];for(const h of r){h.engine=name;raw.push(h);produced++}}catch(e){error=String(e&&e.message||e)}
    audit.engines.push({id:name,ms:Date.now()-s,produced,error,frequency:ENGINE_FREQ[name],records:F.profile.records});
   }
+  const stg0=ST();if(stg0&&!o.only){try{for(const c of stg0.converge(raw,F,confidence)){c.engine='shadow';raw.push(c)}}catch(e){audit.engines.push({id:'convergence',error:String(e&&e.message||e)})}}
   const surfaced=[],internal=[];const seenKeys=new Set();const stg=ST();
   for(const h of raw){
    if(seenKeys.has(h.key))continue;seenKeys.add(h.key);
@@ -365,7 +366,7 @@
     const th=(mem.thr||{})[h.engine];if(th&&h.confidence.score<.45+th&&!h.immediate){internal.push(h);audit.discarded.push({key:h.key,reason:'umbral elevado por falsos positivos reportados en este motor'});continue}}
    const prev=mem.hyp[h.key];const seen=prev?[...new Set([...(prev.seen||[]),today])].slice(-8):[today];
    h.seenDays=seen.length;h.isNew=!prev;
-   const known=mem.know[h.key];
+   let known=mem.know[h.key];if(known&&known.status==='desactualizado'){known.status='vigente';delete known.since;h.reappeared=true}
    h.state=known?'pattern':(seen.length>=(h.minSeen||2)||h.immediate)?(h.valence==='risk'?(h.urgency>=.7?'priority':'risk'):h.valence==='positive'?'positive':h.type==='weekday-peak'||h.type==='post-payday'||h.type==='sequence'?'pattern':h.engine==='prediction'?'anticipation':'discovery'):(seen.length>=2?'learning':'hypothesis');
    if(prev&&prev.state==='following')h.state=VISIBLE.has(h.state)?h.state:'following';
    mem.hyp[h.key]={state:h.state,first:prev?.first||today,last:today,seen,engine:h.engine,title:h.title,type:h.type};

@@ -326,6 +326,48 @@
   mem.base.hist.push({d:today,wk:Math.round(S.median(w.map(x=>x.x))),inc:Math.round(S.median(w.map(x=>x.i))),sm:+(S.mean(w.map(x=>x.small||0))).toFixed(1)});mem.base.hist=mem.base.hist.slice(-8);return mem.base}
 
  /* ==========================================================================
+    INTELIGENCIA INVERSA y ADELANTO AL COBRO — lo que NO ocurrió y lo que llega antes que el dinero
+    Diferencia retraso / cambio / ausencia; nunca asume que algo no ocurrió solo porque no está registrado.
+    ========================================================================== */
+ function nextPay(F){const p=F.paydays;if(p.length<4)return null;const iv=[];for(let i=1;i<p.length;i++)iv.push(diff(p[i],p[i-1]));const med=S.median(iv),m=S.mad(iv);return {last:p[p.length-1],med,mad:m,next:addDays(p[p.length-1],Math.round(med)),n:p.length}}
+ function reverse(F,snap,mem,conf){
+  const out=[];const np=nextPay(F);const today=snap.today;
+  if(np&&np.med>=5){const since=diff(today,np.last);const tol=Math.max(3,2*np.mad);
+   if(since>np.med+tol&&since<=2.5*np.med)out.push(Hh({key:'reverse.income-late',engine:'shadow',type:'income-late',category:'income',valence:'neutral',title:'Tu ingreso habitual todavía no aparece',summary:`Suele llegar cada ≈ ${Math.round(np.med)} días y han pasado ${since} desde el último (${np.last.slice(8)}/${np.last.slice(5,7)}). Puede ser un retraso, un cambio de frecuencia o algo sin registrar.`,observed:since,baseline:np.med,deviation:(since-np.med)/np.med,impact:0,
+    confidence:conf({n:np.n,needed:8,strength:Math.min(1,(since-np.med)/Math.max(1,tol*2)),stability:1-Math.min(1,np.mad/Math.max(1,np.med)),completeness:.8}),evidence:[['Intervalo habitual',`${Math.round(np.med)} días`],['Días desde el último ingreso',String(since)],['Ingresos considerados',String(np.n)]],method:'Intervalo mediano entre tus cobros y su dispersión; se señala cuando se supera la tolerancia propia.',periods:`${np.n} cobros`,comparison:'intervalo actual vs habitual',recurrence:'habitual',why:'Distinguir un retraso de un cambio evita sacar conclusiones equivocadas sobre tu liquidez.',ifContinues:'Si no aparece, tus compromisos próximos pesarán más sobre la liquidez actual.',alternatives:['Es un retraso','Cambió la frecuencia','Aún no lo he registrado'],action:{label:'Ver flujo',target:'income'},modules:['overview','income'],urgency:.25,minSeen:2}));
+   else if(since>2.5*np.med&&since<=6*np.med)out.push(Hh({key:'reverse.income-absent',engine:'shadow',type:'income-absent',category:'income',valence:'neutral',title:'Hace tiempo que no aparece un ingreso recurrente',summary:`Tus cobros llegaban cada ≈ ${Math.round(np.med)} días y el último fue hace ${since}. Podría ser un cambio real o información sin registrar.`,observed:since,baseline:np.med,deviation:(since-np.med)/np.med,impact:0,
+    confidence:conf({n:np.n,needed:8,strength:.8,stability:.6,completeness:.7}),evidence:[['Intervalo habitual',`${Math.round(np.med)} días`],['Días desde el último ingreso',String(since)]],method:'Intervalo mediano entre cobros comparado con el tiempo transcurrido.',periods:`${np.n} cobros`,comparison:'actual vs habitual',recurrence:'habitual',why:'Un ingreso que dejó de ocurrir cambia la base de todas las proyecciones.',ifContinues:'Las proyecciones se calcularán sin ese ingreso.',alternatives:['Terminó ese ingreso','Está sin registrar','Seguir observándolo'],action:{label:'Ver flujo',target:'income'},modules:['overview','income'],urgency:.3,minSeen:2}))}
+  /* cobros periódicos de gasto que dejaron de registrarse (suscripciones, cuotas, aportes) */
+  const led=(snap.ledger||[]).filter(e=>e.k==='x'&&e.a>0&&e.l&&e.d>=addDays(today,-300));const by={};for(const e of led){const k=String(e.l).toLowerCase().trim();(by[k]=by[k]||[]).push(e)}
+  let n=0;for(const [k,list] of Object.entries(by)){if(n>=2)break;if(list.length<4)continue;list.sort((a,b)=>a.d.localeCompare(b.d));const amts=list.map(e=>e.a),ma=S.median(amts);if(!ma||S.mad(amts)>.1*ma)continue;
+   const iv=[];for(let i=1;i<list.length;i++)iv.push(diff(list[i].d,list[i-1].d));const mi=S.median(iv);if(!(mi>=6&&mi<=35)||S.mad(iv)>.25*mi)continue;
+   const last=list[list.length-1].d,since=diff(today,last);if(since>1.8*mi+3&&since<=6*mi){n++;out.push(Hh({key:'reverse.stopped.'+k.slice(0,24),engine:'shadow',type:'recurring-stopped',category:'habits',valence:'neutral',title:`«${list[0].l}» dejó de cobrarse`,summary:`Aparecía cada ≈ ${Math.round(mi)} días por ${fmt(ma)} y el último registro es de hace ${since} días. Podría estar cancelado, haberse movido de tarjeta o no estar registrado.`,observed:since,baseline:mi,deviation:(since-mi)/mi,impact:ma,
+    confidence:conf({n:list.length,needed:6,strength:Math.min(1,since/(3*mi)),stability:1-Math.min(1,S.mad(iv)/Math.max(1,mi)),completeness:.7}),evidence:[['Ocurrencias previas',String(list.length)],['Monto habitual',fmt(ma)],['Intervalo habitual',`${Math.round(mi)} días`],['Días sin registro',String(since)]],method:'Pagos con el mismo concepto, monto estable e intervalo regular; se señala cuando pasan casi dos ciclos sin registro.',periods:`${list.length} registros`,comparison:'tiempo transcurrido vs ciclo habitual',recurrence:`${list.length} veces`,why:'Un cobro recurrente que desaparece cambia tu gasto fijo (y puede ser un ahorro o un registro pendiente).',ifContinues:`Si fue cancelado, liberas ≈ ${fmt(ma*(30/mi))} al mes.`,alternatives:['Lo cancelé','Cambió de forma de pago','Sigue vigente pero sin registrar'],action:{label:'Ver recurrentes',target:'recurring'},modules:['register','overview'],urgency:.1,minSeen:2}))}}
+  return out;
+ }
+ /* El dinero se adelanta al cobro: compromisos antes del próximo ingreso esperado frente a la liquidez */
+ function salaryRace(F,snap,conf){
+  const np=nextPay(F);if(!np)return [];const dNext=diff(np.next,snap.today);if(dNext<1||dNext>25)return [];
+  const up=(snap.upcoming||[]).filter(u=>u.days>=0&&u.days<=dNext&&num(u.amountDop)>0);const due=S.sum(up.map(u=>num(u.amountDop)));const liq=num(snap.position&&snap.position.liquid);
+  if(!(due>0&&liq>0&&due>=.8*liq))return [];
+  return [Hh({key:'creative.before-payday',engine:'shadow',type:'before-payday',category:'liquidity',valence:'risk',title:'Tu dinero se está adelantando a tu salario',summary:`Antes de tu próximo cobro esperado (≈ ${np.next.slice(8)}/${np.next.slice(5,7)}) vencen ${fmt(due)}, ${Math.round(100*due/liq)} % de tu liquidez actual (${fmt(liq)}).`,observed:due/liq,baseline:.8,deviation:due/liq-.8,impact:due,immediate:true,
+   confidence:conf({n:np.n,needed:8,strength:Math.min(1,due/liq),stability:1-Math.min(1,np.mad/Math.max(1,np.med)),completeness:.9}),evidence:[['Vence antes del cobro',fmt(due)],['Liquidez',fmt(liq)],['Próximo cobro esperado',np.next],['Compromisos considerados',String(up.length)]],method:'Compromisos registrados hasta la fecha esperada de tu próximo cobro (por tu intervalo habitual) frente a tu liquidez.',periods:`próximos ${dNext} días`,comparison:'compromisos antes del cobro vs liquidez',recurrence:'estado actual',why:'Lo que importa es qué llega primero, el dinero o la obligación.',ifContinues:'Si el cobro se retrasa, la presión sobre la liquidez aumenta.',alternatives:['Escalonar un pago','Reservar para esa fecha','Mantener todo igual'],action:{label:'Ver compromisos',target:'pressure'},modules:['overview','pressure'],urgency:.65,minSeen:1})]
+ }
+ /* Convergencia de señales débiles: varias lecturas pequeñas, de distinto tipo, apuntando en la misma dirección */
+ function converge(raw,F,conf){
+  const ok=raw.filter(h=>h.engine!=='shadow'||!/^(conv|reverse)/.test(h.key)).filter(h=>h.type!=='possible-data-error'&&h.confidence&&h.confidence.score>=.3);
+  const risk=ok.filter(h=>h.valence==='risk'&&(h.urgency||0)<.7),pos=ok.filter(h=>h.valence==='positive');const out=[];
+  const grp=(list,val)=>{const types=[...new Set(list.map(h=>h.type))];if(types.length<3)return;const cats=[...new Set(list.map(h=>h.category))];
+   const titles=list.slice(0,4).map(h=>h.title);out.push(Hh({key:'conv.'+val,engine:'shadow',type:'convergence-'+val,category:'liquidity',valence:val==='risk'?'risk':'positive',
+    title:val==='risk'?'Varias señales pequeñas apuntan en la misma dirección':'Varias mejoras pequeñas se están sumando',summary:(val==='risk'?'Ninguna es grave por sí sola, pero coinciden: ':'Cada una es modesta, pero juntas cuentan: ')+titles.join(' · ')+'.',observed:types.length,baseline:2,deviation:types.length-2,impact:0,
+    confidence:conf({n:list.length,needed:4,strength:Math.min(1,types.length/5),stability:.6,completeness:F.profile.coverage+.3}),evidence:list.slice(0,5).map(h=>[h.type,h.title]),method:'Lecturas independientes de distinto tipo (≥ 3) con la misma dirección; se evalúa en conjunto lo que por separado no llamaría la atención.',periods:'últimas evaluaciones',comparison:'señales de distinto tipo',recurrence:`${types.length} tipos de señal`,
+    why:val==='risk'?'Los cambios graduales en varios frentes suelen ser invisibles hasta que se juntan.':'Los avances pequeños y sostenidos en varios frentes suelen pasar inadvertidos.',ifContinues:val==='risk'?'Si se mantienen, la combinación podría cambiar tu margen.':'Si se mantienen, tu flexibilidad seguirá creciendo.',alternatives:['Seguir observándolo','Revisar cada una'],action:{label:'Ver resumen',target:'overview'},modules:['overview'],urgency:val==='risk'?.3:.05,minSeen:2}))};
+  grp(risk,'risk');grp(pos,'positive');return out;
+ }
+ /* Percentil personal (1–99) y banda descriptiva; no implica problema: depende del contexto */
+ function band(x,arr){if(!arr||arr.length<10)return null;const p=Math.round(100*arr.filter(v=>v<=x).length/arr.length);return {p,label:p<=5?'muy por debajo de lo habitual':p<=25?'por debajo de lo habitual':p<=75?'dentro de lo habitual':p<=95?'por encima de lo habitual':'extraordinariamente por encima de lo habitual'}}
+
+ /* ==========================================================================
     CURIOSIDAD — qué sabe, qué no, qué preguntar (valor de la información)
     ========================================================================== */
  function curiosity(snap,F,mem,disc){
@@ -343,7 +385,6 @@
   for(const h of inter.filter(x=>['hypothesis','learning'].includes(x.state)).slice(0,4))unknown.push(`${h.title}: ${h.seenDays||1}/${h.minSeen||2} evaluaciones`);
   if(F.weeks.length<16)unknown.push('Relaciones entre variables: se necesitan ≥ 16 semanas');
   if(F.profile.historyDays<365)unknown.push('Estacionalidad anual: se necesitan ≥ 365 días');
-  unknown.push('Bienestar, Mi garaje y Metas: no hay datos guardados en la app (no se infiere nada)');
   const questions=[];
   if(F.windows[90]&&F.windows[90].count>0&&(F.profile.dailyRange||{}).high)questions.push({q:`¿Los días de gasto alto coinciden con tus fechas de cobro?`,answerable:F.paydays.length>=3,via:'secuencia cobro→gasto'});
   questions.push({q:'¿Qué parte de tu gasto es realmente tuya decidir (vs. compromisos)?',answerable:true,via:'modelo de tu realidad'});
@@ -398,8 +439,8 @@
  }
  function recordBenchmark(mem,today){mem.bench=mem.bench||{hist:[]};const b=benchmark(mem);const mo=today.slice(0,7);if(mem.bench.hist.some(h=>h.m===mo))return;mem.bench.hist.push({m:mo,n:b.predicciones.n||0,mae:b.predicciones.mae||null,cov:b.predicciones.coverage||null,fb:b.retroalimentacion});mem.bench.hist=mem.bench.hist.slice(-12)}
  /* Desaprender: un patrón confirmado que deja de observarse se retira para revisión */
- function unlearn(mem,producedKeys,today){const out=[];for(const [k,v] of Object.entries(mem.know||{})){if(v.kind!=='pattern')continue;const h=(mem.hyp||{})[k];if(h&&!producedKeys.has(k)&&diff(today,h.last)>=28){v.status='retirado';v.retiredOn=today;out.push(k);delete mem.know[k];h.state='resolved'}}return out}
+ function unlearn(mem,producedKeys,today){const out=[];for(const [k,v] of Object.entries(mem.know||{})){if(v.kind!=='pattern'||v.status==='desactualizado')continue;const h=(mem.hyp||{})[k];if(h&&!producedKeys.has(k)&&diff(today,h.last)>=28){v.status='desactualizado';v.since=today;out.push(k);h.state='resolved'}}return out}
 
- const api={creative,learn,HORIZONS,lifeModel,horizon,chain,decisionLab,graph,science,council,shadow,curiosity,answer,backtest,govern,logPrediction,evaluatePredictions,performance,abstain,calibrate,benchmark,recordBenchmark,unlearn,CANDS};
+ const api={reverse,salaryRace,converge,band,nextPay,creative,learn,HORIZONS,lifeModel,horizon,chain,decisionLab,graph,science,council,shadow,curiosity,answer,backtest,govern,logPrediction,evaluatePredictions,performance,abstain,calibrate,benchmark,recordBenchmark,unlearn,CANDS};
  if(typeof module==='object'&&module.exports)module.exports=api;else root.ViveStrategy=api;
 })(typeof window!=='undefined'?window:globalThis);

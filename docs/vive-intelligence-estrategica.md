@@ -62,3 +62,34 @@ Principio: **no se añadió ningún módulo, página ni navegación.** Los cambi
 - Recursos: sin consultas nuevas a Supabase; la memoria sigue < 8 KB y se escribe como máximo una vez al día. El análisis completo se cachea por revisión y día; abrir la hoja no lo recalcula.
 
 Pruebas: `tests/intelligence-strategy.js` (70) y `tests/intelligence-strategy-ui.js` (23).
+
+---
+
+## Evolución maestra (alcance real: Dinero y Frases)
+
+**Auditoría de alcance.** Solo se trabajó sobre las dos dimensiones implementadas. Se retiró de la hoja de Intelligence toda mención a módulos no autorizados (bienestar, garaje, metas, Vive Consciente). El banco de frases existente (780 entradas) no se tocó. No se añadieron tablas, funciones, migraciones, Realtime ni consultas a Supabase.
+
+| Bloque | Capacidad | Estado |
+|---|---|---|
+| Dinero · Inversa (29) | Ingreso habitual que se retrasa / ausencia prolongada; cobro periódico de gasto (mismo concepto, monto e intervalo estables) que dejó de registrarse. Distingue retraso, cambio y falta de registro; nunca afirma causa. | Implementado y probado (sintético) |
+| Dinero · Temporal / Señales (28, 33) | «Tu dinero se está adelantando a tu salario»: compromisos antes del próximo cobro esperado (por tu intervalo habitual) vs liquidez. | Implementado y probado |
+| Dinero · Fusión / Señales débiles (20, 28) | Convergencia: ≥ 3 lecturas independientes de distinto tipo con la misma dirección (riesgo o mejora) generan una lectura conjunta. Las señales urgentes no cuentan como débiles. | Implementado y probado |
+| Vigencia (18, 25) | Un patrón no observado 28 días pasa a *desactualizado* (se conserva la memoria histórica, no figura como vigente); si vuelve, *reaparecido*. | Implementado y probado |
+| Percentiles (24) | Percentil personal en la evidencia de anomalías; banda descriptiva (muy por debajo … extraordinariamente por encima) sin juicio de valor. | Parcial: P5–P99 completos solo en anomalías; no hay bandas en otras lecturas |
+| Calidad de datos (75–77) | Verificado en la app real: pagos de tarjeta, transferencias y avances de efectivo no cuentan como gasto/ingreso; devolución resta; USD se convierte con la tasa configurada; correcciones y eliminaciones se reflejan; pendientes no se interpretan como comportamiento. | Probado (10 comprobaciones) |
+| Frases (61–67) | `phrases-intel.js` (pura, 2 KB): similitud por raíces + familias de conceptos (aproximación declarada, **no** embeddings). Rechaza una frase similar a las 12 últimas, idéntica a las 60 últimas, el mismo tema 3 veces y el mismo ritmo de longitud 3 veces. Memoria local de 60 frases. No usa datos financieros ni infiere emociones. | Implementado y probado en el banco real (150 frases consecutivas sin cuasi-repeticiones) |
+| Frases · hallazgo | El banco real tiene **51 pares idénticos** repartidos entre temas distintos (p. ej. «¿Estás ahorrando para vivir o dejando de vivir para ahorrar?» en dos temas). La rotación ya los evita, pero conviene depurar el contenido; no se borró nada sin tu decisión. | Pendiente de tu decisión |
+| Preguntas / Silencio / Autocrítica (56–59, 69, 79) | Ya cubiertos en el refinamiento anterior. | Sin cambios |
+
+### No implementado
+- Local Outlier Factor y agrupación de comportamientos: no hay evidencia en los datos actuales de que mejoren a Isolation Forest + z robusto; se descartan por «no aporta inteligencia real».
+- Memoria de frases semántica con embeddings, y frases generadas: requerirían un modelo externo o de pago; no se usan.
+- Champion–Challenger con efecto real: siguen faltando meses de historial (hoy 6).
+- Evaluación de costos invisibles (intereses/comisiones acumulados) como hallazgo propio: la app registra intereses en el total mensual pero no por producto con fiabilidad suficiente; queda planificado.
+- Modo silencioso de validación para capacidades nuevas: no se implementó; la superficie de comunicación ya filtra por silencio, evidencia y consejo interno.
+- Todo se validó con datos sintéticos y de prueba, no con datos reales ni en iPhone.
+
+### Rendimiento (medido)
+`discover()` con 365 días y 9 motores + creatividad + inversa + convergencia: 12–18 ms en caliente (65 ms la primera vez), cálculo único por revisión y día. Sin consultas ni red.
+
+Pruebas nuevas: `tests/intelligence-strategy.js` (87), `tests/intelligence-integridad.js` (10), `tests/frases-inteligencia.js` (15).
