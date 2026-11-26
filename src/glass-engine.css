@@ -553,18 +553,16 @@ html body #app#app .v985-row-ico svg{width:16px;height:16px}
 html body #app#app .v985-row-lbl{font-size:11.5px!important;letter-spacing:-.01em;min-width:0;flex:1 1 auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 html body #app#app .v985-row-item>strong{flex:0 0 auto;white-space:nowrap;font-size:clamp(11px,2.9vw,12px)!important}
 /* Decidir: el aro conserva su tamaño y su número; accesos al pie con nombre visible */
-html body #app#app article.v985-purple{display:flex;flex-direction:column}
-html body #app#app article.v985-purple .v985-minis{margin-top:auto;padding-top:10px}
 html body #app#app .v985-minis-3{gap:6px}
-html body #app#app .v985-mini{display:grid!important;grid-template-rows:auto auto;place-items:center;gap:3px;padding:9px 2px;min-height:68px}
-html body #app#app .v985-mini .v985-mini-ico{display:grid;place-items:center}
-html body #app#app .v985-mini strong{display:block!important;font-size:10.5px!important;line-height:1.1;text-align:center;letter-spacing:-.01em;color:var(--vg-ink-2,#3b4e69);white-space:nowrap;overflow:visible}
+/* Decidir: accesos como estaban (píldoras con ícono), un poco más redondos tipo pastilla */
+html body #app#app .v985-minis-3 .v985-mini{border-radius:26px!important;min-height:56px}
+html body #app#app .v985-mini strong{display:none!important}
 html body #app#app .v985-minis-3 .v985-mini small{display:none}
 /* Mini gráfica: sin caja ni borde */
 html body #app#app .v985-spark{border:0!important;background:transparent!important;outline:0;border-radius:0}
 html body #app#app .v985-spark path{vector-effect:non-scaling-stroke}
 /* Material: tarjetas, filas y accesos con la óptica de cristal */
-html body #app#app .v985-card,html body #app#app .v985-mini{
+html body #app#app .v985-card{
  background:
   linear-gradient(118deg,rgba(255,255,255,calc(.30 * var(--vg-lk) * (1 - var(--vg-dark,0)) + .06 * var(--vg-lk) * var(--vg-dark,0))) 0%,transparent 36%),
   radial-gradient(120% 46% at 50% -10%,rgba(255,255,255,calc(.5 * var(--vg-lk) * (1 - var(--vg-dark,0)) + .09 * var(--vg-lk) * var(--vg-dark,0))),transparent 62%),
@@ -573,8 +571,7 @@ html body #app#app .v985-card,html body #app#app .v985-mini{
  border:1px solid rgba(255,255,255,calc(.6 * var(--vg-lk) * (1 - var(--vg-dark,0)) + .12 * var(--vg-lk) * var(--vg-dark,0)))!important;
  box-shadow:inset 0 1px 0 rgba(255,255,255,calc(.9 * var(--vg-lk) * (1 - var(--vg-dark,0)) + .14 * var(--vg-lk) * var(--vg-dark,0))),0 10px 26px -14px rgba(var(--vg-shade-rgb),.2)!important;
  -webkit-backdrop-filter:blur(var(--vg-b2)) saturate(1.5)!important;backdrop-filter:blur(var(--vg-b2)) saturate(1.5)!important}
-html body #app#app .v985-mini{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
-body:is(.theme-dark,.theme-black) #app#app :is(.v985-card,.v985-mini){--vg-dark:1}
+body:is(.theme-dark,.theme-black) #app#app .v985-card{--vg-dark:1}
 body:is(.theme-dark,.theme-black) #app#app .v985-mini strong,body:is(.theme-dark,.theme-black) #app#app .v985-barhead{color:#c3c9d6}
 body:is(.theme-dark,.theme-black) #app#app .v985-barhead b{color:#f5f6f8}
 html body #app#app .v985-row-item{gap:5px}

@@ -895,7 +895,8 @@ function v985SimplificationWidget(asKpi){
  const compact=v=>Math.abs(v)>=1e6?'RD$'+(v/1e6).toLocaleString('es-DO',{maximumFractionDigits:2})+'M':money(v);
  const stat=(ico,label,val)=>`<div class="v985-stat"><span class="v985-stat-ico">${v985Svg(V985_ICO[ico],22)}</span><div><small>${sanitize(label)}</small><strong title="${sanitize(money(val))}">${compact(val)}</strong></div></div>`;
  const head=(tone,title,q,n,act)=>`<header class="v985-head"><div class="v985-head-copy"><div><h3>${title}</h3></div><p>${q}</p></div><button type="button" class="v985-go" ${act} aria-label="Abrir ${title}">${v985Svg(V985_ICO.chev,16)}</button></header>`;
- const row=(ico,label,val,attrs)=>`<button type="button" class="v985-row-item" ${attrs}><span class="v985-row-ico">${v985Svg(V985_ICO[ico],20)}</span><span class="v985-row-lbl">${sanitize(label)}</span><strong>${money(val)}</strong></button>`;
+ const ABR={Ingresos:'Ingr.',Transferir:'Transf.',Tarjetas:'Tarj.',Préstamos:'Prést.',Suscripciones:'Susc.',Personas:'Pers.'};
+ const row=(ico,label,val,attrs)=>`<button type="button" class="v985-row-item" ${attrs} aria-label="${sanitize(label)}" title="${sanitize(label)}"><span class="v985-row-ico">${v985Svg(V985_ICO[ico],20)}</span><span class="v985-row-lbl">${sanitize(ABR[label]||label)}</span><strong>${money(val)}</strong></button>`;
  const dotted=Math.round(paidShare);
  return `<section ${asKpi?'data-v1124-kpi="1"':'data-v105-widget="simplification"'} class="v985-matrix" aria-label="Matriz Jobs">
  <header class="v985-title"><h2>Matriz Jobs</h2></header>
