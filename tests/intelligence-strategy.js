@@ -91,8 +91,59 @@ const fakeH={confidence:{score:.7},evidence:[[1,2],[1,2],[1,2]],impact:5000,vale
 const co=G.council(fakeH,{mem:{declared:{priorities:['Experiencias']}}});check('consejo interno: 8 perspectivas + síntesis, con disenso explícito y sin agentes generativos',co.votes.length===8&&co.votes.some(v=>v.role==='Escéptico')&&co.votes.some(v=>v.role==='Sintetizador'),co.votes.map(v=>v.role));
 check('consejo: el humanista usa las prioridades declaradas (o se abstiene si no hay)',co.votes.find(v=>v.role==='Humanista').verdict==='reserva'&&G.council(fakeH,{mem:{}}).votes.find(v=>v.role==='Humanista').verdict==='abstención');
 check('consejo: si el escéptico refuta, el veredicto es descartar',G.council({...fakeH,science:{refuted:true,reason:'r',alternatives:[{tested:true}]}},{mem:{}}).verdict==='descartar');
-const cu=G.curiosity(S0,F0,{},{discoveries:[],internal:[]});check('curiosidad: separa lo conocido de lo desconocido y pregunta como máximo UNA cosa',cu.known.length&&cu.unknown.length&&cu.ask&&cu.ask.id==='priorities'&&cu.ask.why,cu.ask);
-const mem2=G.answer({},'priorities',['Libertad','Familia'],T);check('responder una pregunta actualiza la memoria y no se vuelve a preguntar',mem2.declared.priorities.length===2&&G.curiosity(S0,F0,mem2,null).ask==null||(G.curiosity(S0,F0,mem2,null).ask||{}).id!=='priorities');
+const cu=G.curiosity(S0,F0,{},{discoveries:[],internal:[]});check('curiosidad: separa lo conocido de lo desconocido y NUNCA interroga de forma proactiva (ask = null)',cu.known.length&&cu.unknown.length&&cu.ask===null,cu.ask);
+const mem2=G.answer({},'priorities',['Libertad','Familia'],T);check('la API de respuestas sigue disponible (opcional) y actualiza la memoria',mem2.declared.priorities.length===2);
+
+
+/* ===== E · refinamiento: creatividad, aprendizaje, autocrítica, silencio, preguntas ===== */
+const dayOf=d=>new Date(dms(d)).getUTCDay();
+function gen({days=300,seed=1,fn,incomeEvery=7,incomeAmt=20000,incAfter=null,incFrom=null}={}){const R=S.rng(seed),out=[];const start=addDays(T,-days);
+ for(let i=0;i<days;i++){const d=addDays(start,i);for(const e of fn(i,d,R))out.push({d,k:'x',c:'Alimentación',l:'c',p:'a',...e});
+  if(i%incomeEvery===0)out.push({d,a:incFrom!=null&&i>=incFrom?incAfter:incomeAmt,k:'i',c:'Salario',l:'N',p:'a'})}return out}
+const creativeOf=(L,mm)=>{const s=snap({ledger:L,months:mm||months(8)});const F=D.buildFeatures(s,D.Memory.empty());return G.creative(F,s,{},D.confidence)};
+/* R1 · estabilidad creciente (gasto medio igual, variabilidad menor) */
+{const L=gen({seed:3,fn:(i,d,R)=>i<216?(R()<.5?[]:[{a:3000},{a:3000}]):[{a:1500*(1+(R()-.5)*.1)}].map(x=>({a:Math.round(x.a)}))});
+ const h=creativeOf(L).find(x=>x.type==='stability-up');check('R1 · «Tu estabilidad está creciendo»: variabilidad semanal menor con intervalo por remuestreo, valencia positiva',h&&h.valence==='positive'&&h.evidence.some(e=>/Intervalo/.test(e[0])),h&&h.title);
+ const L2=gen({seed:3,fn:(i,d,R)=>R()<.5?[]:[{a:3000},{a:3000}]});check('R1 · control: sin cambio de variabilidad no se felicita',!creativeOf(L2).some(x=>x.type==='stability-up'));}
+/* R2 · mejora inadvertida */
+{const mm=months(8,i=>({income:100000,expense:60000,expenseBy:{Vivienda:30000,Servicios:5000,Ocio:25000-(i>=5?5000:0)}}));
+ const h=creativeOf(ledger({days:300,seed:2}),mm).find(x=>x.type==='quiet-improvement');check('R2 · «Estás mejorando sin darte cuenta»: variable baja, fijo e ingreso estables',h&&h.valence==='positive'&&/%/.test(h.summary),h&&h.title);
+ const mm2=months(8,i=>({income:100000,expenseBy:{Vivienda:30000+(i>=5?5000:0),Ocio:25000-(i>=5?5000:0)}}));check('R2 · control: si el fijo sube, no se celebra',!creativeOf(ledger({days:300,seed:2}),mm2).some(x=>x.type==='quiet-improvement'));}
+/* R3 · nueva normalidad con ingreso proporcional: no es un problema */
+{const L=gen({seed:5,incomeAmt:20000,incFrom:202,incAfter:26000,fn:(i,d,R)=>[{a:Math.round(1500*(i>=202?1.3:1)*(1+(R()-.5)*.2))},{a:Math.round(1500*(i>=202?1.3:1)*(1+(R()-.5)*.2))}]});
+ const h=creativeOf(L).find(x=>x.type==='new-normal');check('R3 · el gasto sube al mismo ritmo que el ingreso: «Tu normalidad está evolucionando» (neutral, no alarma)',h&&h.valence==='neutral'&&/proporción/.test(h.summary),h&&h.title);
+ const L2=gen({seed:5,incomeAmt:20000,fn:(i,d,R)=>[{a:Math.round(1500*(i>=202?1.3:1)*(1+(R()-.5)*.2))},{a:Math.round(1500*(i>=202?1.3:1)*(1+(R()-.5)*.2))}]});check('R3 · si el ingreso NO acompaña, no se etiqueta como «nueva normalidad» (eso es de otro motor)',!creativeOf(L2).some(x=>x.type==='new-normal'));}
+/* R4 · nivel más bajo sostenido */
+{const L=gen({seed:6,fn:(i,d,R)=>[{a:Math.round(1500*(i>=202?.6:1)*(1+(R()-.5)*.2))},{a:Math.round(1500*(i>=202?.6:1)*(1+(R()-.5)*.2))}]});
+ const h=creativeOf(L).find(x=>x.type==='lower-normal');check('R4 · gasto asentado en un nivel más bajo y sostenido: reconocimiento con evidencia',h&&h.valence==='positive'&&h.impact>0,h&&h.title);}
+/* R5 · el problema no está donde parecía */
+{const mm=months(8,i=>({income:100000,expense:i===7?73000:61000,expenseBy:{Vivienda:40000,Comida:15000,Ocio:5000,Suscripciones:i===7?13000:1000}}));
+ const h=creativeOf(ledger({days:300,seed:2}),mm).find(x=>x.type==='not-where-seemed');check('R5 · el aumento total se explica por una categoría poco evidente',h&&/Suscripciones/.test(h.summary)&&h.valence==='neutral',h&&h.summary);}
+/* R6 · comportamiento que desaparece */
+{const mm=months(8,i=>({income:100000,expense:60000,expenseBy:{Vivienda:40000,Comida:15000,Gimnasio:i<=5?5000:0}}));
+ const h=creativeOf(ledger({days:300,seed:2}),mm).find(x=>x.type==='fading');check('R6 · una categoría regular deja de aparecer: se señala sin juzgar (puede ser recategorización)',h&&/recategorización/.test(h.summary)&&h.valence==='neutral',h&&h.title);}
+/* R7 · autocrítica: no repetir lo ya comunicado */
+{const L=gen({seed:8,fn:(i,d,R)=>[{a:Math.round(1500*(1+(R()-.5)*.4))},...(dayOf(d)===5?[{a:6000}]:[])]});const s=snap({ledger:L});
+ const a=run(s,{});const m=JSON.parse(JSON.stringify(a.mem));for(const k of Object.keys(m.hyp))m.hyp[k].seen=[addDays(T,-1)];const b=run(s,m);const hb=b.discoveries.find(h=>h.key.startsWith('pat.weekday'));
+ check('R7 · la primera comunicación no se marca como repetida',hb&&!hb.repeat,hb&&hb.key);
+ const s2={...s,today:addDays(T,1)};const c=run(s2,b.mem);const hc=c.discoveries.find(h=>h.key.startsWith('pat.weekday'));
+ check('R7 · al día siguiente, sin novedad material: se conserva pero se marca «repetido» y baja su relevancia (no vuelve a anunciarse)',hc&&hc.repeat===true&&hc.relevance<hb.relevance,hc&&[hc.repeat,hc.relevance,hb.relevance]);}
+/* R8 · una sola pregunta, breve y que no insiste */
+{const L=ledger({days:200,seed:6,extra:(i,d)=>(i>=165&&i%6===0)?[{d,a:20000,k:'x',c:'Ocio',l:'Evento',p:'a'}]:[]});const s=snap({ledger:L});
+ const a=run(s,{});const m=JSON.parse(JSON.stringify(a.mem));for(const k of Object.keys(m.hyp))m.hyp[k].seen=[addDays(T,-1)];const b=run(s,m);
+ const qs=b.discoveries.filter(h=>h.question);check('R8 · como máximo UNA pregunta en pantalla, breve y con ≤ 2 opciones',qs.length<=1&&qs.every(h=>h.question.text.length<=40&&h.question.options.length<=2),qs.map(h=>h.question));
+ check('R8 · sin preguntas proactivas fuera de un descubrimiento (curiosity.ask = null)',b.strategy.curiosity.ask===null);
+ if(qs.length){const k=qs[0].key;const d5=run({...s,today:addDays(T,5)},b.mem);check('R8 · no insiste: a los 5 días la pregunta ya no aparece y no se reasigna antes de 10 días',!d5.discoveries.some(h=>h.question)&&!d5.mem.qa.q);}
+ else check('R8 · (sin descubrimiento ambiguo en este conjunto: no se pregunta nada)',true);
+ check('R8 · ignorar la pregunta no se interpreta como respuesta',!b.mem.exc||!Object.keys(b.mem.exc).length);}
+/* R9 · aprendizaje incremental de líneas base sin cuestionarios */
+{const s=snap({ledger:ledger({days:300,seed:11})});const a=run(s,{});check('R9 · aprende líneas base del historial existente desde la primera ejecución (sin cuestionarios)',a.mem.base&&a.mem.base.hist.length===1&&a.mem.base.hist[0].wk>0,a.mem.base);
+ const b=run({...s,today:addDays(T,3)},a.mem);check('R9 · no recalcula en menos de 14 días',b.mem.base.hist.length===1);
+ const c=run({...s,today:addDays(T,15)},b.mem);check('R9 · actualiza la línea base pasados 14 días (acotada)',c.mem.base.hist.length===2&&JSON.stringify(c.mem).length<8192,JSON.stringify(c.mem).length);}
+/* R10 · silencio: sin novedades, sin ruido */
+{const s=snap({ledger:ledger({days:300,seed:13})});const a=run(s,{});const m=JSON.parse(JSON.stringify(a.mem));for(const k of Object.keys(m.hyp))m.hyp[k].seen=[addDays(T,-1)];const b=run(s,m);const c=run({...s,today:addDays(T,1)},b.mem);
+ check('R10 · el segundo día no supera el máximo de descubrimientos (sin saturar)',c.discoveries.length<=4);
+ check('R10 · todo lo ya comunicado queda marcado como repetido (no genera ruido)',c.discoveries.filter(h=>b.discoveries.some(x=>x.key===h.key)).every(h=>h.repeat));}
 
 /* ===== D · integración con discover() ===== */
 const R1=run(S0,{});check('discover(): incluye revisión estratégica sin errores de motor y con 9 motores',R1.strategy&&R1.audit.engines.every(e=>!e.error)&&R1.audit.engines.filter(e=>e.id!=='strategy').length===9,R1.audit.engines.filter(e=>e.error));

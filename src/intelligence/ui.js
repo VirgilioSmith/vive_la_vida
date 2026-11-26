@@ -41,7 +41,7 @@
    res.__label=({overview:'Inicio',register:'Movimientos',banks:'Bancos',accounts:'Cuentas',wallet:'Tarjetas',cards:'Tarjetas',loans:'Préstamos',patrimony:'Patrimonio',recurring:'Suscripciones',pressure:'Compromisos',income:'Ingresos',budget:'Presupuesto',personal:'Entre personas'})[b.page()]||'';
    let shown=list;let d=null;try{d=B().discover()}catch(_){}
    const top=list[0];
-   if(d&&d.discoveries.length&&(!top||(top.priority!=='critical'&&top.priority!=='attention'))){const h=d.discoveries.find(x=>(x.modules||['overview']).some(m=>mods.includes(m)));
+   if(d&&d.discoveries.length&&(!top||(top.priority!=='critical'&&top.priority!=='attention'))){const h=d.discoveries.find(x=>!x.repeat&&(x.modules||['overview']).some(m=>mods.includes(m)));
     if(h){const fake={...h,priority:h.valence==='risk'?'attention':h.valence==='positive'?'recognition':'info',title:h.title};shown=[fake,...list];res.__disc=h}}
    const el=strip(res,shown,mods);if(el){if(res.__disc){el.querySelector('.vi-copy small').textContent='VIVE Intelligence · '+(res.__disc.kicker||'Descubrimiento');res.__disc=null}place(el)}
   }catch(e){console.warn('[Intelligence] mount',e)}
@@ -67,27 +67,28 @@
 
  const FB=[['correct','Esto es correcto'],['incorrect','Esto no es correcto'],['exception','Fue una excepción'],['intentional','Fue intencional'],['known','Ya lo sabía'],['not_interested','No me interesa'],['follow','Quiero seguir observándolo'],['improve','Quiero mejorar este comportamiento'],['helped','Este descubrimiento me ayudó'],['never','No volver a mostrar este tipo de hallazgo']];
  const VAL={risk:'vi-p-attention',positive:'vi-p-recognition',opportunity:'vi-p-opportunity',neutral:'vi-p-info'};
+const plainLabel=l=>String(l).replace(/^z robustos?$/i,'Distancia a lo habitual').replace(/^Aislamiento.*$/i,'Rareza del conjunto').replace(/^Correlación de Spearman$/i,'Fuerza de la relación').replace(/^Valor p.*$/i,'Posibilidad de que sea casualidad').replace(/^Pendiente \(Theil.*$/i,'Cambio por semana').replace(/^Tau de Kendall$/i,'Consistencia de la tendencia');
+ const PLAIN={pattern:'Comparamos tu comportamiento con tu propia historia.',anomaly:'Comparamos este movimiento con lo que es normal para ti.',drift:'Buscamos cambios sostenidos frente a tu nivel habitual.',blindspot:'Revisamos lo que las cifras visibles no muestran.',correlation:'Buscamos si dos cosas suelen ocurrir juntas, sin asumir que una cause la otra.',prediction:'Proyectamos con tu historial y consideramos la incertidumbre.',evolution:'Comparamos varios periodos entre sí.',sequence:'Observamos qué suele ocurrir después de ciertos eventos.',shadow:'Contrastamos varias señales a la vez y probamos explicaciones alternativas.'};
  function howHTML(h){
   const x=window.ViveDiscovery.explain(h),w=x.how;
   const parts=Object.entries(w.confidence.parts).map(([k,v])=>`<li><span>${esc(k)}</span><b>${v}</b></li>`).join('');
   return `<details class="vi-how"><summary>${esc(w.title)}</summary><div class="vi-how-body">
    <dl><dt>¿Qué detectamos?</dt><dd>${esc(x.detected)}</dd>
    <dt>¿Qué información usamos?</dt><dd>${esc(w.periods)} · ${esc(w.comparison)}</dd>
-   <dt>Evidencia</dt><dd><ul class="vi-ev">${w.evidence.map(e=>`<li><span>${esc(e.label)}</span><b>${esc(e.value)}</b></li>`).join('')}</ul></dd>
-   <dt>Metodología</dt><dd>${esc(w.method)}</dd>
+   <dt>Evidencia</dt><dd><ul class="vi-ev">${w.evidence.map(e=>`<li><span>${esc(plainLabel(e.label))}</span><b>${esc(e.value)}</b></li>`).join('')}</ul></dd>
+   <dt>Metodología</dt><dd>${esc(PLAIN[h.engine]||'Comparamos con tu propia historia.')}</dd>
    <dt>¿Aislado o recurrente?</dt><dd>${esc(w.isolated)} · ${esc(w.recurrence)}</dd>
-   <dt>Incertidumbre</dt><dd>${esc(w.uncertainty)} Confianza ${esc(w.confidence.level)} (puntuación de evidencia ${w.confidence.score}).<ul class="vi-ev">${parts}</ul><small>${esc(w.confidence.formula)}</small></dd>
+   <dt>Incertidumbre</dt><dd>${esc(w.uncertainty)} Confianza ${esc(w.confidence.level)}.</dd>
    <dt>¿Por qué importa?</dt><dd>${esc(x.why)}</dd><dt>Si continúa</dt><dd>${esc(x.ifContinues)}</dd>
    ${x.counterfactual?`<dt>Escenario alternativo</dt><dd>${esc(x.counterfactual)}</dd>`:''}
    ${h.science&&h.science.alternatives&&h.science.alternatives.length?`<dt>Puesta a prueba (intentamos refutarla)</dt><dd><ul class="vi-ev">${h.science.alternatives.map(a=>`<li><span>${esc(a.text)}</span><b>${a.tested?esc(a.outcome):'No comprobable: '+esc(a.outcome)}</b></li>`).join('')}</ul><small>Estado: ${esc(h.science.status)}. ${esc(h.science.followUp||'')}</small></dd>`:''}
-   ${h.council?`<dt>Revisión interna (8 validaciones analíticas)</dt><dd><ul class="vi-ev">${h.council.votes.map(v=>`<li><span>${esc(v.role)}</span><b>${esc(v.verdict)}</b></li>`).join('')}</ul><small>Veredicto: ${esc(h.council.verdict)}.${h.council.dissent.length?' Reservas: '+esc(h.council.dissent.join(' · ')):''}</small></dd>`:''}
-   <dt>Alternativas</dt><dd><ul class="vi-alt">${x.alternatives.map(a=>`<li>${esc(a)}</li>`).join('')}</ul></dd></dl><small>${esc(w.relevanceNote)}</small></div></details>`;
+   <dt>Alternativas</dt><dd><ul class="vi-alt">${x.alternatives.map(a=>`<li>${esc(a)}</li>`).join('')}</ul></dd></dl><small>Esto ordena qué mostrar primero; no es una probabilidad.</small></div></details>`;
  }
  function discCard(h){
   const D=window.ViveDiscovery,q=D.reflect(h);
   return `<article class="vi-card vi-disc ${VAL[h.valence]||'vi-p-info'}" data-vi-dkey="${esc(h.key)}">
    <header><span class="vi-ico" aria-hidden="true">✦</span><div><span class="vi-kicker">${esc(h.kicker||'Mira esto')}</span><h4>${esc(h.title)}</h4><div class="vi-tags"><span class="vi-kind vi-k-${esc(h.kind)}">${esc(window.ViveIntelligence.engines.narrative.kindLabel(h.kind))}</span><span class="vi-conf">Confianza ${esc(h.confidence.level)}</span></div></div></header>
-   <p>${esc(h.summary)}</p>${q?`<p class="vi-q">${esc(q)}</p>`:''}
+   <p>${esc(h.summary)}</p>${h.question?`<div class="vi-ask"><span>${esc(h.question.text)}</span>${h.question.options.map(o=>`<button type="button" class="vi-chip" data-vi="dfb" data-a="${o[1]}">${esc(o[0])}</button>`).join('')}</div>`:(q?`<p class="vi-q">${esc(q)}</p>`:'')}
    ${howHTML(h)}
    <footer>${h.action?`<button type="button" class="vi-act" data-vi="go" data-target="${esc(h.action.target)}">${esc(h.action.label)} <span aria-hidden="true">→</span></button>`:'<span></span>'}
     <details class="vi-opts"><summary aria-label="Retroalimentación">Opciones</summary><div role="menu">${FB.map(([a,l])=>`<button type="button" role="menuitem" data-vi="dfb" data-a="${a}">${esc(l)}</button>`).join('')}</div></details></footer></article>`;
@@ -96,13 +97,11 @@
 
  const money=v=>(v<0?'-':'')+'RD$'+Math.round(Math.abs(v)).toLocaleString('es-DO');
  function stratHTML(disc){
-  const s=disc.strategy;if(!s)return '';const lm=s.lifeModel,cu=s.curiosity,b=s.benchmark,g=s.governance;
-  const q=cu.ask?`<div class="vi-q"><p><b>${esc(cu.ask.question)}</b></p><p><small>Por qué te lo pregunto: ${esc(cu.ask.why)} ${esc(cu.ask.effect||'')}</small></p>${cu.ask.type==='action'?'':`<div class="vi-chips">${cu.ask.options.map(o=>`<button type="button" class="vi-chip" data-vi="sans" data-id="${esc(cu.ask.id)}" data-multi="${cu.ask.type==='multi'?1:0}" data-v="${esc(o)}">${esc(o)}</button>`).join('')}${cu.ask.type==='multi'?'<button type="button" class="vi-chip" data-vi="sdone" data-id="'+esc(cu.ask.id)+'">Listo</button>':''}</div>`}</div>`:'';
+  const s=disc.strategy;if(!s)return '';const lm=s.lifeModel,cu=s.curiosity;
   return `<h5>Revisión estratégica</h5>
    <p>${esc(lm.note)}</p><ul class="vi-kl">${lm.items.map(i=>`<li><span>${esc(i.label)}<small> · ${esc(i.basis)}</small></span><b>${money(i.amount)}</b></li>`).join('')}</ul><small>${esc(lm.assumptions.join(' · '))}</small>
-   <h5>Qué sabe y qué no sabe Vive</h5><ul class="vi-kl">${cu.known.map(k=>`<li><span>${esc(k)}</span><b>Sabe</b></li>`).join('')}${cu.unknown.slice(0,5).map(k=>`<li><span>${esc(k)}</span><b>Aún no</b></li>`).join('')}</ul>${q}
-   <h5>Futuros alternativos y decisiones (bajo demanda)</h5><div class="vi-chips"><button type="button" class="vi-chip" data-vi="sfut">Cinco futuros posibles</button><button type="button" class="vi-chip" data-vi="slab">Laboratorio de decisiones</button><button type="button" class="vi-chip" data-vi="schain">¿Y si tomo una cuota de RD$8,000/mes?</button></div><div class="vi-strat" aria-live="polite"></div>
-   <h5>Desempeño medido de Vive</h5><ul class="vi-kl"><li><span>Predicciones de gasto ya evaluadas</span><b>${b.predicciones.n?b.predicciones.n+' · error medio '+money(b.predicciones.mae)+' · cobertura '+Math.round(b.predicciones.coverage*100)+' %':'Aún sin datos'}</b></li><li><span>Modelo de pronóstico en uso</span><b>${g&&g.ok?esc(g.champion)+' v'+g.version+(g.promotionAllowed?'':' (sin promoción: pocos meses)'):'Modelo ingenuo (historial insuficiente)'}</b></li>${g&&g.abstain&&g.abstain.abstain?`<li><span>Pronóstico de gasto</span><b>Vive se abstiene: ${esc(g.abstain.reason)}</b></li>`:''}<li><span>Utilidad percibida (tus respuestas)</span><b>${b.utilidadPercibida==null?'Aún sin datos':Math.round(b.utilidadPercibida*100)+' %'}</b></li></ul><small>${esc(b.nota)}</small>`;
+   <h5>Qué sabe y qué no sabe Vive</h5><ul class="vi-kl">${cu.known.map(k=>`<li><span>${esc(k)}</span><b>Sabe</b></li>`).join('')}${cu.unknown.slice(0,5).map(k=>`<li><span>${esc(k)}</span><b>Aún no</b></li>`).join('')}</ul>
+   <h5>Futuros alternativos y decisiones (bajo demanda)</h5><div class="vi-chips"><button type="button" class="vi-chip" data-vi="sfut">Cinco futuros posibles</button><button type="button" class="vi-chip" data-vi="slab">Laboratorio de decisiones</button><button type="button" class="vi-chip" data-vi="schain">¿Y si tomo una cuota de RD$8,000/mes?</button></div><div class="vi-strat" aria-live="polite"></div>`;
  }
  function knowHTML(disc){
   const D=window.ViveDiscovery,m=B().memory(),L=D.Memory.list(m),prof=disc.features.profile,au=disc.audit;
@@ -121,9 +120,6 @@
    <h5>¿Qué pasaría si…? (simulación bajo demanda)</h5><div class="vi-chips">${sim('Gasto +10 %',{expensePct:10})}${sim('Ingresos −20 %',{incomePct:-20})}${sim('Eliminar RD$5,000/mes de gasto',{removeMonthly:5000})}${sim('Mantener el ritmo actual',{})}</div><div class="vi-sim" aria-live="polite"></div>
    ${stratHTML(disc)}
    <h5>Retroalimentación recibida</h5><p>${fbCount?`${fbCount} respuestas recientes; ajustan el peso de cada motor (${Object.entries(m.w).map(([k,v])=>k+' ×'+v).join(', ')||'sin cambios'}).`:'Aún no has dado retroalimentación.'}</p>
-   <h5>Diagnóstico técnico</h5><details class="vi-diag"><summary>Ejecución de motores</summary><table class="vi-t"><tr><th>Motor</th><th>ms</th><th>Resultado</th></tr>${au.engines.map(e=>`<tr><td>${esc(e.id)} <small>(${esc(e.frequency||'')})</small></td><td>${e.ms!=null?e.ms:'—'}</td><td>${e.error?'error: '+esc(e.error):e.skipped?esc(e.skipped):e.produced+' hipótesis'}</td></tr>`).join('')}</table>
-    <p><small>${au.features.days} días · ${au.features.weeks} semanas · ${au.features.records} registros · características ${au.features.ms} ms · total ${au.ms} ms · memoria ${au.memoryBytes} bytes · ${au.surfaced} visibles de ${au.hypotheses}. Descartados: ${au.discarded.length}.</small></p>
-    <ul class="vi-kl">${au.discarded.slice(0,8).map(d=>`<li><span>${esc(d.key)}</span><b>${esc(d.reason)}</b></li>`).join('')}</ul></details>
    <div class="vi-know-actions"><button type="button" class="vi-chip" data-vi="dexport">Exportar mi conocimiento</button><button type="button" class="vi-chip vi-danger" data-vi="dforgetall">Borrar todo lo aprendido</button></div></div></details>`;
  }
  function sheetHTML(res,mods){

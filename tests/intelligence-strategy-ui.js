@@ -31,9 +31,11 @@ const SEED=`
   check(`[${name}] laboratorio de decisiones: 5 alternativas`,await p.evaluate(()=>document.querySelectorAll('.vi-strat details').length===5));
   await p.evaluate(()=>document.querySelector('[data-vi="schain"]').click());await p.waitForTimeout(400);
   check(`[${name}] consecuencias de 1.º a 4.º orden`,await p.evaluate(()=>/Primer orden/.test(document.querySelector('.vi-strat').innerText)&&/Cuarto orden/.test(document.querySelector('.vi-strat').innerText)));
-  const ask=await p.evaluate(()=>!!document.querySelector('[data-vi="sans"]'));
-  if(ask){await p.evaluate(()=>{document.querySelectorAll('[data-vi="sans"]')[0].click();document.querySelectorAll('[data-vi="sans"]')[1]&&document.querySelectorAll('[data-vi="sans"]')[1].click();document.querySelector('[data-vi="sdone"]').click()});await p.waitForTimeout(500);
-   const mem=await p.evaluate(()=>window.__viveIntel.memory().declared);check(`[${name}] responder la pregunta guarda la prioridad declarada`,mem&&mem.priorities&&mem.priorities.length===2,mem);}
+  const tech=await p.evaluate(()=>document.querySelector('.vi-sheet').textContent);
+  check(`[${name}] la hoja no expone nombres de algoritmos, motores ni paneles técnicos`,!/Isolation|CUSUM|Mann|Spearman|bootstrap|Monte Carlo|Benjamini|Theil|Diagnóstico técnico|campeón|Champion|hiperpar/i.test(tech),(tech.match(/Isolation|CUSUM|Mann|Spearman|bootstrap|Monte Carlo|Benjamini|Theil|Diagnóstico técnico|campeón|Champion/i)||[])[0]);
+  check(`[${name}] no hay preguntas proactivas ni botones de cuestionario`,await p.evaluate(()=>!document.querySelector('[data-vi="sans"]')&&!document.querySelector('[data-vi="sdone"]')));
+  check(`[${name}] como máximo una pregunta contextual en pantalla`,await p.evaluate(()=>document.querySelectorAll('.vi-ask').length<=1));
+  check(`[${name}] el panel de auditoría existe solo como API interna`,await p.evaluate(()=>{const a=window.__viveIntel.audit();return a&&a.audit&&a.audit.engines.length>=9}));
   const fit=await p.evaluate(()=>{const s=document.querySelector('.vi-sheet');return !s||s.scrollWidth<=s.clientWidth+1});
   check(`[${name}] sin desbordes horizontales`,fit);
   check(`[${name}] sin consultas a Supabase por el análisis estratégico`,sup===0,sup);

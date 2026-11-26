@@ -20558,10 +20558,10 @@ function vIntelSimulate(sc){return window.ViveDiscovery.simulate(vIntelSnapshot(
 function vIntelForMomentos(){
  try{if(!window.ViveDiscovery||!window.ViveIntelligence)return [];
   const d=vDiscCache.res||null;if(!d)return [];const crit=vIntelCache.res&&vIntelCache.res.findings.some(f=>f.priority==='critical'||f.priority==='attention');
-  return d.discoveries.filter(h=>!(crit&&h.valence==='positive')).slice(0,2).map(h=>({id:h.key,kicker:h.kicker,text:h.summary,valence:h.valence,go:(h.action&&h.action.target)||'overview',label:(h.action&&h.action.label)||'Ver más'}));
+  return d.discoveries.filter(h=>!h.repeat&&!(crit&&h.valence==='positive')).slice(0,2).map(h=>({id:h.key,kicker:h.kicker,text:h.summary,valence:h.valence,go:(h.action&&h.action.target)||'overview',label:(h.action&&h.action.label)||'Ver más'}));
  }catch(_){return []}
 }
-window.__viveIntel=Object.freeze({run:vIntelRun,discover:vIntelDiscover,discFeedback:vIntelDiscFeedback,memOp:vIntelMemOp,simulate:vIntelSimulate,strategic:vIntelStrategic,answer:vIntelAnswer,forMomentos:vIntelForMomentos,memory:vIntelMem,invalidate:()=>v99Invalidate(),feedback:vIntelFeedback,setPref:vIntelSetPref,snapshot:vIntelSnapshot,prefs:()=>window.ViveIntelligence.engines.learning.normalize(db.settings.intelligence).prefs,
+window.__viveIntel=Object.freeze({run:vIntelRun,discover:vIntelDiscover,discFeedback:vIntelDiscFeedback,memOp:vIntelMemOp,simulate:vIntelSimulate,strategic:vIntelStrategic,audit:()=>{const d=vIntelDiscover();return d&&{audit:d.audit,strategy:d.strategy&&d.strategy.benchmark,governance:d.strategy&&d.strategy.governance}},answer:vIntelAnswer,forMomentos:vIntelForMomentos,memory:vIntelMem,invalidate:()=>v99Invalidate(),feedback:vIntelFeedback,setPref:vIntelSetPref,snapshot:vIntelSnapshot,prefs:()=>window.ViveIntelligence.engines.learning.normalize(db.settings.intelligence).prefs,
  go:id=>{const b=document.createElement('button');b.type='button';b.dataset.act='navigate';b.dataset.id=id;b.hidden=true;document.body.append(b);b.click();b.remove()},
  render:()=>render(),page:()=>ui.page,toast:m=>toast(m)});
 /* Carga bajo demanda: motor, interfaz y estilos se descargan una sola vez, en reposo, la primera vez que se muestra una página con Intelligence. */
@@ -20571,9 +20571,9 @@ function vIntelEnsure(){
  if(window.ViveIntelligence&&window.ViveIntelUI)return Promise.resolve();
  if(vIntelLoading)return vIntelLoading;
  vIntelLoading=new Promise(done=>{
-  try{const css=document.createElement('link');css.rel='stylesheet';css.href='./src/intelligence/intelligence.css?v=6';document.head.appendChild(css)}catch(_){}
+  try{const css=document.createElement('link');css.rel='stylesheet';css.href='./src/intelligence/intelligence.css?v=7';document.head.appendChild(css)}catch(_){}
   const load=src=>new Promise((ok,ko)=>{const el=document.createElement('script');el.src=src;el.onload=ok;el.onerror=ko;document.head.appendChild(el)});
-  load('./src/intelligence/engine.js?v=4').then(()=>load('./src/intelligence/stats.js?v=2')).then(()=>load('./src/intelligence/strategy.js?v=1')).then(()=>load('./src/intelligence/discovery.js?v=2')).then(()=>load('./src/intelligence/ui.js?v=9')).then(()=>done()).catch(()=>done());
+  load('./src/intelligence/engine.js?v=4').then(()=>load('./src/intelligence/stats.js?v=2')).then(()=>load('./src/intelligence/strategy.js?v=2')).then(()=>load('./src/intelligence/discovery.js?v=3')).then(()=>load('./src/intelligence/ui.js?v=11')).then(()=>done()).catch(()=>done());
  });
  return vIntelLoading;
 }

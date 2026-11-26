@@ -173,6 +173,7 @@
    const half=Math.floor(d.length/2);const f=(a)=>{const vv=a.filter(r=>r.wd===w).map(r=>r.x);const mm=S.mean(a.map(r=>r.x));return mm>0?S.mean(vv)/mm:0};const r1=f(d.slice(0,half)),r2=f(d.slice(half));temporal={first:+r1.toFixed(2),second:+r2.toFixed(2)};
    done('El pico depende de un periodo concreto',true,`primera mitad ${r1.toFixed(1)}×, segunda mitad ${r2.toFixed(1)}×`,Math.min(r1,r2)<1.15);
    const post=new Set();for(const p of F.paydays)for(let k=0;k<=2;k++)post.add(addDays(p,k));const nd=d.filter(r=>!post.has(r.d)),nv=nd.filter(r=>r.wd===w).map(r=>r.x);
+   {const qd=d.filter(r=>{const n=Number(r.d.slice(8));return !(n>=14&&n<=16||n>=29||n<=1)});const qv=qd.filter(r=>r.wd===w).map(r=>r.x);if(qv.length>=8)done('Lo explica la quincena (días 14–16 y fin de mes)',true,`sin esos días el pico es ${(S.mean(qv)/S.mean(qd.map(r=>r.x))).toFixed(1)}×`,S.mean(qv)<S.mean(qd.map(r=>r.x))*1.2)}
    if(nv.length>=8){const nm=S.mean(nd.map(r=>r.x));done('Lo explica el cobro (días posteriores al ingreso)',true,`sin esos días el pico es ${(S.mean(nv)/nm).toFixed(1)}×`,S.mean(nv)<nm*1.2)}else done('Lo explica el cobro',false,'datos insuficientes para descartarlo',false)}
   else if(h.type==='post-payday'){const ctl=[],obs=[];for(const p of F.paydays){const i=F.days.findIndex(r=>r.d===p);if(i<10||i+2>=F.days.length)continue;obs.push(F.days[i].x+F.days[i+1].x+F.days[i+2].x);ctl.push(F.days[i-7].x+F.days[i-6].x+F.days[i-5].x)}
    if(obs.length>=3){const r=S.median(obs)/(S.median(ctl)||1);done('Es solo el mismo día de la semana (sin cobro)',true,`frente a los mismos días de la semana anterior: ${r.toFixed(1)}×`,r<1.3)}else done('Es el día de la semana',false,'datos insuficientes',false)}
@@ -274,6 +275,56 @@
   return out;
  }
 
+
+ /* ==========================================================================
+    CREATIVIDAD — nuevas interpretaciones respaldadas por datos reales (sin inventar)
+    Estabilidad creciente · mejora inadvertida · nueva normalidad · «el problema no está donde parecía» · comportamientos que desaparecen
+    ========================================================================== */
+ const bootRatio=(a,b,seed)=>{const R=S.rng(seed),r=[];for(let i=0;i<300;i++){const x=S.mad(S.bootstrap(a,a.length,R)),y=S.mad(S.bootstrap(b,b.length,R));if(y>0)r.push(x/y)}return r.length?{low:S.quantile(r,.05),high:S.quantile(r,.95)}:null};
+ function creative(F,snap,mem,conf){
+  const out=[];const w=F.weeks;const mths=(snap.months||[]).filter(m=>!m.partial&&m.txCount>0);
+  /* A · estabilidad creciente: la variabilidad semanal baja de forma estadísticamente distinguible */
+  if(w.length>=26){const a=w.slice(-12).map(x=>x.x),b=w.slice(-24,-12).map(x=>x.x);const ma=S.mad(a),mb=S.mad(b),med=S.median(b)||1;
+   if(mb>0&&ma/mb<=.7&&S.median(a)<=med*1.1){const ci=bootRatio(a,b,41);
+    if(ci&&ci.high<1)out.push(Hh({key:'creative.stability-up',engine:'shadow',type:'stability-up',category:'spending',valence:'positive',title:'Tu estabilidad está creciendo',
+     summary:`Tu gasto semanal oscila ${Math.round(100*(1-ma/mb))} % menos que hace tres meses: se volvió más predecible sin gastar más.`,observed:ma,baseline:mb,deviation:ma/mb-1,impact:0,
+     confidence:conf({n:24,needed:24,strength:Math.min(1,(1-ma/mb)/.5),stability:1-Math.min(1,ci.high),completeness:F.profile.coverage+.3}),evidence:[['Variación semanal (12 semanas recientes)',fmt(ma)],['Variación semanal (12 previas)',fmt(mb)],['Intervalo de la razón (90 %)',`${ci.low.toFixed(2)} – ${ci.high.toFixed(2)}`]],
+     method:'Comparación de la dispersión robusta del gasto semanal entre dos bloques de 12 semanas, con intervalo por remuestreo: solo se comunica si el intervalo queda completamente por debajo de 1.',periods:'24 semanas',comparison:'12 semanas recientes vs 12 previas',recurrence:'sostenido',why:'Un gasto predecible facilita planear y reduce sorpresas.',ifContinues:'Tu margen de planificación seguirá mejorando.',alternatives:['Fijar este nivel como referencia','Seguir observándolo'],action:{label:'Ver presupuesto',target:'budget'},modules:['overview','budget'],urgency:.05,minSeen:2}))}}
+  /* B · mejora inadvertida: el gasto variable baja, el fijo no sube y el ingreso no cae */
+  if(mths.length>=6){const A=mths.slice(-3),B=mths.slice(-6,-3);const fixed=m=>S.sum(Object.entries(m.expenseBy||{}).filter(([k])=>FIXED.test(k)).map(([,v])=>v)),vari=m=>S.sum(Object.entries(m.expenseBy||{}).filter(([k])=>!FIXED.test(k)).map(([,v])=>v));
+   const vr=S.median(A.map(vari)),vrB=S.median(B.map(vari)),fx=S.median(A.map(fixed)),fxB=S.median(B.map(fixed)),inc=S.median(A.map(m=>num(m.income))),incB=S.median(B.map(m=>num(m.income)));
+   if(vrB>0&&vr<=vrB*.9&&fx<=fxB*1.05&&inc>=incB*.95&&Object.keys(A[0].expenseBy||{}).length)out.push(Hh({key:'creative.quiet-improvement',engine:'shadow',type:'quiet-improvement',category:'spending',valence:'positive',title:'Estás mejorando sin darte cuenta',
+    summary:`Tu gasto variable bajó ${Math.round(100*(1-vr/vrB))} % (${fmt(vrB)} → ${fmt(vr)} al mes) sin que tus gastos fijos ni tus ingresos empeoraran.`,observed:vr,baseline:vrB,deviation:vr/vrB-1,impact:vrB-vr,
+    confidence:conf({n:6,needed:6,strength:Math.min(1,(1-vr/vrB)/.3),stability:.7,completeness:.8}),evidence:[['Variable (3 m)',fmt(vr)],['Variable (3 m previos)',fmt(vrB)],['Fijo (3 m / previos)',`${fmt(fx)} / ${fmt(fxB)}`],['Ingreso (3 m / previos)',`${fmt(inc)} / ${fmt(incB)}`]],
+    method:'Mediana trimestral del gasto variable vs previo, comprobando que el fijo y el ingreso no hayan compensado el cambio.',periods:'6 meses',comparison:'3 meses vs 3 meses previos',recurrence:'tendencia',why:'Los avances graduales rara vez se notan desde dentro.',ifContinues:`Mantener este nivel liberaría ≈ ${fmt((vrB-vr)*12)} al año.`,alternatives:['Reconocerlo y mantenerlo','Decidir a qué destinar ese margen'],action:{label:'Ver categorías',target:'categories'},modules:['overview','register'],urgency:.05,minSeen:2}))}
+  /* C · nueva normalidad: cambio de nivel sostenido ≥ 8 semanas. Si el ingreso se movió igual, no es un problema */
+  if(w.length>=24){const sp=w.slice(-40).map(x=>x.x),inc=w.slice(-40).map(x=>x.i);const c=S.cusum(sp,{n0:Math.floor(sp.length*.5),k:.6,h:5});
+   if(c&&sp.length-c.start>=8){const after=sp.slice(c.start),mid=Math.floor(after.length/2);const h1=S.median(after.slice(0,mid)),h2=S.median(after.slice(mid));const sustained=Math.sign(h1-c.baseline)===Math.sign(h2-c.baseline)&&Math.abs(h2-c.baseline)>=.6*Math.abs(h1-c.baseline);
+    const ib=S.median(inc.slice(0,c.start)),ia=S.median(inc.slice(c.start));const dI=ib>0?(ia-ib)/ib:null;const dS=c.baseline?(S.median(after)-c.baseline)/c.baseline:0;
+    if(sustained&&Math.abs(dS)>=.15){
+     if(dI!=null&&dS>0&&Math.abs(dI-dS)<=.1)out.push(Hh({key:'creative.new-normal',engine:'shadow',type:'new-normal',category:'spending',valence:'neutral',title:'Tu normalidad está evolucionando',summary:`Tu gasto semanal subió ≈ ${Math.round(dS*100)} % y tu ingreso también (≈ ${Math.round(dI*100)} %): la proporción se mantiene, no es un descontrol.`,observed:dS,baseline:0,deviation:dS-dI,impact:0,
+      confidence:conf({n:sp.length,needed:30,strength:Math.min(1,Math.abs(dS)/.4),stability:.7,completeness:F.profile.coverage+.3}),evidence:[['Gasto semanal (antes → ahora)',`${fmt(c.baseline)} → ${fmt(S.median(after))}`],['Ingreso semanal (antes → ahora)',`${fmt(ib)} → ${fmt(ia)}`],['Semanas en el nuevo nivel',String(after.length)]],method:'Detección de cambio de nivel sostenido en el gasto semanal contrastada con el movimiento del ingreso.',periods:`${sp.length} semanas`,comparison:'antes vs después del cambio',recurrence:`${after.length} semanas`,why:'Un aumento acompañado de más ingreso no equivale a un deterioro.',ifContinues:'Este será tu nuevo punto de referencia.',alternatives:['Aceptarlo como nueva referencia','Seguir observándolo'],action:{label:'Ver flujo',target:'income'},modules:['overview','income'],urgency:.05,minSeen:2}));
+     else if(dS<0&&(dI==null||dI>=-.05))out.push(Hh({key:'creative.lower-normal',engine:'shadow',type:'lower-normal',category:'spending',valence:'positive',title:'Tu gasto se asentó en un nivel más bajo',summary:`Desde hace ${after.length} semanas gastas ≈ ${Math.round(-dS*100)} % menos por semana (${fmt(c.baseline)} → ${fmt(S.median(after))}) y se ha mantenido.`,observed:dS,baseline:0,deviation:dS,impact:(c.baseline-S.median(after))*4.3,
+      confidence:conf({n:sp.length,needed:30,strength:Math.min(1,Math.abs(dS)/.4),stability:.75,completeness:F.profile.coverage+.3}),evidence:[['Gasto semanal (antes → ahora)',`${fmt(c.baseline)} → ${fmt(S.median(after))}`],['Semanas sostenido',String(after.length)]],method:'Cambio de nivel sostenido: ambas mitades del periodo posterior se mantienen en el nuevo nivel.',periods:`${sp.length} semanas`,comparison:'antes vs después del cambio',recurrence:`${after.length} semanas`,why:'Un cambio que se sostiene es un hábito, no una casualidad.',ifContinues:`≈ ${fmt((c.baseline-S.median(after))*52)} menos al año.`,alternatives:['Reconocerlo','Decidir a qué destinar ese margen'],action:{label:'Ver flujo',target:'income'},modules:['overview'],urgency:.05,minSeen:2}))}}}
+  /* D · el problema no está donde parecía: un aumento total explicado por una categoría poco evidente */
+  if(mths.length>=4){const last=mths[mths.length-1],prev=mths.slice(-4,-1);const cats=new Set([...Object.keys(last.expenseBy||{}),...prev.flatMap(m=>Object.keys(m.expenseBy||{}))]);
+   const tot=num(last.expense),totP=S.median(prev.map(m=>num(m.expense)));const dT=tot-totP;
+   if(totP>0&&dT>=.1*totP){const contrib=[...cats].map(c=>({c,d:num((last.expenseBy||{})[c])-S.median(prev.map(m=>num((m.expenseBy||{})[c]))),share:tot?num((last.expenseBy||{})[c])/tot:0})).sort((a,b)=>b.d-a.d);const top=contrib[0];
+    if(top&&top.d>=.6*dT&&top.share<.25&&top.d>0)out.push(Hh({key:'creative.not-where-seemed.'+last.ym,engine:'shadow',type:'not-where-seemed',category:'spending',valence:'neutral',title:'El aumento no viene de donde parecía',summary:`Tu gasto del último mes subió ${fmt(dT)}; ${Math.round(100*top.d/dT)} % de ese aumento viene de «${top.c}», que solo pesa ${Math.round(top.share*100)} % de tu gasto.`,observed:top.d,baseline:dT,deviation:top.d/dT,impact:top.d,
+     confidence:conf({n:4,needed:6,strength:Math.min(1,top.d/dT),stability:.6,completeness:.8}),evidence:[['Aumento total',fmt(dT)],[`Aporte de «${top.c}»`,fmt(top.d)],['Peso de la categoría',Math.round(top.share*100)+' %']],method:'Descomposición del cambio mensual del gasto por categoría frente a la mediana de los 3 meses previos.',periods:'4 meses',comparison:'último mes vs mediana de 3 previos',recurrence:'último mes',why:'Mirar solo las categorías grandes puede ocultar de dónde viene realmente el cambio.',ifContinues:'Si se repite, pasará a ser parte de tu gasto habitual.',alternatives:['Es puntual','Es un nuevo hábito','Seguir observándolo'],action:{label:'Ver categorías',target:'categories'},modules:['register','overview'],urgency:.15,minSeen:2}))}}
+  /* E · un comportamiento que está desapareciendo (no asume que sea bueno o malo) */
+  if(mths.length>=6){const rec=mths.slice(-2),old=mths.slice(-6,-2);const cats=new Set(old.flatMap(m=>Object.keys(m.expenseBy||{})));
+   for(const c of cats){const o=old.map(m=>num((m.expenseBy||{})[c])),r=rec.map(m=>num((m.expenseBy||{})[c]));const mo=S.median(o),tot=S.median(old.map(m=>num(m.expense)))||1;
+    if(mo>=.04*tot&&o.filter(v=>v>0).length>=3&&r.every(v=>v===0)){out.push(Hh({key:'creative.fading.'+c,engine:'shadow',type:'fading',category:'habits',valence:'neutral',title:`«${c}» dejó de aparecer en tus movimientos`,summary:`Gastabas ≈ ${fmt(mo)} al mes en «${c}» y en los dos últimos meses no hay registros. Puede ser un cambio real o una recategorización.`,observed:0,baseline:mo,deviation:-1,impact:mo,
+     confidence:conf({n:6,needed:6,strength:.7,stability:.6,completeness:.7}),evidence:[[`Mediana previa de «${c}»`,fmt(mo)],['Últimos 2 meses',fmt(0)]],method:'Categoría con gasto regular en los 4 meses previos y sin registros en los 2 últimos.',periods:'6 meses',comparison:'4 meses vs 2 últimos',recurrence:'2 meses',why:'Los hábitos que se terminan también cuentan.',ifContinues:'Se considerará una nueva normalidad.',alternatives:['Fue intencional','Cambié de categoría','Seguir observándolo'],action:{label:'Ver categorías',target:'categories'},modules:['register'],urgency:.05,minSeen:3}));break}}}
+  return out;
+ }
+ /* Aprendizaje incremental de líneas base: una lectura cada ≥ 14 días, acotada (sin cuestionarios) */
+ function learn(F,mem,today){
+  const w=F.weeks.slice(-12);if(w.length<8)return null;mem.base=mem.base||{hist:[]};const last=mem.base.hist[mem.base.hist.length-1];
+  if(last&&diff(today,last.d)<14)return mem.base;
+  mem.base.hist.push({d:today,wk:Math.round(S.median(w.map(x=>x.x))),inc:Math.round(S.median(w.map(x=>x.i))),sm:+(S.mean(w.map(x=>x.small||0))).toFixed(1)});mem.base.hist=mem.base.hist.slice(-8);return mem.base}
+
  /* ==========================================================================
     CURIOSIDAD — qué sabe, qué no, qué preguntar (valor de la información)
     ========================================================================== */
@@ -299,7 +350,7 @@
   questions.push({q:'¿Hay cambios graduales que ningún indicador por separado muestra?',answerable:F.weeks.length>=20,via:'tendencia Mann–Kendall'});
   gaps.sort((a,b)=>b.value-a.value);
   const asked=(mem.qa&&mem.qa.asked)||{};const ready=gaps.filter(g=>g.type!=='action'&&g.value>=.25&&!(asked[g.id]&&diff(snap.today,asked[g.id])<14)&&!((mem.qa&&mem.qa.answers||{})[g.id]));
-  return {known,unknown,gaps,questions,ask:ready[0]||null};
+  return {known,unknown,gaps,questions,ask:null,candidates:ready.map(g=>g.id)};   /* política: la curiosidad investiga en silencio; nunca interroga de forma proactiva */
  }
  function answer(memIn,id,value,today){const m=JSON.parse(JSON.stringify(memIn||{}));m.qa=m.qa||{asked:{},answers:{}};m.qa.asked[id]=today;m.qa.answers[id]=value;m.declared=m.declared||{};if(id==='priorities')m.declared.priorities=[].concat(value).slice(0,8);if(id==='planned-expense')m.declared.plannedExpense=value;if(id==='income-stability')m.declared.incomeVariable=value;return m}
 
@@ -349,6 +400,6 @@
  /* Desaprender: un patrón confirmado que deja de observarse se retira para revisión */
  function unlearn(mem,producedKeys,today){const out=[];for(const [k,v] of Object.entries(mem.know||{})){if(v.kind!=='pattern')continue;const h=(mem.hyp||{})[k];if(h&&!producedKeys.has(k)&&diff(today,h.last)>=28){v.status='retirado';v.retiredOn=today;out.push(k);delete mem.know[k];h.state='resolved'}}return out}
 
- const api={HORIZONS,lifeModel,horizon,chain,decisionLab,graph,science,council,shadow,curiosity,answer,backtest,govern,logPrediction,evaluatePredictions,performance,abstain,calibrate,benchmark,recordBenchmark,unlearn,CANDS};
+ const api={creative,learn,HORIZONS,lifeModel,horizon,chain,decisionLab,graph,science,council,shadow,curiosity,answer,backtest,govern,logPrediction,evaluatePredictions,performance,abstain,calibrate,benchmark,recordBenchmark,unlearn,CANDS};
  if(typeof module==='object'&&module.exports)module.exports=api;else root.ViveStrategy=api;
 })(typeof window!=='undefined'?window:globalThis);

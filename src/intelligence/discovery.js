@@ -113,7 +113,7 @@
  const H=(o)=>Object.assign({kind:'fact',valence:'neutral',urgency:.2,impact:0,modules:['overview'],category:'habits',alternatives:[],evidence:[],minSeen:2},o);
 
  const Engines={};
- Engines.shadow=(F,snap,mem)=>{const st=ST();return st?st.shadow(F,snap,mem,confidence):[]};
+ Engines.shadow=(F,snap,mem)=>{const st=ST();return st?st.shadow(F,snap,mem,confidence).concat(st.creative(F,snap,mem,confidence)):[]};
  /* --- Pattern: día de la semana y ventana posterior al cobro --- */
  Engines.pattern=F=>{
   const out=[];const d=F.days.filter(r=>!r.ex);if(F.profile.historyDays<70)return out;
@@ -315,7 +315,7 @@
     RETROALIMENTACIÓN — efectos verificables sobre la memoria y la priorización
     ========================================================================== */
  /* Mensajes breves de entrada (Centro Estratégico): coherentes con la valencia y el tipo del hallazgo */
- function kicker(h){if(h.valence==='risk')return h.engine==='prediction'?'Algo se acerca':'Esto importa';if(h.valence==='positive')return h.type==='improving'?'Vas mejorando':'Estás avanzando';if(h.engine==='prediction')return 'Algo se acerca';if(h.type==='structural-up'||h.type==='structural-down')return 'Algo cambió';if(h.state==='pattern'||h.type==='weekday-peak'||h.type==='post-payday')return 'Patrón descubierto';if(h.engine==='anomaly')return 'Mira esto';return 'Mira esto'}
+ function kicker(h){if(h.type==='new-normal'||h.type==='fading'||h.type==='not-where-seemed')return 'Algo cambió';if(h.type==='stability-up'||h.type==='quiet-improvement'||h.type==='lower-normal')return 'Vas mejorando';if(h.valence==='risk')return h.engine==='prediction'?'Algo se acerca':'Esto importa';if(h.valence==='positive')return h.type==='improving'?'Vas mejorando':'Estás avanzando';if(h.engine==='prediction')return 'Algo se acerca';if(h.type==='structural-up'||h.type==='structural-down')return 'Algo cambió';if(h.state==='pattern'||h.type==='weekday-peak'||h.type==='post-payday')return 'Patrón descubierto';if(h.engine==='anomaly')return 'Mira esto';return 'Mira esto'}
  const FEEDBACK=['correct','incorrect','exception','intentional','known','not_interested','follow','improve','helped','never'];
  function feedback(memIn,h,action,today){
   const m=Memory.norm(JSON.parse(JSON.stringify(memIn||{})));if(!FEEDBACK.includes(action))return m;
@@ -382,6 +382,19 @@
   for(const k of Object.keys(mem.hyp)){const h=mem.hyp[k];if(h.last!==today&&diff(today,h.last)>=14&&!['resolved','discarded','pattern'].includes(h.state))h.state='resolved'}
   // seguimiento de metas de mejora
   for(const [k,g] of Object.entries(mem.goals)){const cur=raw.find(h=>h.key===k);if(cur&&g.baseline!=null){const imp=g.baseline?(g.baseline-cur.observed)/Math.abs(g.baseline):0;g.progress=+imp.toFixed(2)}}
+  /* Autocrítica: no repetir lo ya comunicado. Si no hay novedad material (< 15 % de cambio) se marca como «repetido»: se conserva, pero no vuelve a anunciarse. */
+  mem.shown=mem.shown||{};
+  for(const h of show){const sh=mem.shown[h.key];
+   if(sh){const ch=Math.abs((h.observed||0)-(sh.o||0))/Math.max(Math.abs(sh.o||0),1e-9);if(sh.d!==today&&ch<.15){h.repeat=true;h.relevance=Math.round(h.relevance*.6)}else if(ch>=.15)mem.shown[h.key]={d:today,o:h.observed}}
+   else mem.shown[h.key]={d:today,o:h.observed}}
+  { const ks=Object.keys(mem.shown);if(ks.length>24)ks.sort((a,b)=>mem.shown[a].d.localeCompare(mem.shown[b].d)).slice(0,ks.length-24).forEach(k=>delete mem.shown[k]);
+    for(const k of ks)if(mem.shown[k]&&diff(today,mem.shown[k].d)>90)delete mem.shown[k] }
+  /* Pregunta excepcional: como máximo UNA, breve, opcional, ligada a un descubrimiento ambiguo; nunca más de una cada 10 días ni más de 3 días visible. */
+  mem.qa=mem.qa||{asked:{},answers:{}};const QA=mem.qa;
+  const QMAP={'exception-to-habit':['¿Es un nuevo hábito?',[['Sí','correct'],['Fue puntual','exception']]],'atypical-combination':['¿Fue algo puntual?',[['Sí','exception'],['No','correct']]],'slow-trend':['¿Quieres que lo siga observando?',[['Sí','follow'],['No hace falta','not_interested']]],'not-where-seemed':['¿Fue algo puntual?',[['Sí','exception'],['Es nuevo','correct']]],'fading':['¿Fue intencional?',[['Sí','intentional'],['No sé','follow']]]};
+  if(QA.q&&(diff(today,QA.q.since)>3||!show.some(h=>h.key===QA.q.key))){QA.last=QA.q.since;delete QA.q}
+  if(!QA.q&&(!QA.last||diff(today,QA.last)>=10)){const c=show.find(h=>!h.repeat&&QMAP[h.type]&&!(mem.exc[h.key]));if(c)QA.q={key:c.key,since:today}}
+  if(QA.q){const h=show.find(x=>x.key===QA.q.key);if(h&&QMAP[h.type])h.question={text:QMAP[h.type][0],options:QMAP[h.type][1]}}
   let strategy=null;
   if(stg&&!o.noStrategy){try{
    const producedKeys=new Set(raw.map(h=>h.key));const unlearned=stg.unlearn(mem,producedKeys,today);
@@ -390,7 +403,7 @@
    const gov=stg.govern(mem,done);
    if(gov.ok){const cur=today.slice(0,7),ab=stg.abstain(mem,'spend');gov.abstain=ab;
     if(!ab.abstain)stg.logPrediction(mem,{t:'spend',for:cur,pred:Math.round(gov.pred),lo:Math.round(gov.pred-1.645*gov.sigma),hi:Math.round(gov.pred+1.645*gov.sigma),naive:Math.round(done[done.length-1]),model:gov.champion})}
-   stg.recordBenchmark(mem,today);
+   stg.recordBenchmark(mem,today);stg.learn(F,mem,today);
    strategy={lifeModel:stg.lifeModel(snap,F),curiosity:stg.curiosity(snap,F,mem,{discoveries:show,internal}),governance:gov,unlearned,evaluated,benchmark:stg.benchmark(mem,Date.now()-t0)};
   }catch(e){audit.engines.push({id:'strategy',error:String(e&&e.message||e)})}}
   mem.audit={runs:(mem.audit.runs||0)+1,last:today};Memory.prune(mem,today);

@@ -34,3 +34,31 @@ Limitaciones honestas: se probó con datos sintéticos y los de prueba de la app
 
 ## Recursos
 Cálculo ≈ 40–70 ms por evaluación (presupuesto 150 ms), futuros/decisiones solo bajo demanda. Sin consultas nuevas a Supabase, sin tablas ni funciones nuevas; la memoria sigue en `settings.intelligenceMem` (< 8 KB, ≤ 1 escritura al día). No se añadieron módulos ni navegación: todo vive en la hoja «Lo que Vive sabe de ti».
+
+---
+
+## Refinamiento (misma experiencia, más inteligencia interna)
+
+Principio: **no se añadió ningún módulo, página ni navegación.** Los cambios son internos; en pantalla solo hay menos tecnicismos y, excepcionalmente, una pregunta de una línea dentro de un descubrimiento.
+
+| Dimensión | Qué cambió | Estado |
+|---|---|---|
+| Curiosidad | Investiga sola; **ya no hay preguntas proactivas** (`curiosity.ask` es siempre `null`). Las lagunas se guardan como candidatas internas. | Implementado y probado |
+| Creatividad | 5 interpretaciones nuevas con datos reales: *estabilidad creciente* (variabilidad semanal con intervalo por remuestreo), *mejora inadvertida* (variable baja, fijo e ingreso estables), *nueva normalidad* (gasto e ingreso suben en proporción → neutral, sin alarma) / *nivel más bajo sostenido*, *el aumento no viene de donde parecía* (descomposición por categoría), *comportamiento que desaparece*. Cada una tiene su control negativo (sin el patrón, no se emite). | Implementado y probado (sintético) |
+| Predicción | Sin cambios visibles; el libro de predicciones y la abstención de la fase anterior siguen activos. Se añadió el contexto de **quincena** (días 14–16 y fin de mes) como explicación alternativa a los picos semanales. | Implementado; la estacionalidad anual sigue requiriendo ≥ 1 año |
+| Estrategia | Se mantiene bajo demanda (futuros, laboratorio, consecuencias). No se convierte cada hallazgo en lista de tareas. | Sin cambios |
+| Aprendizaje | Línea base incremental (`mem.base`): mediana semanal de gasto e ingreso y micropagos, una lectura cada ≥ 14 días (≤ 8), calculada desde el historial existente en la primera ejecución. Sin cuestionarios. | Implementado y probado |
+| Autocrítica | **Control de repetición:** lo ya comunicado sin novedad material (< 15 % de cambio) se marca *repetido*: se conserva en la hoja pero baja su relevancia y no vuelve a anunciarse en la franja ni en el Centro Estratégico. Ya existían: refutación, consejo interno, desaprendizaje, calibración por falsos positivos. | Implementado y probado |
+| Ciencia | Sin modelos nuevos «por aparentar». Los nuevos detectores usan intervalo por remuestreo, descomposición y controles. | — |
+| Contexto | Quincena como alternativa; un aumento acompañado de ingreso no se trata como problema. Feriados, metas y prioridades: solo se usan si existen datos (la app no guarda metas ni bienestar). | Parcial |
+| Preguntas | Una sola, ligada a un descubrimiento ambiguo (excepción→hábito, combinación atípica, tendencia lenta, aumento inesperado, categoría que desaparece), de ≤ 40 caracteres, con ≤ 2 opciones; visible ≤ 3 días y no se reasigna antes de 10 días. Ignorarla no cuenta como respuesta. | Implementado y probado |
+| Silencio | Sin cupos diarios; lo repetido no genera ruido. | Implementado y probado |
+| Sin carga técnica | Se retiró de la hoja: «Diagnóstico técnico», métricas de desempeño del modelo, voto del consejo interno, partes de la puntuación y fórmula. Las etiquetas de evidencia usan lenguaje llano («Distancia a lo habitual», «Posibilidad de que sea casualidad»…) y la metodología se explica sin nombres de algoritmos. Todo sigue disponible para mantenimiento en `window.__viveIntel.audit()` y en la exportación. | Implementado y probado |
+
+### No implementado o experimental
+- «Patrones dentro de patrones» y «diferencia entre percepción y registro»: no hay un método fiable con los datos actuales; solo existen aproximaciones (la prueba de explicaciones alternativas y la descomposición por categoría).
+- Aprendizaje por prioridades declaradas: sin la pregunta proactiva, el consejo «humanista» se abstiene (no se infieren valores).
+- Todo se validó con datos sintéticos y los de prueba de la app; no con datos reales ni en un iPhone.
+- Recursos: sin consultas nuevas a Supabase; la memoria sigue < 8 KB y se escribe como máximo una vez al día. El análisis completo se cachea por revisión y día; abrir la hoja no lo recalcula.
+
+Pruebas: `tests/intelligence-strategy.js` (70) y `tests/intelligence-strategy-ui.js` (23).
