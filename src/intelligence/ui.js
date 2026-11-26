@@ -53,7 +53,9 @@
   const main=document.querySelector('#app main.main');
   const vis=e=>!e.closest('.topbar,[hidden],.modal,#modal-root')&&(!e.checkVisibility||e.checkVisibility({checkVisibilityCSS:true}));
   /* título propio de la página (h1); si la página abre directamente con un encabezado de sección (Anual, Proyección…), el primer h2 hace de título */
-  const h=[...document.querySelectorAll('#page h1,#app main h1')].find(vis)||[...document.querySelectorAll('#page h2')].find(vis);
+  const h1s=[...document.querySelectorAll('#page h1,#app main h1')].filter(e=>!e.closest('.topbar,[hidden],.modal,#modal-root'));
+  /* El h2 solo hace de título cuando la página NO tiene ningún h1 (si lo tiene pero aún no es visible, se espera: nunca se mete la línea dentro de una tarjeta) */
+  const h=h1s.find(vis)||(h1s.length?null:[...document.querySelectorAll('#page h2')].find(vis));
   if(h){let anchor=h;
    for(let n=0;n<4;n++){const p=anchor.parentElement;if(!p||p===page||p===main||p.id==='app'||p.querySelectorAll('*').length>45)break;anchor=p}
    hideSubs(anchor);anchor.after(el);return true}
