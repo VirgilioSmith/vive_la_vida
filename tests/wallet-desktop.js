@@ -33,7 +33,8 @@ module.exports=async function walletDesktop(browser){
   const global=wallet.getByRole('button',{name:/Créditos generales/});
   const select=bank=>wallet.getByRole('button',{name:'Seleccionar '+bank.name,exact:true});
   const sum=key=>fixture.cards.reduce((s,c)=>s+c[key],0);
-  assert.equal(await p.getByRole('heading',{name:'Tu universo financiero'}).count(),1);
+  assert.equal(await p.getByRole('heading',{name:'Wallet',exact:true,level:1}).count(),1);   /* título = nombre de la sección; sin eslogan ni etiqueta superior */
+  assert.equal(await p.getByText('Tu universo financiero').count(),0);
   assert.equal(await global.getAttribute('aria-pressed'),'true');
   assert.equal(await wallet.locator('.vWalletPc-stat').count(),3);
   assert.equal(await wallet.locator('.vWalletPc-stat.is-available div>span').innerText(),'Balance disponible');

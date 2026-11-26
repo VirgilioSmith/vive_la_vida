@@ -140,3 +140,8 @@ html body #app#app#app#app main.vBanksPc-world #page#page .vBanksPc-overview-til
  html body #app#app#app#app main.vBanksPc-world #page#page .vBanksPc-overview-tile .vBanksPc-overview-name{font-size:16px!important}
  html body #app#app#app#app main.vBanksPc-world #page#page .vBanksPc-overview-tile .vBanksPc-overview-top{gap:10px!important}
 }
+
+/* Bancos PC · alineación: las tres columnas arrancan y terminan a la misma altura (la central tenía 10 px de relleno vertical)
+   y la cifra de cada fila de «Mis productos» ocupa una columna de ancho fijo, de modo que los separadores quedan en línea. */
+html body #app#app#app#app main.vBanksPc-world #page#page .vBanksPc-center{padding-top:0!important;padding-bottom:0!important}
+html body #app#app#app#app main.vBanksPc-world #page#page .vBanksPc-overview-tile .vBanksPc-overview-metric{flex:0 0 clamp(150px,41cqi,196px)!important;width:clamp(150px,41cqi,196px)!important;box-sizing:border-box}
