@@ -49,7 +49,7 @@ async function checkApplicationRoutes(browser,width,mode){
 async function checkSharedGlass(page,width,mode){
  const mobile=width<791;
  const surfaces=[
-  ['income','.income-distribution'],
+  ['income','.vexp-panel'],
   ['expenses','.expenses-distribution'],
   ['pressure','.v360-pressure-calendar'],
   ['register',mobile?'.v708-movements :is(.v708-row-stack,.v708-empty)':'.ledger-card'],
