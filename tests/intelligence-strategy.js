@@ -186,8 +186,26 @@ const creativeOf=(L,mm)=>{const s=snap({ledger:L,months:mm||months(8)});const F=
 /* F7 · rendimiento: ejecución completa con 365 días y muchas señales */
 {const s=snap({ledger:ledger({days:365,seed:31}),loans:[{id:'l',name:'P',balanceDop:3e5,installmentDop:9e3,rate:12}]});const t0=Date.now();const r=run(s,{});const ms=Date.now()-t0;check(`F7 · evaluación completa de 365 días en < 400 ms (${ms} ms) y sin errores en ningún motor`,ms<400&&r.audit.engines.every(e=>!e.error),r.audit.engines.filter(e=>e.error));}
 
+
+/* ===== G · lente por pantalla ===== */
+{const cardsSnap={cards:[{id:'c1',name:'Visa Oro',limit:100000,limitDop:100000,debt:70000,debtDop:70000,util:70},{id:'c2',name:'Master',limit:50000,limitDop:50000,debt:5000,debtDop:5000,util:10}],cardPay90:30000,
+  loans:[{id:'l1',name:'Auto',balanceDop:300000,installmentDop:25000,rate:12}],recurring:[{name:'Seguro',monthlyDop:3000},{name:'Streaming',monthlyDop:800}],recurringMonthlyDop:3800,
+  accounts:[{id:'a1',name:'Principal',kind:'checking',balanceDop:180000},{id:'a2',name:'Ahorro',kind:'savings',balanceDop:5000}],months:months(8,i=>({income:100000,expense:60000,expenseBy:{Vivienda:30000,Ocio:i===7?30000:10000}})),position:{liquid:185000,assets:600000,debt:375000,net:225000}};
+ const L1=ledger({days:200,seed:41});for(const e of L1)if(e.k==='x')e.p='c';
+ const s=snap({...cardsSnap,ledger:L1});const F=D.buildFeatures(s,D.Memory.empty());const lz=G.lens(F,s,D.confidence);const by=d=>lz.filter(x=>x.lens===d);
+ check('G1 · Wallet: utilización alta, dependencia de tarjetas, concentración y balance consumo/pagos se descubren con evidencia',['card-utilization','card-dependence','card-concentration','card-growth'].every(t=>by('cards').some(x=>x.type===t)),by('cards').map(x=>x.type));
+ check('G2 · Préstamos: carga de cuotas y horizonte de pago',['loan-burden','loan-horizon'].every(t=>by('loans').some(x=>x.type===t)),by('loans').map(x=>x.type));
+ check('G3 · Suscripciones: peso de lo recurrente',by('recurring').some(x=>x.type==='recurring-weight'));
+ check('G4 · Bancos: concentración en una cuenta y cobertura de liquidez',['cash-concentration','liquidity-coverage'].every(t=>by('banks').some(x=>x.type===t)),by('banks').map(x=>x.type));
+ check('G5 · Movimientos: una categoría que crece frente a su mediana',by('register').some(x=>x.type==='category-growth'&&/Ocio/.test(x.title)),by('register').map(x=>x.title));
+ check('G6 · Patrimonio: relación deuda/activos',by('patrimony').some(x=>x.type==='debt-to-assets'));
+ check('G7 · cada hallazgo de lente trae evidencia, módulos y acción (nada vacío ni inventado)',lz.every(x=>x.evidence.length>=1&&x.modules.length&&x.action&&x.action.target&&x.summary.length>20),lz.filter(x=>!x.evidence.length).map(x=>x.key));
+ const r=run(s,{});check('G8 · discover() entrega la lente por dominio y no la mezcla con los descubrimientos globales',r.lens&&r.lens.cards&&r.lens.cards.length>=3&&!r.discoveries.some(h=>h.engine==='lens'),Object.keys(r.lens||{}));
+ const s2=snap({ledger:ledger({days:200,seed:41})});const F2=D.buildFeatures(s2,D.Memory.empty());check('G9 · sin tarjetas/préstamos no se inventa nada de esos dominios',!G.lens(F2,s2,D.confidence).some(x=>['cards','loans'].includes(x.lens)));
+ const ok2={...cardsSnap,cards:[{id:'c1',name:'Visa',limit:100000,limitDop:100000,debt:4000,debtDop:4000,util:4}],cardPay90:0};const s3=snap({...ok2,ledger:L1});check('G10 · utilización baja se reconoce como algo positivo («flexibilidad, no dinero propio»)',G.lens(D.buildFeatures(s3,D.Memory.empty()),s3,D.confidence).some(x=>x.type==='credit-headroom'&&x.valence==='positive'&&/no dinero propio/.test(x.summary)));}
+
 /* ===== D · integración con discover() ===== */
-const R1=run(S0,{});check('discover(): incluye revisión estratégica sin errores de motor y con 9 motores',R1.strategy&&R1.audit.engines.every(e=>!e.error)&&R1.audit.engines.filter(e=>e.id!=='strategy').length===9,R1.audit.engines.filter(e=>e.error));
+const R1=run(S0,{});check('discover(): incluye revisión estratégica sin errores de motor y con 10 motores (incluida la lente por pantalla)',R1.strategy&&R1.audit.engines.every(e=>!e.error)&&R1.audit.engines.filter(e=>e.id!=='strategy').length===10,R1.audit.engines.filter(e=>e.error));
 check('discover(): memoria < 8 KB tras varias ejecuciones y registro de predicciones acotado',(()=>{let m={};for(let i=0;i<6;i++){const s=snap({ledger:ledger({days:300,seed:11}),today:addDays(T,i)});s.today=addDays(T,i);m=run(s,m).mem}return JSON.stringify(m).length<8192&&(m.pred||[]).length<=14})());
 check('discover(): ≤ 1 pregunta pendiente al usuario',R1.strategy.curiosity.ask===null||typeof R1.strategy.curiosity.ask.id==='string');
 check('discover(): presupuesto de cómputo (< 400 ms con 300 días)',R1.audit.ms<400,R1.audit.ms);

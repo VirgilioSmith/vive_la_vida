@@ -102,3 +102,12 @@ La hoja de VIVE Intelligence **no muestra** centro de conocimiento, madurez, fue
 
 ## La franja cambia según dónde estás
 Antes, un hallazgo transversal («pagos vencidos», presente en 8 módulos) ganaba en todas las páginas y se veía siempre el mismo mensaje, sobre todo en móvil. Ahora (`rank()` en `ui.js`): **Inicio** prioriza lo estratégico (descubrimientos, proyecciones, reconocimientos) y rebaja los vencimientos, que ya ven Compromisos y Pagos; cada **página específica** muestra lo propio (Wallet: vencimientos y lecturas de tarjetas; Préstamos: intereses y cuotas; Suscripciones: recurrentes; Compromisos: proyección de pagos). Los hallazgos transversales no se repiten en páginas donde no son propios: si no hay nada propio, la franja guarda silencio (Bancos, Patrimonio). La hoja abre con el mismo hallazgo que anuncia la franja. Prueba: `tests/intelligence-contexto.js` (13, móvil y PC).
+
+## Píldora y lente por pantalla
+- **Píldora:** la franja ancha pasó a una píldora que se ajusta al contenido. En PC vive en la barra superior, junto a las acciones (se reduce a icono + contador bajo 1180 px); en móvil es una píldora corta bajo el saludo. Una línea con elipsis; el texto completo está en la hoja.
+- **Inicio** = fondo general y estratégico. **Cada pantalla** (Wallet, Préstamos, Suscripciones, Bancos, Movimientos, Ingresos, Patrimonio) tiene una *lente* (10.º motor, `lens`): analiza el escenario completo de esa pantalla con datos ya calculados, sin consultas nuevas.
+  - Wallet: dependencia de tarjetas (90 d vs 90 d previos), utilización alta o margen de crédito, concentración de la deuda, consumo vs pagos, vencimientos que coinciden, tendencia lenta del consumo con tarjeta.
+  - Préstamos: peso de las cuotas sobre el ingreso, horizonte de pago (aproximado, sin intereses futuros), intereses acumulados.
+  - Suscripciones: peso de lo recurrente y cobros anuales próximos. Bancos: concentración en una cuenta y cobertura de liquidez en meses. Movimientos: categoría que crece frente a su mediana. Ingresos: estabilidad o variabilidad. Patrimonio: deuda/activos.
+- La hoja abre con los hallazgos de la pantalla primero; los transversales («pagos vencidos») quedan debajo. Pruebas: 10 de lente en `tests/intelligence-strategy.js` y 15 en `tests/intelligence-contexto.js`.
+- Limitación: validado con datos de prueba; el valor de cada lente depende de que existan datos de esa pantalla (si no hay, la píldora no aparece).

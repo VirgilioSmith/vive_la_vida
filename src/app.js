@@ -20479,14 +20479,15 @@ function vIntelSnapshot(){
  snap.recurringMonthlyDop=recMonthly;
  // Gastos recientes (60 días) para patrones
  const d60=addDays(t,-60),d30=addDays(t,-30),d90=addDays(t,-90);
- snap.recentExpenses=[];let wk=0,refunds=0,adv=0,unc=0;
+ snap.recentExpenses=[];let wk=0,refunds=0,adv=0,unc=0,cardPay=0;
  for(const x of txs){if(!x||!x.date||x.date<d90||x.date>t)continue;
   if(x.type==='card_refund'&&x.date>=d30)refunds+=cvt(x.amount,x.currency||'DOP');
   if(x.type==='card_advance')adv+=cvt(x.amount,x.currency||'DOP');
+  if(x.type==='card_payment')cardPay+=cvt(x.amount,x.currency||'DOP');
   if((x.type==='expense'||x.type==='card_charge')){if(!x.category&&x.date>=d60)unc++;
    if(x.date>=d60){const a=cvt(x.amount,x.currency||'DOP');snap.recentExpenses.push({id:x.id,date:x.date,amountDop:a,label:String(x.note||x.payee||x.category||'Gasto').slice(0,40)});const wd=new Date(x.date+'T12:00:00Z').getUTCDay();if(wd===0||wd===6)wk++;}}}
  snap.weekendShare=snap.recentExpenses.length?100*wk/snap.recentExpenses.length:null;
- snap.refundsLast30=refunds;snap.cashAdvance90=adv;snap.uncategorized=unc;
+ snap.refundsLast30=refunds;snap.cashAdvance90=adv;snap.uncategorized=unc;snap.cardPay90=cardPay;
  // Gastos repetidos mes a mes que no están como recurrentes
  snap.recurringCandidates=[];try{const byKey={};const recNames=new Set(snap.recurring.map(r=>String(r.name).toLowerCase().replace(/[^a-z0-9]/g,'')));
   const d120=addDays(t,-125);for(const x of txs){if(!x||x.date<d120||x.date>t||!(x.type==='expense'||x.type==='card_charge'))continue;const label=String(x.note||x.payee||'').trim();if(label.length<3)continue;const k=label.toLowerCase().replace(/[^a-z0-9áéíóúñ]/g,'');if(!k||[...recNames].some(n=>n&&(k.includes(n)||n.includes(k))))continue;(byKey[k]=byKey[k]||{label,amts:{},months:new Set()}).months.add(x.date.slice(0,7));byKey[k].amts[x.date.slice(0,7)]=cvt(x.amount,x.currency||'DOP')}
@@ -20573,7 +20574,7 @@ function vIntelEnsure(){
  vIntelLoading=new Promise(done=>{
   try{const css=document.createElement('link');css.rel='stylesheet';css.href='./src/intelligence/intelligence.css?v=10';document.head.appendChild(css)}catch(_){}
   const load=src=>new Promise((ok,ko)=>{const el=document.createElement('script');el.src=src;el.onload=ok;el.onerror=ko;document.head.appendChild(el)});
-  load('./src/intelligence/engine.js?v=4').then(()=>load('./src/intelligence/stats.js?v=2')).then(()=>load('./src/intelligence/strategy.js?v=3')).then(()=>load('./src/intelligence/discovery.js?v=4')).then(()=>load('./src/intelligence/ui.js?v=17')).then(()=>done()).catch(()=>done());
+  load('./src/intelligence/engine.js?v=4').then(()=>load('./src/intelligence/stats.js?v=2')).then(()=>load('./src/intelligence/strategy.js?v=4')).then(()=>load('./src/intelligence/discovery.js?v=5')).then(()=>load('./src/intelligence/ui.js?v=19')).then(()=>done()).catch(()=>done());
  });
  return vIntelLoading;
 }

@@ -113,6 +113,7 @@
  const H=(o)=>Object.assign({kind:'fact',valence:'neutral',urgency:.2,impact:0,modules:['overview'],category:'habits',alternatives:[],evidence:[],minSeen:2},o);
 
  const Engines={};
+ Engines.lens=(F,snap)=>{const st=ST();return st?st.lens(F,snap,confidence):[]};
  Engines.shadow=(F,snap,mem)=>{const st=ST();return st?st.shadow(F,snap,mem,confidence).concat(st.creative(F,snap,mem,confidence),st.reverse(F,snap,mem,confidence),st.salaryRace(F,snap,confidence)):[]};
  /* --- Pattern: día de la semana y ventana posterior al cobro --- */
  Engines.pattern=F=>{
@@ -293,8 +294,8 @@
    why:'Si hay una secuencia estable, puedes anticiparla.',ifContinues:'Necesita más ciclos para confirmarse.',alternatives:['Seguir observándola','No me interesa'],action:{label:'Ver ingresos',target:'income'},modules:['overview','income'],urgency:.05,minSeen:3}))}
   return out;
  };
- const ENGINE_ORDER=['pattern','anomaly','drift','blindspot','correlation','prediction','evolution','sequence','shadow'];
- const ENGINE_FREQ={pattern:'semanal',anomaly:'diaria',drift:'semanal',blindspot:'diaria',correlation:'semanal',prediction:'diaria',evolution:'mensual',sequence:'semanal',shadow:'diaria'};
+ const ENGINE_ORDER=['pattern','anomaly','drift','blindspot','correlation','prediction','evolution','sequence','shadow','lens'];
+ const ENGINE_FREQ={pattern:'semanal',anomaly:'diaria',drift:'semanal',blindspot:'diaria',correlation:'semanal',prediction:'diaria',evolution:'mensual',sequence:'semanal',shadow:'diaria',lens:'diaria'};
 
  /* ==========================================================================
     PRIORIDAD multidimensional (puntuación de relevancia 0–100; NO es una probabilidad)
@@ -354,7 +355,7 @@
    audit.engines.push({id:name,ms:Date.now()-s,produced,error,frequency:ENGINE_FREQ[name],records:F.profile.records});
   }
   const stg0=ST();if(stg0&&!o.only){try{for(const c of stg0.converge(raw,F,confidence)){c.engine='shadow';raw.push(c)}}catch(e){audit.engines.push({id:'convergence',error:String(e&&e.message||e)})}}
-  const surfaced=[],internal=[];const seenKeys=new Set();const stg=ST();
+  const surfaced=[],internal=[];const lensOut={};const seenKeys=new Set();const stg=ST();
   for(const h of raw){
    if(seenKeys.has(h.key))continue;seenKeys.add(h.key);
    if(mem.prefs&&mem.prefs.off&&mem.prefs.off[h.category]){audit.discarded.push({key:h.key,reason:'aprendizaje desactivado para la categoría «'+h.category+'»'});continue}
@@ -364,6 +365,7 @@
     if(h.science&&h.science.refuted){internal.push(h);audit.discarded.push({key:h.key,reason:'refutada al ponerla a prueba: '+h.science.reason});continue}
     if(h.council&&h.council.verdict==='descartar'){internal.push(h);audit.discarded.push({key:h.key,reason:'el consejo interno la descartó'});continue}
     const th=(mem.thr||{})[h.engine];if(th&&h.confidence.score<.45+th&&!h.immediate){internal.push(h);audit.discarded.push({key:h.key,reason:'umbral elevado por falsos positivos reportados en este motor'});continue}}
+   if(h.engine==='lens'){h.state='discovery';h.relevance=relevance(h,mem);h.kicker='Aquí y ahora';if(h.confidence.score>=.45){(lensOut[h.lens]=lensOut[h.lens]||[]).push(h)}continue}
    const prev=mem.hyp[h.key];const seen=prev?[...new Set([...(prev.seen||[]),today])].slice(-8):[today];
    h.seenDays=seen.length;h.isNew=!prev;
    let known=mem.know[h.key];if(known&&known.status==='desactualizado'){known.status='vigente';delete known.since;h.reappeared=true}
@@ -409,7 +411,7 @@
   }catch(e){audit.engines.push({id:'strategy',error:String(e&&e.message||e)})}}
   mem.audit={runs:(mem.audit.runs||0)+1,last:today};Memory.prune(mem,today);
   audit.ms=Date.now()-t0;audit.surfaced=show.length;audit.hypotheses=raw.length;audit.memoryBytes=Memory.size(mem);
-  return {discoveries:show,internal,mem,audit,strategy,features:{profile:F.profile,windows:F.windows}};
+  return {discoveries:show,internal,lens:lensOut,mem,audit,strategy,features:{profile:F.profile,windows:F.windows}};
  }
 
  /* ==========================================================================

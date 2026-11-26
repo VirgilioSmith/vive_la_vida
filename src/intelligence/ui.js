@@ -51,8 +51,12 @@
   if(od.length)out.push({id:'sc-od',key:'sc-od',rule:'scoped.overdue',engine:'risk',kind:'fact',priority:'critical',modules:[page],title:`${od.length} pago${od.length===1?'':'s'} ${ks.length===1?w[0]+' ':''}vencido${od.length===1?'':'s'} por ${f(od.reduce((s,x)=>s+x.amountDop,0))}`,confidence:{level:'alta'}});
   else if(soon.length)out.push({id:'sc-soon',key:'sc-soon',rule:'scoped.soon',engine:'risk',kind:'fact',priority:'attention',modules:[page],title:`${soon[0].name} vence ${soon[0].days===0?'hoy':'en '+soon[0].days+' día'+(soon[0].days===1?'':'s')}: ${f(soon[0].amountDop)}`,confidence:{level:'alta'}});
   return out}
+ const LENS={wallet:'cards',cards:'cards',benefits:'cards',loans:'loans',recurring:'recurring',payments:'recurring',banks:'banks',accounts:'banks',register:'register',expenses:'register',categories:'register',income:'income',patrimony:'patrimony',certificates:'patrimony'};
+ const lensScore=h=>2.3+(h.valence==='risk'?.7:h.valence==='positive'?.3:.1)+(h.urgency||0)*2+(h.confidence?h.confidence.score*.4:0);
+ const lensFor=(page,d)=>{const dom=LENS[page];return dom&&d&&d.lens&&d.lens[dom]?[...d.lens[dom]].sort((a,b)=>lensScore(b)-lensScore(a)):[]};
  function rank(page,list,d,mods){
   const strat=STRATEGIC.has(page);const c=[];
+  for(const h of lensFor(page,d)){const fake={...h,priority:h.valence==='risk'?'attention':h.valence==='positive'?'recognition':'info',title:h.title,modules:h.modules};c.push({item:fake,disc:h,s:lensScore(h)+.4})}
   for(const f of scoped(page,d))c.push({item:f,s:(PRI[f.priority]||1)+.5});
   for(const f of list){let s=PRI[f.priority]||1;const broad=f.modules.length>=5;
    if(!strat&&broad&&!['pressure','payments'].includes(page))continue;
@@ -158,9 +162,10 @@ const plainLabel=l=>String(l).replace(/^z robustos?$/i,'Distancia a lo habitual'
   let disc=null;try{disc=B().discover()}catch(e){console.warn('[Intelligence] discover',e)}
   try{const pk=mods?rank(B().page(),mine,disc,mods):null;if(pk&&!pk.disc){const i=ordered.indexOf(pk.item);if(i>0){ordered.splice(i,1);ordered.unshift(pk.item)}}}catch(_){}
   const by=p=>ordered.filter(f=>f.priority===p);
-  const dsec=disc&&disc.discoveries.length?`<section class="vi-group"><h3>Descubrimientos<span>${disc.discoveries.length}</span></h3>${disc.discoveries.map(discCard).join('')}</section>`:'';
-  const body=GROUPS.map(([p,l])=>{const a=by(p);const g=a.length?`<section class="vi-group"><h3>${l}<span>${a.length}</span></h3>${a.map(card).join('')}</section>`:'';return (p==='attention'?g+dsec:g)}).join('').replace(/^$/,'')||(dsec||'<p class="vi-empty">Por ahora no hay nada que destacar. VIVE Intelligence sigue aprendiendo en silencio y vuelve a evaluar cuando registres o cambies información.</p>');
-  const bodyFinal=(!/Descubrimientos<span>/.test(body)&&dsec)?dsec+body:body;
+  const lensList=lensFor(B().page(),disc);const dlist=[...lensList,...(disc?disc.discoveries:[]).filter(h=>!lensList.some(l=>l.key===h.key))];
+  const dsec=dlist.length?`<section class="vi-group"><h3>Descubrimientos<span>${dlist.length}</span></h3>${dlist.map(discCard).join('')}</section>`:'';
+  const body=GROUPS.map(([p,l])=>{const a=by(p);const g=a.length?`<section class="vi-group"><h3>${l}<span>${a.length}</span></h3>${a.map(card).join('')}</section>`:'';return (p==='attention'&&!lensList.length?g+dsec:g)}).join('').replace(/^$/,'')||(dsec||'<p class="vi-empty">Por ahora no hay nada que destacar. VIVE Intelligence sigue aprendiendo en silencio y vuelve a evaluar cuando registres o cambies información.</p>');
+  const bodyFinal=(lensList.length||!/Descubrimientos<span>/.test(body))&&dsec?dsec+body:body;
   const q=res.meta.quality||{};
   const life=B().prefs().life;
   return `<div class="vi-layer" data-vi="backdrop"><section class="vi-sheet" role="dialog" aria-modal="true" aria-labelledby="vi-title">
