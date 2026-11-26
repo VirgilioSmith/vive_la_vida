@@ -138,3 +138,9 @@
 - **Cabecera de Beneficios** con el componente nuevo; se eliminaron las cabeceras ejecutivas v57/v46 de Cuentas, Tarjetas, Préstamos y Certificados, la barra de pestañas «Instituciones · Cuentas · Tarjetas · Préstamos · Certificados» y 337 + 60 reglas CSS huérfanas (~45 KB).
 - Verificación: 52 de 60 capturas (PC/móvil, claro/Black) idénticas; las 8 que cambian son los detalles/páginas rehechos (préstamo, beneficios) y Tarjetas de PC que ahora abre Wallet. Pasan `prestamos`, `detalles`, `bancos-pc-glass`, `bancos-movil-referencia`, `intelligence-contexto`, `intelligence-adaptive`, `glass-engine`, `negro-verdadero`. `tarjetas-v1290`, `wallet-credit-global` y `bancos-patrimonio` fallan igual que antes de estos cambios.
 - Conservado a propósito: el detalle de tarjeta (mismo componente que usa Bancos) sigue abriéndose por la página `cards`, y las clases `loan-*`/`v1249-*` de las pestañas del préstamo (son los generadores actuales).
+
+## Detalle de tarjeta dentro de Wallet y retoques finales
+- La página `cards` deja de ser un destino: abrir una tarjeta (`goCard`) muestra su detalle **dentro de Wallet** (PC y móvil), con su «Volver a Wallet»; la píldora de Intelligence pasa a hablar de esa tarjeta. `cards` queda solo como proveedor interno del detalle y del comparador móvil.
+- Hojas de formulario en móvil («Ampliar catálogo», «Registrar movimiento», etc.): las filas ya no se estiran (se quitó el hueco bajo el emoji) y el pie queda anclado al fondo de la hoja con la zona segura.
+- Verificado: `wallet-desktop`, `wallet-mobile-fidelity`, `wallet-movil-dimension`, `detalles`, `prestamos`, `navegacion-gestos`, `intelligence-contexto`, `glass-engine`, `negro-verdadero`.
+- No reproducible: la etiqueta «DEUDAS TOTALES» de Bancos en Black móvil cabe dentro de su columna (356 px de 390); no se tocó.
