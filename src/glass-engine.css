@@ -239,6 +239,10 @@ body.theme-black,body.theme-dark{
  --vx-shadow-1:0 8px 22px -8px rgba(0,0,0,.55);
  --vx-shadow-2:0 18px 44px -14px rgba(0,0,0,.65);
 }
+/* Accesibilidad: con alto contraste o transparencia reducida el vidrio vuelve a ser sólido (el puente de arriba no debe pisarlo) */
+@media (prefers-reduced-transparency:reduce),(prefers-contrast:more){
+ :root,body,body.theme-black,body.theme-dark{--vx-glass-1:var(--vx-solid-1);--vx-glass-2:var(--vx-solid-2);--vx-glass-raised:var(--vx-solid-1);--vx-glass-nav:var(--vx-solid-1)}
+}
 html body[data-vive-bg][data-vive-bg]{
  --ui-glass-fill:rgba(255,255,255,min(.95,calc(.40 * var(--vg-k))));
  --ui-glass-edge:rgba(255,255,255,min(.9,calc(.64 * var(--vg-lk))));
