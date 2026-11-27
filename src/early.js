@@ -58,20 +58,34 @@ window.VIVE_ENABLED=window.VIVE_ENABLED!==false;
     var intento = function (n) {
       var control = new AbortController();
       var externa = opciones && opciones.signal;
-      if (externa) { if (externa.aborted) control.abort(); else externa.addEventListener('abort', function () { control.abort(); }, { once: true }); }
+      var abortar = function () { control.abort(); };
+      if (externa) { if (externa.aborted) control.abort(); else externa.addEventListener('abort', abortar, { once: true }); }
       var reloj = setTimeout(function () { control.abort(); }, limite);
       var conSenal = Object.assign({}, opciones || {}, { signal: control.signal });
-      return fetchOriginal(entrada, conSenal).then(function (resp) {
-        clearTimeout(reloj);
-        if (CODIGOS_REINTENTABLES.indexOf(resp.status) >= 0 && n < intentos) {
+      var descargar = async function () {
+        try {
+          var resp = await fetchOriginal(entrada, conSenal);
+          // Safari puede recibir HTTP 200 y fallar después al descargar el cuerpo.
+          // Completar las lecturas de las tablas financieras antes de entregarlas al SDK.
+          if (metodo === 'GET' && resp.ok && /\/rest\/v1\/finance_(items|values|revision|collection_state)(?:\?|$)/.test(url)) {
+            var cuerpo = await resp.arrayBuffer();
+            resp = new Response(cuerpo, { status: resp.status, statusText: resp.statusText, headers: resp.headers });
+          }
+          return { resp: resp };
+        } catch (err) {
+          return { err: err };
+        } finally {
+          clearTimeout(reloj);
+          if (externa) externa.removeEventListener('abort', abortar);
+        }
+      };
+      return descargar().then(function (resultado) {
+        if (externa && externa.aborted) throw resultado.err || new DOMException('Lectura cancelada', 'AbortError');
+        if ((resultado.err || CODIGOS_REINTENTABLES.indexOf(resultado.resp.status) >= 0) && n < intentos) {
           return esperar(ESPERA_BASE_MS * Math.pow(2, n)).then(function () { return intento(n + 1); });
         }
-        return resp;
-      }, function (err) {
-        clearTimeout(reloj);
-        if (externa && externa.aborted) throw err;
-        if (n < intentos) return esperar(ESPERA_BASE_MS * Math.pow(2, n)).then(function () { return intento(n + 1); });
-        throw err;
+        if (resultado.err) throw resultado.err;
+        return resultado.resp;
       });
     };
     return intento(0);
