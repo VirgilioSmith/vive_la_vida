@@ -1,42 +1,13 @@
 'use strict';
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
-const os=require('node:os');
 const path=require('node:path');
-const {execFileSync}=require('node:child_process');
 const {chromium}=require('playwright');
 const open=require('./harness');
 const evidence=process.env.BANKS_VISUAL_DIR||process.env.WALLET_VISUAL_DIR;
 const go=(page,route)=>page.evaluate(route=>window.__T.go(route),route);
 const money=async locator=>Number((await locator.innerText()).replace(/[^0-9.\-]/g,''));
 
-async function inspectPrevious(browser){
- if(!process.env.CI||!evidence)return;
- // Captura de referencia a partir del código publicado antes del rediseño universal.
- const sha='9ae7ffb51bdef591f46f5cdf8c73b623f47050b8';
- const root=fs.mkdtempSync(path.join(os.tmpdir(),'vive-bancos-previo-'));
- const previous=process.env.ROOT;
- try{
-  execFileSync('git',['fetch','--no-tags','--depth=1','origin',sha],{stdio:'ignore'});
-  const archive=execFileSync('git',['archive',sha,'index.html','src','vendor','assets','manifest.webmanifest'],{maxBuffer:80*1024*1024});
-  execFileSync('tar',['-xf','-','-C',root],{input:archive});
-  process.env.ROOT=root;
-  for(const [width,height] of [[1672,941],[390,844]]){
-   const {ctx,p}=await open(browser,width,height);
-   try{
-    await go(p,'banks');
-    await p.locator(width<791?'.vBanks-mobile':'.vBanksPc').waitFor();
-    await p.screenshot({path:path.join(evidence,`antes-bancos-${width}.png`)});
-    await go(p,'wallet');
-    await p.locator(width<791?'.v68-wallet':'.vWalletPc').waitFor();
-    await p.screenshot({path:path.join(evidence,`antes-wallet-${width}.png`)});
-   }finally{await ctx.close();}
-  }
- }finally{
-  if(previous===undefined)delete process.env.ROOT;else process.env.ROOT=previous;
-  fs.rmSync(root,{recursive:true,force:true});
- }
-}
 async function fixture(page){
  return page.evaluate(()=>{
   const t=window.__T,db=t.dbg(),[bank]=db.banks,[card]=db.cards,[loan]=db.loans;
@@ -443,7 +414,6 @@ async function testDesktopDashboardScroll(browser){
 
 async function banksAndPatrimony(browser){
  if(evidence)fs.mkdirSync(evidence,{recursive:true});
- await inspectPrevious(browser);
  await testDesktopDashboardScroll(browser);
  for(const width of [1672,1440,1280,1024,390,320,430])await testBanks(browser,width);
  await testBanks(browser,390,'black');
