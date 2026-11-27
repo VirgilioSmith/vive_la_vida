@@ -44,9 +44,11 @@ async function esperaListo(p, ms = 12000) { const t = Date.now(); while (Date.no
 const pantalla = p => p.evaluate(() => { const g = document.getElementById('f33-gate'); const visible = g && !g.hidden && getComputedStyle(g).display !== 'none' && getComputedStyle(g).visibility !== 'hidden'; return { fase: window.__f360Test?.phase(), gateVisible: !!visible, gate: visible ? g.innerText.replace(/\s+/g, ' ').slice(0, 140) : '', app: (document.getElementById('app')?.children.length || 0), polvo: document.querySelectorAll('.v980-dust').length }; });
 async function hastaEstable(p, ms) { const t = Date.now(); let e; while (Date.now() - t < ms) { e = await pantalla(p); if (!e.gateVisible && e.app > 0) return { ...e, ms: Date.now() - t }; if (e.gateVisible && /(Reintentar|Volver a iniciar|Entrar a vive)/i.test(e.gate)) return { ...e, ms: Date.now() - t, salida: true }; await wait(250) } return { ...e, ms: Date.now() - t, colgado: true }; }
 (async () => {
-  const b = await chromium.launch();
+  /* Si el navegador (p. ej. WebKit en CI) se cuelga, falla con diagnóstico en minutos en lugar de agotar el límite del trabajo. */
+  const guardia = setTimeout(() => { console.log('✕ TIMEOUT global de 4 min: el navegador o un escenario no respondió; último paso: ' + (global.__paso || 'lanzar navegador')); process.exit(1) }, 240000);
+  global.__paso = 'lanzar navegador'; const b = await chromium.launch({ timeout: 60000 }); console.log('navegador listo:', process.env.ARRANQUE_BROWSER || 'chromium');
   const caso = async (id, nombre, { w = 390, h = 844, semilla = true, prep, tope = 14000, init }, evalua) => {
-    const st = servidorAuth(); if (prep) prep(st);
+    global.__paso = id; const st = servidorAuth(); if (prep) prep(st);
     const { p, ctx, errs } = await abrir(b, st, null, { semilla: null, w, h }); if (init) await ctx.addInitScript(init);
     await p.evaluate(([k, v, s]) => { if (s) localStorage.setItem(k, v) }, [KEY, st.semilla(), semilla]);
     if (opcionesRestos) await p.evaluate(opcionesRestos, KEY); await p.reload();
@@ -65,5 +67,5 @@ async function hastaEstable(p, ms) { const t = Date.now(); let e; while (Date.no
   await caso('B8', 'Supabase responde 500 en lecturas: mensaje de error con salida, no carga infinita', { tope: 45000, prep: st => { const h = st.handler; st.handler = async route => { if (/\/rest\/v1\//.test(route.request().url()) && !/rpc/.test(route.request().url())) return route.fulfill({ status: 500, headers: { 'access-control-allow-origin': '*', 'content-type': 'application/json' }, body: '{"message":"boom"}' }); return h(route) } } }, e => !e.colgado);
   /* B9 · pestaña en segundo plano / ahorro de energía de Safari: requestAnimationFrame no se ejecuta nunca. El arranque no puede depender de animaciones. */
   await caso('B9', 'requestAnimationFrame congelado (pestaña en segundo plano o ahorro de energía): la pantalla de carga igual desaparece', { init: 'window.requestAnimationFrame=function(){return 0};' }, e => !e.colgado && !e.gateVisible && e.app > 0 && e.polvo === 0 && e.fase === 'ready');
-  console.log(fails ? `\nFALLAN: ${fails} de ${n}` : `\nOK: ${n} comprobaciones superadas`); await b.close(); process.exit(fails ? 1 : 0);
+  console.log(fails ? `\nFALLAN: ${fails} de ${n}` : `\nOK: ${n} comprobaciones superadas`); clearTimeout(guardia); await b.close(); process.exit(fails ? 1 : 0);
 })();
