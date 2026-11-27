@@ -10,16 +10,18 @@
  const brands=(navigator.userAgentData&&navigator.userAgentData.brands||[]).map(b=>b.brand).join(' ');
  const isChromium=/Chromium|Google Chrome|Microsoft Edge/.test(brands)||(/Chrome\/\d+/.test(navigator.userAgent)&&!/Edg\/|OPR\//.test(navigator.userAgent)&&!/CriOS|FxiOS/.test(navigator.userAgent)&&!!window.chrome);
  const hasBF=!!(window.CSS&&(CSS.supports('backdrop-filter','blur(1px)')||CSS.supports('-webkit-backdrop-filter','blur(1px)')));
- const lite=(navigator.hardwareConcurrency||8)<=3||(navigator.deviceMemory||8)<=2||(navigator.connection&&navigator.connection.saveData===true);
+ /* Siempre booleano: en Safari navigator.connection no existe y un `undefined` convertía toggle(clase, undefined) en un interruptor que se alternaba en cada llamada. */
+ const lite=!!((navigator.hardwareConcurrency||8)<=3||(navigator.deviceMemory||8)<=2||(navigator.connection&&navigator.connection.saveData===true));
  const caps={chromium:isChromium,backdrop:hasBF,lite,refract:false,reduceMotion:false,reduceTransparency:false};
  function evaluate(){
   caps.reduceMotion=mq('(prefers-reduced-motion:reduce)')||root.classList.contains('vg-reduce-motion');
   caps.reduceTransparency=mq('(prefers-reduced-transparency:reduce)')||root.classList.contains('vg-reduce-transparency');
   caps.refract=isChromium&&hasBF&&!lite&&!caps.reduceTransparency;
-  root.classList.toggle('vlg-refract',caps.refract);
-  root.classList.toggle('vlg-on',hasBF);
-  root.classList.toggle('vlg-lite',lite);
+  /* Solo se escribe si cambia: evaluate() se llama desde un observador de clases de <html>; escribir sin cambio (WebKit lo registra como mutación)
+     o alternar una clase realimentaba el observador y congelaba la página (incidente del 27-nov en iPhone). */
+  setClass('vlg-refract',caps.refract);setClass('vlg-on',hasBF);setClass('vlg-lite',lite);
  }
+ function setClass(name,on){on=!!on;if(root.classList.contains(name)!==on)root.classList.toggle(name,on)}
  /* ---- Filtro de refracción: lente en el borde (mapa de desplazamiento estirado al tamaño del elemento) ---- */
  const MAP="data:image/svg+xml;utf8,"+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" preserveAspectRatio="none"><defs><linearGradient id="h" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#ff0000"/><stop offset=".13" stop-color="#800000"/><stop offset=".87" stop-color="#800000"/><stop offset="1" stop-color="#000"/></linearGradient><linearGradient id="v" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#00ff00"/><stop offset=".13" stop-color="#008000"/><stop offset=".87" stop-color="#008000"/><stop offset="1" stop-color="#000"/></linearGradient></defs><rect width="200" height="200" fill="url(#h)"/><rect width="200" height="200" fill="url(#v)" style="mix-blend-mode:screen"/></svg>');
  function mountDefs(){

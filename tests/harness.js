@@ -18,7 +18,7 @@ module.exports=async function open(b,w,h,pre){
    return r.fulfill({body,contentType:ct});}
   return r.abort();});
   /* Las pruebas nunca abren Realtime contra el Supabase real (tokens falsos ensuciaban los registros de producción con MalformedJWT). */
-  await ctx.addInitScript("(()=>{const W=window.WebSocket;window.WebSocket=function(u,p){if(/supabase\\.co/.test(String(u))){const o=new EventTarget();o.close=()=>{};o.send=()=>{};o.readyState=3;setTimeout(()=>{o.dispatchEvent(new Event('error'));o.onerror&&o.onerror(new Event('error'));o.onclose&&o.onclose(new Event('close'))},0);return o}return p===undefined?new W(u):new W(u,p)};window.WebSocket.CONNECTING=0;window.WebSocket.OPEN=1;window.WebSocket.CLOSING=2;window.WebSocket.CLOSED=3;window.WebSocket.prototype=W.prototype})()");
+  await ctx.addInitScript("(()=>{const W=window.WebSocket;window.WebSocket=function(u,p){if(/supabase\\.co/.test(String(u))){window.__wsIntentos=(window.__wsIntentos||0)+1;const o=new EventTarget();o.close=()=>{};o.send=()=>{};o.readyState=3;setTimeout(()=>{o.dispatchEvent(new Event('error'));o.onerror&&o.onerror(new Event('error'));o.onclose&&o.onclose(new Event('close'))},0);return o}return p===undefined?new W(u):new W(u,p)};window.WebSocket.CONNECTING=0;window.WebSocket.OPEN=1;window.WebSocket.CLOSING=2;window.WebSocket.CLOSED=3;window.WebSocket.prototype=W.prototype})()");
   await ctx.addInitScript('window.__THEME='+JSON.stringify(process.env.THEME||'light'));
   if(process.env.PALETTE)await ctx.addInitScript('window.__PALETTE='+JSON.stringify(process.env.PALETTE));
   if(process.env.PALHEX)await ctx.addInitScript('window.__PALHEX='+JSON.stringify(process.env.PALHEX));

@@ -41,7 +41,7 @@ const estado = p => p.evaluate(() => ({ fase: window.__f360Test?.phase(), listo:
 async function esperaListo(p, ms = 12000) { const t = Date.now(); while (Date.now() - t < ms) { const e = await estado(p); if (e.listo) return e; await wait(300) } return estado(p) }
 
 /* Estado de la pantalla de carga: lo único que importa a la persona es que desaparezca. */
-const pantalla = p => p.evaluate(() => { const g = document.getElementById('f33-gate'); const visible = g && !g.hidden && getComputedStyle(g).display !== 'none' && getComputedStyle(g).visibility !== 'hidden'; return { fase: window.__f360Test?.phase(), gateVisible: !!visible, gate: visible ? g.innerText.replace(/\s+/g, ' ').slice(0, 140) : '', app: (document.getElementById('app')?.children.length || 0), polvo: document.querySelectorAll('.v980-dust').length }; });
+const pantalla = p => p.evaluate(() => { const g = document.getElementById('f33-gate'); const visible = g && !g.hidden && getComputedStyle(g).display !== 'none' && getComputedStyle(g).visibility !== 'hidden'; return { fase: window.__f360Test?.phase(), gateVisible: !!visible, gate: visible ? g.innerText.replace(/\s+/g, ' ').slice(0, 140) : '', app: (document.getElementById('app')?.children.length || 0), polvo: document.querySelectorAll('.v980-dust').length, ws: window.__wsIntentos || 0 }; });
 async function hastaEstable(p, ms) { const t = Date.now(); let e; while (Date.now() - t < ms) { e = await pantalla(p); if (!e.gateVisible && e.app > 0) return { ...e, ms: Date.now() - t }; if (e.gateVisible && /(Reintentar|Volver a iniciar|Entrar a vive)/i.test(e.gate)) return { ...e, ms: Date.now() - t, salida: true }; await wait(250) } return { ...e, ms: Date.now() - t, colgado: true }; }
 (async () => {
   /* Si el navegador (p. ej. WebKit en CI) se cuelga, falla con diagnóstico en minutos en lugar de agotar el límite del trabajo. */
@@ -108,5 +108,17 @@ async function hastaEstable(p, ms) { const t = Date.now(); let e; while (Date.no
   await conDatos('B15', 'Con datos existentes, Safari recibe 200 y falla al descargar el cuerpo («Load failed», caso exacto del iPhone): VIVE abre igual', 'cuerpo', 1, 30000);
   await conDatos('B16', 'Con datos existentes, la misma lectura queda colgada dos veces seguidas: los reintentos caben dentro del límite y VIVE abre', 'cuelga', 2, 60000);
   await conDatos('B14', 'Con datos existentes, una lectura queda colgada (conexión muerta de Safari tras dormir el iPhone): VIVE abre igual en ≤ 45 s', 'cuelga', 1, 45000);
+  /* B17 · Incidente 27-nov (causa raíz): en Safari `navigator.connection` no existe; liquid-glass.js calculaba `lite` como undefined y
+     classList.toggle('vlg-lite', undefined) alternaba la clase en cada llamada desde su propio observador de <html> → bucle infinito de
+     microtareas, página congelada tras «listo». Se simula Safari en cualquier motor y se exige que, ya abierta, la página siga respondiendo
+     y <html> no cambie sin parar. */
+  {
+    global.__paso = 'B17'; const st = servidorAuth(); const { p, ctx, errs } = await abrir(b, st, null, { semilla: null });
+    await ctx.addInitScript(() => { try { Object.defineProperty(Navigator.prototype, 'connection', { get: () => undefined, configurable: true }) } catch (_) { } try { Object.defineProperty(Navigator.prototype, 'deviceMemory', { get: () => undefined, configurable: true }) } catch (_) { } try { Object.defineProperty(Navigator.prototype, 'hardwareConcurrency', { get: () => 6, configurable: true }) } catch (_) { } });
+    await p.evaluate(([k, v]) => localStorage.setItem(k, v), [KEY, st.semilla()]); await p.reload({ waitUntil: 'commit' });
+    const t0 = Date.now(); let r = null;
+    while (Date.now() - t0 < 20000) { r = await Promise.race([p.evaluate(() => new Promise(res => { let n = 0; const o = new MutationObserver(m => { n += m.length }); o.observe(document.documentElement, { attributes: true }); setTimeout(() => { o.disconnect(); res({ fase: window.__f360Test?.phase(), mutacionesHtml1s: n, app: document.getElementById('app')?.children.length || 0 }) }, 1000) })).catch(e => ({ err: e.message.slice(0, 60) })), new Promise(res => setTimeout(() => res({ congelada: true }), 6000))]); if (r.congelada || r.fase === 'ready') break; await wait(300) }
+    check('B17', 'Navegador sin navigator.connection (Safari): tras abrir, la página responde y <html> no cambia sin parar (sin bucle de observadores)', !!r && !r.congelada && r.fase === 'ready' && r.app > 0 && r.mutacionesHtml1s < 20, JSON.stringify(r)); await ctx.close();
+  }
   console.log(fails ? `\nFALLAN: ${fails} de ${n}` : `\nOK: ${n} comprobaciones superadas`); clearTimeout(guardia); await b.close(); process.exit(fails ? 1 : 0);
 })();
