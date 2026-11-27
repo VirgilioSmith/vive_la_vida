@@ -8948,7 +8948,7 @@ let v335SplashSince=0;
 function f33Shell(title,description,content){
  f33Gate();const el=document.getElementById('f33-gate');el.hidden=false;
  el.classList.remove('v329-fade-out');
- if(f33Phase==='loading'){
+ if(f33Phase==='loading'&&!content){
   if(!v335SplashSince)v335SplashSince=Date.now();
   el.classList.add('v329-splash');
   el.classList.toggle('v331-splash-light',v333SplashTheme()==='light');
@@ -8995,7 +8995,7 @@ function f33Ready(){
  if(existingSplash?.classList.contains('v329-splash'))existingSplash.classList.toggle('v331-splash-light',db.settings?.theme==='light');
  const gate=document.getElementById('f33-gate');
  // Render first; dismiss splash immediately when the authenticated data is ready.
- v360RestoreUI();render();if(gate){v980DismissSplash(gate);}if(v360ResumeScroll!==null){const y=v360ResumeScroll;v360ResumeScroll=null;setTimeout(()=>window.scrollTo(0,y),90)}f33SetStatus('ok','✓ Guardado en Supabase');
+ v360RestoreUI();render();if(gate){v980DismissSplash(gate);setTimeout(()=>{if(f33Phase==='ready'&&!gate.hidden){gate.hidden=true;gate.classList.remove('v329-splash','v329-fade-out','v980-dissolving');delete gate.dataset.v980Running;document.querySelectorAll('.v980-dust').forEach(x=>x.remove())}},2000);}if(v360ResumeScroll!==null){const y=v360ResumeScroll;v360ResumeScroll=null;setTimeout(()=>window.scrollTo(0,y),90)}f33SetStatus('ok','✓ Guardado en Supabase');
  v10LiveStart();
  setTimeout(()=>{v212Load().then(()=>v212Sync()).catch(err=>console.warn('Apple Pay:',err));},1600);
  // Consultar tasa externa de forma no bloqueante tras autenticar al usuario.
@@ -9490,7 +9490,8 @@ function authEscuchar(){
 let f33UltimoError='';
 window.addEventListener('error',e=>{f33UltimoError=String(e.message||e.error||'').slice(0,200)+(e.filename?' ('+String(e.filename).split('/').pop()+':'+e.lineno+')':'')});
 window.addEventListener('unhandledrejection',e=>{f33UltimoError=String((e.reason&&e.reason.message)||e.reason||'').slice(0,200)});
-setTimeout(()=>{if(['loading','retry'].includes(f33Phase)||(f33Phase==='ready'&&!document.querySelector('#app')?.children.length)){
+setTimeout(()=>{if(f33Phase==='ready'&&document.querySelector('#app')?.children.length){const gate=document.getElementById('f33-gate');if(gate&&!gate.hidden){gate.hidden=true;gate.classList.remove('v329-splash','v329-fade-out','v980-dissolving');delete gate.dataset.v980Running;document.querySelectorAll('.v980-dust').forEach(x=>x.remove())}return}if(['loading','retry'].includes(f33Phase)||(f33Phase==='ready'&&!document.querySelector('#app')?.children.length)){
+ f33Phase='failure';f33Active=false;
  f33Shell('La app tarda en abrir.','Tus datos en Supabase no se han modificado.','<div class="f33-error" role="alert">'+sanitize(f33UltimoError||'Sin error registrado: el servidor no respondió.')+'</div><button class="f33-primary" data-f33="boot">Reintentar</button><button class="f33-primary" data-f33="relogin" style="margin-top:8px;opacity:.85">Volver a iniciar sesión</button>')}},30000);
 async function f33Boot(silencioso){
  if(authArrancando)return authArrancando;
@@ -9509,7 +9510,7 @@ async function f33Boot(silencioso){
   if(error&&(authEsTemporal(error)||!error.status)){authPantallaReintento();return}
   clearTimeout(authTemporizador);authReintento=0;
   f33LoginScreen();
- })().finally(()=>{authArrancando=null});
+ })().catch(err=>{f33Phase='failure';f33Active=false;f33Shell('No pudimos iniciar VIVE.','Tus datos permanecen protegidos.','<div class="f33-error" role="alert">'+sanitize(err?.message||String(err))+'</div><button class="f33-primary" data-f33="boot">Reintentar</button><button class="f33-primary" data-f33="relogin">Volver a iniciar sesión</button>')}).finally(()=>{authArrancando=null});
  return authArrancando;
 }
 window.__f360Test={phase:()=>f33Phase,ready:()=>f33Active,cloudUser:()=>f33User?.id||null,state:()=>db,dirty:()=>f33Dirty,flush:()=>f33Flush(),load:u=>f33LoadUser(u)};
