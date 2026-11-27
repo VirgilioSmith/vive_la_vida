@@ -8890,12 +8890,24 @@ function f33Shell(title,description,content){
  el.setAttribute('aria-label','Acceso privado vive el hoy');
  el.innerHTML='<section class="f33-auth-card"><div class="f33-label" role="img" aria-label="'+APP_BRAND+'">'+brandMark()+'</div><h2>'+sanitize(title)+'</h2><p>'+sanitize(description)+'</p><div class="f33-error" hidden role="alert"></div>'+content+'<p class="f33-auth-note">Tu información se mantiene protegida y vinculada a tu cuenta.</p></section>';
 }
+/* El login manual tiene su propio plazo: el vigilante de arranque solo se ejecuta una vez al abrir la página. */
+let f33LoginPending=null;
+async function f33SignInBounded(email,password){
+ if(f33LoginPending)throw Error('Hay una validación de acceso pendiente. Recarga VIVE si no termina; tus datos permanecen intactos.');
+ const pending=Promise.resolve().then(()=>f33Api.auth.signInWithPassword({email,password}));
+ f33LoginPending=pending;
+ const release=()=>{if(f33LoginPending===pending)f33LoginPending=null};
+ pending.then(release,release);
+ let timer;
+ try{return await Promise.race([pending,new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('La validación de acceso superó el tiempo de espera. Comprueba la conexión o recarga VIVE para recuperar la sesión.')),32000)})]);}
+ finally{clearTimeout(timer)}
+}
 function f33LoginScreen(){
  f33Phase='login';document.getElementById('app').innerHTML='';
  f33Shell('Tu dinero, en un solo lugar.','Ingresa con el usuario que creaste en Supabase.',
   '<form id="f33-login-form"><label>Correo electrónico<input id="f33-email" name="email" type="email" autocomplete="username" required placeholder="Tu correo"></label><label>Contraseña<input id="f33-password" name="password" type="password" autocomplete="current-password" required placeholder="Tu contraseña"></label><button class="f33-primary" id="f33-login-button" type="submit">Entrar a vive el hoy</button></form><p class="f33-auth-note">Si no tienes contraseña, Supabase permite restablecerla desde Authentication → Users → tu usuario.</p>');
  document.getElementById('f33-login-form').onsubmit=async e=>{e.preventDefault();let btn=document.getElementById('f33-login-button');btn.disabled=true;btn.textContent='Validando acceso…';let email=document.getElementById('f33-email').value.trim(),password=document.getElementById('f33-password').value;
-  try{if(!f33Api)throw Error('No se cargó la conexión de Supabase. Comprueba tu conexión a Internet.');let {data,error}=await f33Api.auth.signInWithPassword({email,password});if(error)throw error;if(!data.user)throw Error('No se pudo verificar el usuario.');await f33LoadUser(data.user)}catch(err){f33Message('No pudimos iniciar sesión: '+(err.message||err),true)}finally{if(btn.isConnected){btn.disabled=false;btn.textContent='Entrar a vive el hoy'}}};
+  try{if(!f33Api)throw Error('No se cargó la conexión de Supabase. Comprueba tu conexión a Internet.');let {data,error}=await f33SignInBounded(email,password);if(error)throw error;if(!data.user)throw Error('No se pudo verificar el usuario.');await f33LoadUser(data.user)}catch(err){f33Message('No pudimos iniciar sesión: '+(err.message||err),true)}finally{if(btn.isConnected){btn.disabled=false;btn.textContent='Entrar a vive el hoy'}}};
 }
 function f33SetStatus(state,label){
  f34SyncState=state;f34SyncLabel=label;f34PanelUpdate();
@@ -20031,7 +20043,7 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
 /* V1233 · Apple Pay: la tarjeta se elige con el selector universal de productos (el mismo de los formularios). */
 (()=>{
  'use strict';
- const sync=()=>{const sel=document.getElementById('v212-card'),b=document.querySelector('[data-v1233-pick]');if(!sel||!b)return;const o=sel.selectedOptions[0];const n=b.querySelector('.v1233-pick-name');if(n&&n.textContent!==(o?.textContent||''))n.textContent=o?.textContent||'Primero registra una tarjeta'};
+ const sync=()=>{const sel=document.getElementById('v212-card'),b=document.querySelector('[data-v1233-pick]');if(!sel||!b)return;const o=sel.selectedOptions[0];const n=b.querySelector('.v1233-pick-name');const label=o?.textContent||'Primero registra una tarjeta';if(n&&n.textContent!==label)n.textContent=label};
  new MutationObserver(()=>sync()).observe(document.body,{childList:true,subtree:true});
  document.addEventListener('click',e=>{
   const b=e.target.closest?.('[data-v1233-pick]');if(!b)return;

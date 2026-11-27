@@ -67,5 +67,15 @@ async function hastaEstable(p, ms) { const t = Date.now(); let e; while (Date.no
   await caso('B8', 'Supabase responde 500 en lecturas: mensaje de error con salida, no carga infinita', { tope: 45000, prep: st => { const h = st.handler; st.handler = async route => { if (/\/rest\/v1\//.test(route.request().url()) && !/rpc/.test(route.request().url())) return route.fulfill({ status: 500, headers: { 'access-control-allow-origin': '*', 'content-type': 'application/json' }, body: '{"message":"boom"}' }); return h(route) } } }, e => !e.colgado);
   /* B9 · pestaña en segundo plano / ahorro de energía de Safari: requestAnimationFrame no se ejecuta nunca. El arranque no puede depender de animaciones. */
   await caso('B9', 'requestAnimationFrame congelado (pestaña en segundo plano o ahorro de energía): la pantalla de carga igual desaparece', { init: 'window.requestAnimationFrame=function(){return 0};' }, e => !e.colgado && !e.gateVisible && e.app > 0 && e.polvo === 0 && e.fase === 'ready');
+  global.__paso = 'B10: formulario de login';
+  {
+    const st=servidorAuth();const {p,ctx}=await abrir(b,st,null,{});
+    await p.locator('#f33-email').fill('demo@example.com');
+    await p.locator('#f33-password').fill('password-de-prueba');
+    await p.locator('#f33-login-button').click();
+    const e=await hastaEstable(p,45000);
+    check('B10','Login manual desde una sesión vacía: monta la app',!e.colgado&&!e.gateVisible&&e.app>0&&e.fase==='ready',JSON.stringify(e));
+    await ctx.close();
+  }
   console.log(fails ? `\nFALLAN: ${fails} de ${n}` : `\nOK: ${n} comprobaciones superadas`); clearTimeout(guardia); await b.close(); process.exit(fails ? 1 : 0);
 })();
