@@ -21,7 +21,7 @@ const engine=process.env.HOME_BROWSER==='webkit'?webkit:chromium;
     const [a,b,c]=await Promise.all([personalize.boundingBox(),period.boundingBox(),matrix.boundingBox()]);
     assert.ok(Math.abs(a.y+a.height/2-b.y-b.height/2)<=2,'Controles centrados en la misma fila');
     assert.ok(a.x+a.width<=b.x,'Controles sin solapamiento');
-    assert.ok(c.y>=b.y+b.height-1&&c.y-b.y-b.height<40,'Matriz inmediatamente debajo');
+    assert.ok(c.y>=b.y+b.height-1&&c.y-b.y-b.height<110,'Matriz debajo de los controles (con la línea de Vive Intelligence entre ambos)');
     assert.equal(await p.locator('.vive-mobile-home .vive-mobile-quick-actions').count(),0,'Acciones eliminadas del DOM');
     const trend=p.locator('.vive-mobile-home [data-v105-widget="patrimonyTrend"]');
     await trend.waitFor({state:'visible'});
