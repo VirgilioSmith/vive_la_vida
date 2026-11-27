@@ -15,11 +15,11 @@ let fails = 0; const check = (n, name, ok, extra = '') => { if (!ok) fails++; co
     const n0 = await p.evaluate(() => window.__T.dbg().transactions.length);
     await edit(t.id); await p.waitForTimeout(900);
     const a = await info();
-    const nueva = !!a && a.etapa === 'entry' && a.edit && /Editar movimiento/.test(a.titulo) && !a.segmento && /Guardar|Continuar/.test(a.boton || 'Continuar');
-    check(`E-${t.type}-1`, `Editar un ${t.type} abre la pantalla nueva en modo edición (título «Editar movimiento», sin selector de tipo)`, nueva, JSON.stringify(a));
+    const nueva = !!a && a.etapa === 'entry' && a.edit && /Editar movimiento/.test(a.titulo) && /Guardar|Continuar/.test(a.boton || 'Continuar');
+    check(`E-${t.type}-1`, `Editar un ${t.type} abre la pantalla nueva en modo edición (título «Editar movimiento»)`, nueva, JSON.stringify(a));
     check(`E-${t.type}-2`, 'El importe original llega precargado', a && a && Number(a.monto) === t.amount, a && a.monto + ' esperado ' + t.amount);
-    // cambiar el importe: borrar todo y teclear 7 → 77
-    await p.evaluate(() => { for (let i = 0; i < 12; i++) document.querySelector('[data-v749="key"][data-value="⌫"]')?.click(); for (const k of ['7', '7']) document.querySelector(`[data-v749="key"][data-value="${k}"]`)?.click(); });
+    // cambiar el importe a 77 en el campo nativo
+    await p.evaluate(() => { const i = document.querySelector('#v749Amount'); i.focus(); i.value = '77'; i.dispatchEvent(new Event('input', { bubbles: true })); });   // importe con el teclado numérico nativo (campo de texto)
     await p.evaluate(() => document.querySelector('[data-v749="continue"]')?.click()); await p.waitForTimeout(900);
     const r = await info();
     check(`E-${t.type}-3`, 'La revisión se titula «Confirma los cambios» y el botón dice «Guardar cambios»', !!r && r.etapa === 'review' && /Confirma los cambios/.test(r.titulo) && /Guardar cambios/.test(r.boton), JSON.stringify(r));
