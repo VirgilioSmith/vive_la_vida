@@ -29,7 +29,27 @@ node tests/liquid-glass.js     # material óptico, accesibilidad, ilustraciones
 node tests/regresion-visual.js # 72 capturas contra la línea base (--base para regenerarla)
 ```
 
-La CI (`.github/workflows/ci.yml`) ejecuta las suites en Chromium y WebKit en cada push a `main`.
+### Siempre en los dos motores: Chromium y WebKit (Safari/iPhone)
+
+VIVE se usa sobre todo en iPhone (Safari = WebKit). Todo cambio se prueba en **Chromium y en WebKit**:
+
+```bash
+node tests/arranque.js                          # Chromium: 17 escenarios de arranque
+ARRANQUE_BROWSER=webkit node tests/arranque.js  # WebKit: los mismos 17 escenarios
+```
+
+Instalar WebKit una vez (Playwright ya trae Chromium):
+
+```bash
+npx playwright install webkit
+npx playwright install-deps webkit
+```
+
+En una sesión en la nube de Claude, la red del entorno debe permitir `cdn.playwright.dev` y `playwright.download.prss.microsoft.com` para descargar WebKit.
+
+Para revisar a ojo una pantalla en WebKit: `require('playwright').webkit.launch()` con `tests/harness.js` (mismo arnés que Chromium) y captura de la vista cambiada, en móvil (390 px, `TOUCH=1`) y PC (1440 px), Claro y Black.
+
+La CI (`.github/workflows/ci.yml`) ejecuta `tests/arranque.js` y las suites de Wallet, conciliación y movimientos en Chromium **y** WebKit en cada push a `main`; un fallo en cualquiera de los dos motores es un fallo.
 
 ## Publicar
 

@@ -9,6 +9,6 @@
 5. **Documentación mínima:** solo `README.md` y `AGENTS.md`. Prohibido crear informes, auditorías o historiales en el repositorio (la historia de Git es el historial).
 6. **Limpieza obligatoria después de cada implementación:** sin código muerto, archivos duplicados, dependencias sin uso, workflows redundantes, cachés ni Service Workers; subir el `?v=` de lo cambiado.
 7. **Prohibido introducir complejidad sin justificación** (una línea de motivo en el commit). Sin funcionalidades nuevas durante estabilización.
-8. **Verificación real:** pruebas con Playwright en PC y móvil; no declarar nada «hecho» sin evidencia; informar con honestidad lo verificado y lo no verificado.
+8. **Verificación real en Chromium Y WebKit (motor de Safari/iPhone):** pruebas con Playwright en PC y móvil en **los dos motores**; un cambio no está «hecho» si solo se probó en Chromium. Mínimo antes de publicar: `node tests/arranque.js` y `ARRANQUE_BROWSER=webkit node tests/arranque.js` (ambos OK) y revisión visual en WebKit de lo cambiado. No declarar nada «hecho» sin evidencia; informar con honestidad lo verificado y lo no verificado (WebKit de escritorio no es idéntico a un iPhone real). Incidente 27-nov: un bucle que solo ocurría en Safari bloqueó VIVE en iPhone y las pruebas en Chromium no lo vieron.
 9. **Privacidad:** los datos financieros nunca salen de Supabase ni se envían a terceros; las pruebas usan datos simulados.
 10. **Commits** terminan con los *trailers* de coautoría y sesión definidos por la herramienta que los crea.
