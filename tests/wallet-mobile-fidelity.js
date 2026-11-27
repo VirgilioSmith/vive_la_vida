@@ -190,7 +190,8 @@ const screenshot=async(p,dir,name)=>p.screenshot({path:path.join(dir,name+'.png'
     assert.ok(await visible(p.locator('.v266-gallery')),'El carrusel desapareció');
     assert.equal(await p.locator('.wallet-mobile-summary .v266-wallet-actions button').count(),4);
     const back=p.locator('.v68-wallet-dots button[data-id="'+GLOBAL+'"]');await back.click();
-    await p.waitForTimeout(250);
+    /* WebKit termina el desplazamiento suave más tarde que Chromium: se espera a que la selección se asiente (máx. 10 s) en lugar de 250 ms fijos. */
+    await p.waitForFunction(id=>document.querySelector('.v68-wallet-face.selected')?.dataset.id===id,GLOBAL,{timeout:10000}).catch(()=>{});
     assert.equal(await p.locator('.v68-wallet-face.selected').getAttribute('data-id'),GLOBAL);
     g=await readGeometry(p);assertGeometry(g,theme+' '+width+' regreso',width);
     /* Cortes: ambas monedas y sin fechas impresas en la tarjeta. */
