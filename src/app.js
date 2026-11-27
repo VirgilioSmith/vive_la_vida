@@ -9486,6 +9486,12 @@ function authEscuchar(){
  const revisar=()=>{if(document.visibilityState==='hidden')return;f33Api.auth.getSession().catch(()=>{});if(!f33User&&f33Phase==='retry')f33Boot()};
  document.addEventListener('visibilitychange',revisar);window.addEventListener('pageshow',e=>{if(e.persisted)revisar()});window.addEventListener('online',revisar);
 }
+/* Vigilante de arranque: si a los 30 s la app no está lista ni en el acceso, se muestra el último error real y una salida, en lugar de un spinner sin explicación. */
+let f33UltimoError='';
+window.addEventListener('error',e=>{f33UltimoError=String(e.message||e.error||'').slice(0,200)+(e.filename?' ('+String(e.filename).split('/').pop()+':'+e.lineno+')':'')});
+window.addEventListener('unhandledrejection',e=>{f33UltimoError=String((e.reason&&e.reason.message)||e.reason||'').slice(0,200)});
+setTimeout(()=>{if(['loading','retry'].includes(f33Phase)||(f33Phase==='ready'&&!document.querySelector('#app')?.children.length)){
+ f33Shell('La app tarda en abrir.','Tus datos en Supabase no se han modificado.','<div class="f33-error" role="alert">'+sanitize(f33UltimoError||'Sin error registrado: el servidor no respondió.')+'</div><button class="f33-primary" data-f33="boot">Reintentar</button><button class="f33-primary" data-f33="relogin" style="margin-top:8px;opacity:.85">Volver a iniciar sesión</button>')}},30000);
 async function f33Boot(silencioso){
  if(authArrancando)return authArrancando;
  authArrancando=(async()=>{
