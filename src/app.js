@@ -7364,6 +7364,9 @@ function render(){
 
  }
 
+/* El render base permite recuperar el acceso si falla una extensión visual. */
+const f33CoreRender=render;
+
 /* V68 — cierre accesible para todos los formularios, incluidos estudios personalizados. */
 (function(){
  const root=document.getElementById('modal-root');
@@ -8927,21 +8930,40 @@ function f33Prepare(doc){/* Las listas vacías no se guardan como filas: al rele
 
 function f33Ready(){
  v99Invalidate();
- if(!f33User||!f33Stamp)return;window.__f360CloudUid=f33User.id;
- window.__f360CloudPersist=()=>{f33Dirty=true;if(f33Conflict){f33SetStatus('conflict','Versiones simultáneas protegidas');return;}f33SetStatus('saving','Confirmando directamente en Supabase…');clearTimeout(f33Timeout);if(!f33Saving)window.__f360LastPersistPromise=f33Flush();};
- f33Active=true;f33Phase='ready';f33Dirty=false;window.__f360BaseStamp=f33Stamp;
+ if(!f33User||!f33Stamp)throw Error('No se pudo confirmar la sesión y la revisión.');
+ f33Active=false;f33Dirty=false;
+ window.__f360CloudUid=null;window.__f360CloudPersist=null;
  v333RememberTheme();
- const existingSplash=document.getElementById('f33-gate');
- if(existingSplash?.classList.contains('v329-splash'))existingSplash.classList.toggle('v331-splash-light',db.settings?.theme==='light');
  const gate=document.getElementById('f33-gate');
- // Render first; dismiss splash immediately when the authenticated data is ready.
- v360RestoreUI();render();if(!document.getElementById('app')?.children.length)throw Error('No se pudo montar la pantalla de VIVE.');v980DismissSplash(gate);if(v360ResumeScroll!==null){const y=v360ResumeScroll;v360ResumeScroll=null;setTimeout(()=>window.scrollTo(0,y),90)}f33SetStatus('ok','✓ Guardado en Supabase');
- v10LiveStart();
- setTimeout(()=>{v212Load().then(()=>v212Sync()).catch(err=>console.warn('Apple Pay:',err));},1600);
- // Consultar tasa externa de forma no bloqueante tras autenticar al usuario.
- Promise.resolve().then(()=>f34UpdateFx(false)).catch(err=>console.warn('Consulta de divisas:',err));
+ if(gate?.classList.contains('v329-splash'))gate.classList.toggle('v331-splash-light',db.settings?.theme==='light');
+ f33BootStage('montaje de interfaz');
+ if(f33SafeBoot()){ui.page='overview';v360ResumeScroll=null;}else v360RestoreUI();
+ try{render();if(!document.getElementById('app')?.children.length)throw Error('Pantalla vacía');}
+ catch(first){
+  console.warn('[VIVE] Fallo de montaje; se intenta Inicio base:',first?.message||String(first));
+  ui.page='overview';v360ResumeScroll=null;
+  document.getElementById('app').replaceChildren();
+  f33CoreRender();
+  if(!document.getElementById('app')?.children.length)throw Error('No se pudo montar Inicio.');
+ }
+ // Solo habilitar acciones y sincronización tras confirmar el montaje real.
+ window.__f360CloudUid=f33User.id;window.__f360BaseStamp=f33Stamp;
+ window.__f360CloudPersist=()=>{if(!f33Active)return;f33Dirty=true;if(f33Conflict){f33SetStatus('conflict','Versiones simultáneas protegidas');return;}f33SetStatus('saving','Confirmando directamente en Supabase…');clearTimeout(f33Timeout);if(!f33Saving)window.__f360LastPersistPromise=f33Flush();};
+ f33Active=true;f33Phase='ready';f33BootStage('listo');v980DismissSplash(gate);
+ if(v360ResumeScroll!==null){const y=v360ResumeScroll;v360ResumeScroll=null;setTimeout(()=>window.scrollTo(0,y),90)}
+ try{f33SetStatus('ok','✓ Guardado en Supabase')}catch(err){console.warn('[VIVE] Indicador de sincronización:',err?.message||String(err))}
+ // Estas integraciones no deben hacer fallar el acceso autenticado.
+ setTimeout(()=>{if(!f33Active)return;try{v10LiveStart()}catch(err){console.warn('[VIVE] Realtime:',err?.message||String(err))}},0);
+ setTimeout(()=>{if(f33Active)Promise.resolve().then(()=>v212Load()).then(()=>v212Sync()).catch(err=>console.warn('Apple Pay:',err));},1600);
+ setTimeout(()=>{if(f33Active)Promise.resolve().then(()=>f34UpdateFx(false)).catch(err=>console.warn('Consulta de divisas:',err));},0);
 }
 let f993Fails=0,f993Failed=false;
+let f33ReadController=null;
+let f33Stage='sesión';
+const f33SafeBoot=()=>new URLSearchParams(location.search).get('safe')==='1';
+function f33CancelRead(){if(f33ReadController){f33ReadController.abort();f33ReadController=null}}
+function f33BootStage(stage){f33Stage=stage;const g=document.querySelector('#f33-gate .v329-splash-content');if(g)g.setAttribute('aria-label','Abriendo VIVE: '+stage);}
+function f33ReadQuery(query,signal){return signal&&typeof query.abortSignal==='function'?query.abortSignal(signal):query;}
 
 async function f33ReloadRemote(){
  if(f33Saving){toast('Se está guardando en Supabase. Vuelve a consultar la nube cuando termine la sincronización.');return;}
@@ -8958,7 +8980,7 @@ async function f33Logout(){
   return;
  }
  v10LiveStop();v10ManualConflict=false;v10Protect('ok');
- ++f151CloudLoadToken; // invalida cargas remotas aún pendientes antes de cambiar de sesión
+ ++f151CloudLoadToken;f33CancelRead(); // invalida cargas remotas aún pendientes antes de cambiar de sesión
  authCerrandoVoluntario=true;try{if(f33Api)await f33Api.auth.signOut({scope:'local'})}catch(err){console.warn('No se pudo cerrar completamente la sesión:',err)}finally{authCerrandoVoluntario=false}
  /* Sin cambios pendientes (se comprobó arriba): se borran del dispositivo las copias locales de los datos financieros de esta cuenta. */
  try{const uid=f33User&&f33User.id;if(uid)Object.keys(localStorage).filter(k=>k.startsWith('finanzas360.')&&k.indexOf(uid)>-1).forEach(k=>localStorage.removeItem(k))}catch(_){}
@@ -8970,9 +8992,10 @@ document.addEventListener('click',async e=>{
  const button=e.target.closest('[data-f33]');if(!button)return;
  const act=button.dataset.f33;
  if(act==='import'||act==='start'){button.disabled=true;await f33FirstStart(act==='import');}
- else if(act==='load'&&f33User){await f33LoadUser(f33User);}
+ else if(act==='load'&&f33User){button.disabled=true;await f33LoadUser(f33User);}
+ else if(act==='safe'){const url=new URL(location.href);url.searchParams.set('safe','1');location.assign(url.href);}
  else if(act==='relogin'){ /* Salida de emergencia: solo descarta la sesión guardada en este dispositivo; no toca datos del servidor ni copias de recuperación */
-  ++f151CloudLoadToken;v10LiveStop();f33Active=false;f33User=null;authCerrandoVoluntario=true;
+  ++f151CloudLoadToken;f33CancelRead();v10LiveStop();f33Active=false;f33User=null;window.__f360CloudUid=null;window.__f360CloudPersist=null;authCerrandoVoluntario=true;
   try{if(f33Api)await f33Api.auth.signOut({scope:'local'})}catch(_){}finally{authCerrandoVoluntario=false}
   try{localStorage.removeItem(AUTH_STORAGE_KEY)}catch(_){}
   f33LoginScreen();}
@@ -8980,7 +9003,7 @@ document.addEventListener('click',async e=>{
  else if(act==='export'){exportJson();}
  else if(act==='reload'){await f33ReloadRemote();}
  else if(act==='logout'){await f33Logout();}
- else if(act==='boot'){await f33Boot();}
+ else if(act==='boot'){authReintento=0;await f33Boot();}
 });
 window.addEventListener('online',()=>{if(f33Conflict&&f33User)f33LoadUser(f33User);else if(f33Dirty)f33Flush();f34UpdateFx(false)});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&f33Active)f34UpdateFx(false)});
@@ -9041,15 +9064,16 @@ function v405Unflatten(values){
  }
  return root;
 }
-async function v405All(table,columns,userId,ordering,only){
+async function v405All(table,columns,userId,ordering,only,signal){
  const records=[];let from=0;
  for(let page=0;page<300;page++){
   let query=f33Api.from(table).select(columns).eq('user_id',userId).range(from,from+999);
   if(only&&only.length)query=query.in('collection',only);
   if(ordering)query=query.order(ordering).order('record_id');
   if(table==='finance_values')query=query.order('path');
-  const {data,error}=await query;
-  if(error)throw error;
+  if(signal?.aborted)throw Error('Lectura cancelada');
+  const {data,error}=await f33ReadQuery(query,signal);
+  if(error)throw Object.assign(Error(table+' · bloque '+(page+1)+': '+(error.message||String(error))),{code:error.code,status:error.status});
   records.push(...(data||[]));
   if(!data||data.length<1000)return records;
   from+=1000;
@@ -9094,16 +9118,17 @@ function v405Assemble(items,fields){
  for(const key of v405ArrayCollections)if(Array.isArray(result[key]))result[key]=result[key].sort((a,b)=>a.position-b.position).map(x=>x.value);
  return result;
 }
-async function v405Read(userId){
+async function v405Read(userId,signal){
  for(let attempt=0;attempt<3;attempt++){
-  const start=await f33Api.from('finance_revision').select('revision').eq('user_id',userId).maybeSingle();
+  if(signal?.aborted)throw Error('Lectura cancelada');
+  const start=await f33ReadQuery(f33Api.from('finance_revision').select('revision').eq('user_id',userId).maybeSingle(),signal);
   if(start.error)throw start.error;
   if(!start.data)return {revision:null,documento:null};
   const [items,fields]=await Promise.all([
-   v405All('finance_items','collection,record_id,position',userId,'collection'),
-   v405All('finance_values','collection,record_id,path,kind,text_value,number_value,boolean_value',userId,'collection')
+   v405All('finance_items','collection,record_id,position',userId,'collection',null,signal),
+   v405All('finance_values','collection,record_id,path,kind,text_value,number_value,boolean_value',userId,'collection',null,signal)
   ]);
-  const end=await f33Api.from('finance_revision').select('revision').eq('user_id',userId).single();
+  const end=await f33ReadQuery(f33Api.from('finance_revision').select('revision').eq('user_id',userId).single(),signal);
   if(end.error)throw end.error;
   if(Number(start.data.revision)!==Number(end.data.revision))continue;
   const grouped=new Map();
@@ -9185,16 +9210,19 @@ function v714ScheduleWriteRetry(){
 // Sustituir las funciones cloud antiguas; la UI y la lógica financiera siguen intactas.
 f33LoadUser=async function(user){
  const token=++f151CloudLoadToken;
- v10LiveStop();f33User=user;f33Active=false;f33Conflict=false;v403ExplicitDeletes.clear();v403RestoreApproved();
- f33Phase='loading';f33Shell('Conectando tus finanzas…','Leyendo tablas de Supabase en tiempo real.','');
+ f33CancelRead();const controller=new AbortController();f33ReadController=controller;let readTimer;
+ f33User=user;f33Active=false;f33Conflict=false;window.__f360CloudUid=null;window.__f360CloudPersist=null;
+ f33Phase='loading';f33Shell('Conectando tus finanzas…','Leyendo tablas de Supabase en tiempo real.','');f33BootStage('lectura de datos');
  try{
+  v10LiveStop();v403ExplicitDeletes.clear();v403RestoreApproved();
   if(Date.now()<v719BusyUntil()){
    f33Shell('Supabase está recuperándose.','Se ha pausado la conexión para evitar sobrecargar el servidor. Tus datos no se han modificado.',
     '<button class="f33-primary" data-f33="load">Comprobar conexión</button>');
    f33Phase='failure';return;
   }
   /* Tope de 25 s: sin respuesta se ofrece reintentar o volver a entrar, en lugar de un spinner eterno. */
-  let remote=await Promise.race([v405Read(user.id),new Promise((_,rej)=>setTimeout(()=>rej(Error('La conexión con Supabase tarda demasiado en responder.')),25000))]);
+  let remote=await Promise.race([v405Read(user.id,controller.signal),new Promise((_,rej)=>{readTimer=setTimeout(()=>{controller.abort();rej(Error('La conexión con Supabase tarda demasiado en responder.'));},25000)})]);
+  clearTimeout(readTimer);
   if(token!==f151CloudLoadToken||f33User?.id!==user.id)return;
   if(!remote.documento){
    const initial=migrateData(init());
@@ -9211,15 +9239,16 @@ f33LoadUser=async function(user){
    window.__f360LegacyRecoveryPending={userId:user.id,savedAt:pending.savedAt||null};
    console.warn('[V406] Unconfirmed local recovery retained but NOT loaded: server is source of truth.');
   }
-  db=f33Prepare(remote.documento);
+  f33BootStage('reconstrucción de datos');db=f33Prepare(remote.documento);
   v714ReadFailureCount=0;v714NextReadAt=0;v714WriteRetryCount=0;v714NextWriteAt=0;
   v405Base=v405Clone(remote.documento);v405Revision=remote.revision;v405Loaded=true;
   f33Stamp=String(remote.revision);v360RememberBase(remote.documento,f33Stamp);
   f33Ready();
- }catch(err){if(token!==f151CloudLoadToken)return;v719MarkBusy(err);f33Phase='failure';f33Active=false;
-  f33Shell('No pudimos cargar tus datos.','La base no se modificó. Puedes reintentar.',
-   '<div class="f33-error" role="alert">'+sanitize(err.message||String(err))+'</div><button class="f33-primary" data-f33="load">Reintentar</button><button class="f33-primary" data-f33="relogin" style="margin-top:8px;opacity:.85">Volver a iniciar sesión</button>');
- }
+ }catch(err){if(token!==f151CloudLoadToken)return;v719MarkBusy(err);f33Phase='failure';f33Active=false;window.__f360CloudUid=null;window.__f360CloudPersist=null;
+  const detail=f33Stage+': '+(err?.message||String(err));console.error('[VIVE] Arranque:',detail);
+  f33Shell('No pudimos abrir VIVE.','Tus datos permanecen en Supabase. Puedes reintentar.',
+   '<div class="f33-error" role="alert">'+sanitize(detail)+'</div><button class="f33-primary" data-f33="load">Reintentar</button><button class="f33-primary" data-f33="safe" style="margin-top:8px">Abrir Inicio sin restaurar la vista anterior</button><button class="f33-primary" data-f33="relogin" style="margin-top:8px;opacity:.85">Volver a iniciar sesión</button>');
+ }finally{clearTimeout(readTimer);controller.abort();if(f33ReadController===controller)f33ReadController=null;}
 };
 f33FirstStart=async function(){if(f33User)await f33LoadUser(f33User)};
 f33Flush=async function(){
@@ -9403,12 +9432,13 @@ let authReintento=0,authTemporizador=0,authArrancando=null,authEscuchando=false,
 const authEsTemporal=err=>{if(!err)return false;const st=Number(err.status||0);return err.name==='AuthRetryableFetchError'||st===0||st===429||st>=500||/failed to fetch|load failed|network|timeout|offline|aborted/i.test(String(err.message||''))||(typeof navigator!=='undefined'&&navigator.onLine===false)};
 function authProgramarReintento(){
  clearTimeout(authTemporizador);
- const espera=AUTH_REINTENTOS_MS[Math.min(authReintento,AUTH_REINTENTOS_MS.length-1)];authReintento++;
+ if(authReintento>=AUTH_REINTENTOS_MS.length)return;
+ const espera=AUTH_REINTENTOS_MS[authReintento++];
  authTemporizador=setTimeout(()=>{if(!f33User&&f33Phase==='retry')f33Boot(true)},espera);
 }
 function authPantallaReintento(){
  if(f33Phase!=='retry'){f33Phase='retry';
- f33Shell('No pudimos conectar','Tu sesión sigue guardada en este dispositivo. Reintentaremos en cuanto haya conexión.','<button class="f33-primary" data-f33="boot">Reintentar ahora</button>')}
+ f33Shell('No pudimos conectar','Tu sesión sigue guardada. Puedes reintentar la conexión.','<button class="f33-primary" data-f33="boot">Reintentar ahora</button>')}
  authProgramarReintento();
 }
 function authEscuchar(){
@@ -9416,6 +9446,7 @@ function authEscuchar(){
  f33Api.auth.onAuthStateChange((evento)=>{
   /* El servidor revocó la sesión (o se cerró en otra pestaña): se vuelve al acceso sin perder los cambios pendientes. */
   if(evento==='SIGNED_OUT'&&!authCerrandoVoluntario&&f33User){
+   ++f151CloudLoadToken;f33CancelRead();window.__f360CloudPersist=null;
    const pendiente=f33Dirty;if(pendiente)v360WritePending();
    v10LiveStop();clearTimeout(f33Timeout);f33Active=false;f33User=null;f33Dirty=false;window.__f360CloudUid=null;db=init();
    const insignia=document.getElementById('f33-cloud-badge');if(insignia)insignia.hidden=true;
@@ -9457,7 +9488,7 @@ window.__f360Test={phase:()=>f33Phase,ready:()=>f33Active,cloudUser:()=>f33User?
 /* Conserva deep link a Pagos sin paneles ni configuraciones push antiguas. */
 const v717PaymentsReady=f33Ready;
 f33Ready=function(){v717PaymentsReady();
- if(new URLSearchParams(location.search).get('open')==='payments'){ui.page='payments';render();}
+ if(!f33SafeBoot()&&new URLSearchParams(location.search).get('open')==='payments'){try{ui.page='payments';render()}catch(err){console.warn('[VIVE] Enlace a Pagos:',err?.message||String(err));ui.page='overview';f33CoreRender();}}
 };
 
 /* V40 · Contratos recurrentes, instituciones multiformato y fiscalidad versionada.
@@ -9737,7 +9768,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-v40-action
 },true);
 // On cloud-ready only: never post scheduled transactions before fetching the real user document.
 const v40OriginalCloudReady=f33Ready;
-f33Ready=function(){v40OriginalCloudReady();v40Ensure();Promise.resolve().then(()=>v40ProcessDue()).catch(e=>console.warn('Registro periódico:',e));};
+f33Ready=function(){v40OriginalCloudReady();setTimeout(()=>{if(f33Active)Promise.resolve().then(()=>{v40Ensure();return v40ProcessDue()}).catch(e=>console.warn('Registro periódico:',e));},0);};
 window.addEventListener('focus',()=>{if(f33Active)Promise.resolve().then(()=>v40ProcessDue());});
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&f33Active)Promise.resolve().then(()=>v40ProcessDue());});
 
@@ -16594,7 +16625,7 @@ function v246RefreshAfterResume(){
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)v246RefreshAfterResume();});
 window.addEventListener('focus',v246RefreshAfterResume,{passive:true});
 
- f33Boot();
+ document.addEventListener('DOMContentLoaded',()=>f33Boot(),{once:true});
 
 /* V244 · Tarjetas móvil limpio + refinamiento transversal de módulos.
    Objetivo: igualar la claridad de Cuentas y efectivo en iPhone sin tocar los cálculos. */

@@ -77,5 +77,14 @@ async function hastaEstable(p, ms) { const t = Date.now(); let e; while (Date.no
     check('B10','Login manual desde una sesión vacía: monta la app',!e.colgado&&!e.gateVisible&&e.app>0&&e.fase==='ready',JSON.stringify(e));
     await ctx.close();
   }
+  global.__paso='B11: Inicio sin restaurar vista';
+  {
+    const st=servidorAuth();const {p,ctx}=await abrir(b,st,null,{});
+    await p.evaluate(([k,v])=>{localStorage.setItem(k,v);localStorage.setItem('finanzas360.resume.00000000-0000-0000-0000-000000000001',JSON.stringify({page:'wallet',at:Date.now()}))},[KEY,st.semilla()]);
+    await p.goto('http://localhost:8765/index.html?safe=1');
+    const e=await hastaEstable(p,45000);
+    const page=await p.evaluate(()=>document.body.dataset.page);
+    check('B11','Recuperación: abre Inicio sin restaurar la vista anterior',e.fase==='ready'&&!e.gateVisible&&page==='overview',JSON.stringify({e,page}));await ctx.close();
+  }
   console.log(fails ? `\nFALLAN: ${fails} de ${n}` : `\nOK: ${n} comprobaciones superadas`); clearTimeout(guardia); await b.close(); process.exit(fails ? 1 : 0);
 })();
