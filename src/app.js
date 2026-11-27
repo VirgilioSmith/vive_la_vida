@@ -8866,88 +8866,16 @@ function v980SplashAccent(){
  return c==='custom'&&hex.test(db?.settings?.paletteHex||'')?db.settings.paletteHex:(pal[c]||pal.original);
 }
 function v980DismissSplash(gate){
- if(gate&&gate.dataset.v980Running==='1')return;if(gate)gate.dataset.v980Running='1';
- const finish=()=>{delete gate.dataset.v980Running;gate.hidden=true;gate.classList.remove('v329-splash','v329-fade-out','v980-dissolving');document.querySelectorAll('.v980-dust').forEach(x=>x.remove());v335SplashSince=0;};
- try{
-  const word=gate.querySelector('.v329-wordmark');
-  const calm=window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches;
-  if(calm||!word||!gate.classList.contains('v329-splash')||gate.hidden){finish();return;}
-  const r=word.getBoundingClientRect();if(r.width<20||r.height<10){finish();return;}
-  const cs=getComputedStyle(word),dpr=Math.min(2,window.devicePixelRatio||1),pad=36;
-  const W=Math.ceil(r.width+pad*2),H=Math.ceil(r.height+pad*2);
-  /* V1030 · El polvo viaja hacia la izquierda y se vuelve a formar como el logotipo de la esquina superior izquierda. */
-  const brand=[...document.querySelectorAll('.vive-p-brand,.vive-mobile-brand')].find(e=>{const b=e.getBoundingClientRect();return b.width>8&&b.height>8&&getComputedStyle(e).visibility!=='hidden'});
-  const vw=window.innerWidth,vh=window.innerHeight;
-  const cv=document.createElement('canvas');cv.className='v980-dust';cv.width=vw*dpr;cv.height=vh*dpr;
-  cv.style.cssText=`position:fixed;left:0;top:0;width:${vw}px;height:${vh}px;pointer-events:none;z-index:2147483000`;
-  const ctx=cv.getContext('2d');
-  const raster=(text,font,rect,color)=>{const c=document.createElement('canvas');c.width=Math.ceil(vw*dpr);c.height=Math.ceil(vh*dpr);const g=c.getContext('2d',{willReadFrequently:true});g.scale(dpr,dpr);g.font=font;g.fillStyle=color;g.textBaseline='alphabetic';g.textAlign='center';g.fillText(text,rect.left+rect.width/2,rect.top+rect.height*0.5+parseFloat(font.match(/(\d+(\.\d+)?)px/)?.[1]||16)*0.34);return g.getImageData(0,0,c.width,c.height)};
-  const sample=(img,step,minA)=>{const out=[];for(let py=0;py<img.height;py+=step)for(let px=0;px<img.width;px+=step){if(img.data[(py*img.width+px)*4+3]>minA)out.push({x:px/dpr,y:py/dpr})}return out};
-  const fs=parseFloat(cs.fontSize),step=Math.max(2,Math.round(2*dpr));
-  const src=sample(raster(word.textContent,`${cs.fontWeight} ${fs}px ${cs.fontFamily}`,r,cs.color),step,110);
-  if(!src.length){finish();return;}
-  let dst=[],bcol=v980SplashAccent();
-  if(brand){
-   let bs2=null;const br=brand.getBoundingClientRect(),bs=getComputedStyle(brand),bf=parseFloat(bs.fontSize)||24;
-   // Solo el primer texto de la marca (en móvil comparte el botón con la fecha): se mide su rectángulo exacto.
-   const tw=document.createTreeWalker(brand,NodeFilter.SHOW_TEXT,{acceptNode:n=>n.textContent.trim()?1:2});const tn=tw.nextNode();
-   let txt=(brand.textContent||'V').trim(),rr=br;
-   if(tn){const rg=document.createRange();rg.selectNodeContents(tn);const q=rg.getBoundingClientRect();if(q.width>4){rr=q;txt=tn.textContent.trim();const ps=getComputedStyle(tn.parentElement);bs2=ps}}
-   dst=sample(raster(txt,`${(bs2||bs).fontWeight} ${parseFloat((bs2||bs).fontSize)||bf}px ${(bs2||bs).fontFamily}`,rr,'#000'),step,110);
-   bcol=bs.color&&!/rgba?\(0, 0, 0, 0\)/.test(bs.color)?bs.color:bcol;
-  }
-  /* El polvo también forma el subtítulo «vive el hoy» (escritorio), debajo del logotipo. */
-  const subEl=[...document.querySelectorAll('.topbar-intro .top-sub')].find(e=>{const b=e.getBoundingClientRect();return b.width>8&&b.height>6});
-  const subPrev=subEl&&subEl.style.opacity!=='0'?subEl.style.opacity:'';
-  let subPts=[];
-  if(subEl){const sr=subEl.getBoundingClientRect(),ss=getComputedStyle(subEl),sf=parseFloat(ss.fontSize)||14;
-   const rg=document.createRange();rg.selectNodeContents(subEl);const q=rg.getBoundingClientRect();
-   subPts=sample(raster(subEl.textContent.trim(),`${ss.fontWeight} ${sf}px ${ss.fontFamily}`,q.width>4?q:sr,'#000'),Math.max(1,Math.round(dpr)),110);subEl.style.opacity='0'}
-  const pickDst=()=>dst[(Math.random()*dst.length)|0];
-  const parts=src.map((p,n)=>{const t=dst.length?pickDst():{x:-20,y:p.y};const nx=(p.x-r.left)/Math.max(1,r.width);
-   return {x0:p.x,y0:p.y,tx:t.x,ty:t.y,sz:(t.sub?Math.max(1,step/dpr*.6):step/dpr)*(.9+Math.random()*.5),wob:Math.random()*6.28,amp:6+Math.random()*16,delay:100+(1-nx)*420+Math.random()*160,life:900+Math.random()*500}});
-  ctx.scale(dpr,dpr);
-  document.body.appendChild(cv);word.style.visibility='hidden';
-  const brandPrev=brand&&brand.style.opacity!=='0'?brand.style.opacity:'';if(brand)brand.style.opacity='0';
-  gate.classList.add('v980-dissolving');gate.style.pointerEvents='none';
-  const DUR0=2300,PH2=DUR0-250;
-  const parts2=subPts.length&&dst.length?subPts.filter((_,i)=>i%2===0||subPts.length<400).map(t=>{const o=dst[(Math.random()*dst.length)|0];return {x0:o.x,y0:o.y,tx:t.x,ty:t.y,sz:Math.max(1,dpr>1?1.2:1.4)*(.9+Math.random()*.6),wob:Math.random()*6.28,amp:3+Math.random()*7,delay:Math.random()*220,life:450+Math.random()*300}}):[];
-  const t0=performance.now(),DUR=DUR0,END=parts2.length?PH2+900:DUR+400,col=cs.color;
-  const ease=k=>k<.5?4*k*k*k:1-Math.pow(-2*k+2,3)/2;
-  (function frame(now){
-   const t=now-t0;ctx.clearRect(0,0,vw,vh);
-   for(const q of parts){
-    const a=t-q.delay;
-    if(a<0){ctx.globalAlpha=1;ctx.fillStyle=col;ctx.fillRect(q.x0,q.y0,q.sz,q.sz);continue}
-    const k=Math.min(1,a/q.life),e=ease(k);
-    const wob=Math.sin(q.wob+a/160)*q.amp*Math.sin(Math.PI*k);
-    // El polvo se desprende hacia la izquierda y baja/sube hasta asentarse en el logotipo
-    const x=q.x0+(q.tx-q.x0)*e-Math.sin(Math.PI*k)*40,y=q.y0+(q.ty-q.y0)*e+wob;
-    ctx.globalAlpha=k<1?.95:1;ctx.fillStyle=k>.6?bcol:col;
-    ctx.fillRect(x,y,q.sz*(1-.25*Math.sin(Math.PI*k)),q.sz*(1-.25*Math.sin(Math.PI*k)));
-   }
-   ctx.globalAlpha=1;
-   gate.style.opacity=String(Math.max(0,1-Math.max(0,(t-250)/800)));
-   const done=t>=PH2;
-   if(done){if(brand){brand.style.transition='opacity .25s ease';brand.style.opacity=brandPrev||'';}}
-   if(done&&parts2.length){
-    const u=t-PH2;ctx.fillStyle=bcol;
-    for(const q of parts2){
-     const a=u-q.delay;if(a<0)continue;const k=Math.min(1,a/q.life),e=1-Math.pow(1-k,3);
-     const wob=Math.sin(q.wob+a/90)*q.amp*Math.sin(Math.PI*k);
-     ctx.globalAlpha=k<1?.95:1;ctx.fillRect(q.x0+(q.tx-q.x0)*e,q.y0+(q.ty-q.y0)*e+wob,q.sz,q.sz);
-    }
-    ctx.globalAlpha=1;
-    if(subEl&&u>650){subEl.style.transition='opacity .25s ease';subEl.style.opacity=subPrev||'';cv.style.opacity=String(Math.max(0,1-(u-650)/250))}
-   }else if(done){cv.style.opacity=String(Math.max(0,1-(t-PH2)/250))}
-   if(t<END)requestAnimationFrame(frame);else{if(brand){brand.style.opacity=brandPrev;brand.style.transition=''}if(subEl){subEl.style.opacity=subPrev;subEl.style.transition=''}gate.style.opacity='';gate.style.pointerEvents='';finish();}
-  })(t0);
- }catch(e){console.warn('V980: disolución no disponible',e);finish();}
+ // VIVE V1: la salida del arranque es síncrona y no depende de Canvas ni de requestAnimationFrame.
+ if(gate)gate.remove();
+ document.querySelectorAll('.v980-dust').forEach(x=>x.remove());
+ v335SplashSince=0;
 }
 let v335SplashSince=0;
 function f33Shell(title,description,content){
  f33Gate();const el=document.getElementById('f33-gate');el.hidden=false;
- el.classList.remove('v329-fade-out');
+ el.classList.remove('v329-fade-out','v980-dissolving');
+ el.style.removeProperty('opacity');el.style.removeProperty('pointer-events');delete el.dataset.v980Running;
  if(f33Phase==='loading'&&!content){
   if(!v335SplashSince)v335SplashSince=Date.now();
   el.classList.add('v329-splash');
@@ -8995,7 +8923,7 @@ function f33Ready(){
  if(existingSplash?.classList.contains('v329-splash'))existingSplash.classList.toggle('v331-splash-light',db.settings?.theme==='light');
  const gate=document.getElementById('f33-gate');
  // Render first; dismiss splash immediately when the authenticated data is ready.
- v360RestoreUI();render();if(gate){v980DismissSplash(gate);setTimeout(()=>{if(f33Phase==='ready'&&!gate.hidden){gate.hidden=true;gate.classList.remove('v329-splash','v329-fade-out','v980-dissolving');delete gate.dataset.v980Running;document.querySelectorAll('.v980-dust').forEach(x=>x.remove())}},2000);}if(v360ResumeScroll!==null){const y=v360ResumeScroll;v360ResumeScroll=null;setTimeout(()=>window.scrollTo(0,y),90)}f33SetStatus('ok','✓ Guardado en Supabase');
+ v360RestoreUI();render();if(!document.getElementById('app')?.children.length)throw Error('No se pudo montar la pantalla de VIVE.');v980DismissSplash(gate);if(v360ResumeScroll!==null){const y=v360ResumeScroll;v360ResumeScroll=null;setTimeout(()=>window.scrollTo(0,y),90)}f33SetStatus('ok','✓ Guardado en Supabase');
  v10LiveStart();
  setTimeout(()=>{v212Load().then(()=>v212Sync()).catch(err=>console.warn('Apple Pay:',err));},1600);
  // Consultar tasa externa de forma no bloqueante tras autenticar al usuario.
@@ -9486,13 +9414,13 @@ function authEscuchar(){
  const revisar=()=>{if(document.visibilityState==='hidden')return;f33Api.auth.getSession().catch(()=>{});if(!f33User&&f33Phase==='retry')f33Boot()};
  document.addEventListener('visibilitychange',revisar);window.addEventListener('pageshow',e=>{if(e.persisted)revisar()});window.addEventListener('online',revisar);
 }
-/* Vigilante de arranque: si a los 30 s la app no está lista ni en el acceso, se muestra el último error real y una salida, en lugar de un spinner sin explicación. */
+/* Vigilante de arranque: 40 s permiten completar los límites de sesión (8 s) y lectura (25 s); la pantalla de reintento conserva su recuperación automática. */
 let f33UltimoError='';
 window.addEventListener('error',e=>{f33UltimoError=String(e.message||e.error||'').slice(0,200)+(e.filename?' ('+String(e.filename).split('/').pop()+':'+e.lineno+')':'')});
 window.addEventListener('unhandledrejection',e=>{f33UltimoError=String((e.reason&&e.reason.message)||e.reason||'').slice(0,200)});
-setTimeout(()=>{if(f33Phase==='ready'&&document.querySelector('#app')?.children.length){const gate=document.getElementById('f33-gate');if(gate&&!gate.hidden){gate.hidden=true;gate.classList.remove('v329-splash','v329-fade-out','v980-dissolving');delete gate.dataset.v980Running;document.querySelectorAll('.v980-dust').forEach(x=>x.remove())}return}if(['loading','retry'].includes(f33Phase)||(f33Phase==='ready'&&!document.querySelector('#app')?.children.length)){
+setTimeout(()=>{if(f33Phase==='ready'&&document.querySelector('#app')?.children.length){v980DismissSplash(document.getElementById('f33-gate'));return}if(f33Phase==='loading'||(f33Phase==='ready'&&!document.querySelector('#app')?.children.length)){
  f33Phase='failure';f33Active=false;
- f33Shell('La app tarda en abrir.','Tus datos en Supabase no se han modificado.','<div class="f33-error" role="alert">'+sanitize(f33UltimoError||'Sin error registrado: el servidor no respondió.')+'</div><button class="f33-primary" data-f33="boot">Reintentar</button><button class="f33-primary" data-f33="relogin" style="margin-top:8px;opacity:.85">Volver a iniciar sesión</button>')}},30000);
+ f33Shell('La app tarda en abrir.','Tus datos en Supabase no se han modificado.','<div class="f33-error" role="alert">'+sanitize(f33UltimoError||'Sin error registrado: el servidor no respondió.')+'</div><button class="f33-primary" data-f33="boot">Reintentar</button><button class="f33-primary" data-f33="relogin" style="margin-top:8px;opacity:.85">Volver a iniciar sesión</button>')}},40000);
 async function f33Boot(silencioso){
  if(authArrancando)return authArrancando;
  authArrancando=(async()=>{
