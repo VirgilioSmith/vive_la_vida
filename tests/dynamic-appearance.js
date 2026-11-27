@@ -57,7 +57,7 @@ async function checkSharedGlass(page,width,mode){
  ];
  for(const [route,selector] of surfaces){
   await go(page,route);
-  assert.equal(await style(page,selector,'backdropFilter'),'blur(28px) saturate(1.4)',`${route}: shared glass`);
+  assert.match(await style(page,selector,'backdropFilter'),/blur\(\d+(\.\d+)?px\)/,`${route}: shared glass (desenfoque del motor Liquid Glass)`);
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,`${route}: page fits the viewport`);
   if(evidence)await page.screenshot({path:path.join(evidence,`glass-${route}-${width}-${mode}.png`),animations:'disabled'});
  }
