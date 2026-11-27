@@ -9031,6 +9031,11 @@ document.addEventListener('click',async e=>{
  const act=button.dataset.f33;
  if(act==='import'||act==='start'){button.disabled=true;await f33FirstStart(act==='import');}
  else if(act==='load'&&f33User){await f33LoadUser(f33User);}
+ else if(act==='relogin'){ /* Salida de emergencia: solo descarta la sesión guardada en este dispositivo; no toca datos del servidor ni copias de recuperación */
+  ++f151CloudLoadToken;v10LiveStop();f33Active=false;f33User=null;authCerrandoVoluntario=true;
+  try{if(f33Api)await f33Api.auth.signOut({scope:'local'})}catch(_){}finally{authCerrandoVoluntario=false}
+  try{localStorage.removeItem(AUTH_STORAGE_KEY)}catch(_){}
+  f33LoginScreen();}
  else if(act==='retry'){await f33Flush();}
  else if(act==='export'){exportJson();}
  else if(act==='reload'){await f33ReloadRemote();}
@@ -9248,7 +9253,8 @@ f33LoadUser=async function(user){
     '<button class="f33-primary" data-f33="load">Comprobar conexión</button>');
    f33Phase='failure';return;
   }
-  let remote=await v405Read(user.id);
+  /* Tope de 25 s: sin respuesta se ofrece reintentar o volver a entrar, en lugar de un spinner eterno. */
+  let remote=await Promise.race([v405Read(user.id),new Promise((_,rej)=>setTimeout(()=>rej(Error('La conexión con Supabase tarda demasiado en responder.')),25000))]);
   if(token!==f151CloudLoadToken||f33User?.id!==user.id)return;
   if(!remote.documento){
    const initial=migrateData(init());
@@ -9272,7 +9278,7 @@ f33LoadUser=async function(user){
   f33Ready();
  }catch(err){if(token!==f151CloudLoadToken)return;v719MarkBusy(err);f33Phase='failure';f33Active=false;
   f33Shell('No pudimos cargar tus datos.','La base no se modificó. Puedes reintentar.',
-   '<div class="f33-error" role="alert">'+sanitize(err.message||String(err))+'</div><button class="f33-primary" data-f33="load">Reintentar</button>');
+   '<div class="f33-error" role="alert">'+sanitize(err.message||String(err))+'</div><button class="f33-primary" data-f33="load">Reintentar</button><button class="f33-primary" data-f33="relogin" style="margin-top:8px;opacity:.85">Volver a iniciar sesión</button>');
  }
 };
 f33FirstStart=async function(){if(f33User)await f33LoadUser(f33User)};
