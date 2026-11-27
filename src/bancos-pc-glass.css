@@ -395,3 +395,9 @@ html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-mp-detail .vBank
  html body #app#app#app#app #page#page .vBanksPc-insights :is(.v1301-ranked,.wallet-consumption-list){justify-content:flex-start!important;align-content:start!important;gap:10px!important}
 }
 @media (min-width:1440px){html body #app#app#app#app #page#page .vBanksPc-insights .vBanksPc-consumption-rows{justify-content:flex-start!important;align-content:start!important;gap:14px!important;flex:0 0 auto!important}html body #app#app#app#app #page#page .vBanksPc-insights .vBanksPc-crow{min-height:58px}}
+
+/* Importes extremos: la tarjeta nunca se ensancha; el importe se reduce con su longitud y, como último recurso, se recorta con «…» */
+html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-metric>div :is(strong,.vBanksPc-var-row,.vx-money){max-width:100%;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-var-row{flex-wrap:wrap}
+html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-metric>div{grid-template-columns:minmax(0,1fr)!important;overflow:hidden!important}
+html body #app#app#app main.vBanksPc-world #page#page .vBanksPc-metric>div :is(strong,.vBanksPc-var-row,.vx-money){max-width:100%!important;min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important}
