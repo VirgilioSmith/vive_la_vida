@@ -111,6 +111,22 @@ jobs:
           name: vive-conciliacion-saldos-${{ matrix.browser }}
           path: test-results/conciliacion/
           if-no-files-found: ignore
+  arranque:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, webkit]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm i --no-save playwright@1 && npx playwright install --with-deps ${{ matrix.browser }}
+      - name: Arranque con sesión, restos antiguos, Supabase caído y animaciones congeladas
+        run: node tests/arranque.js
+        env:
+          ARRANQUE_BROWSER: ${{ matrix.browser }}
   wallet-credit-global:
     runs-on: ubuntu-latest
     timeout-minutes: 10
