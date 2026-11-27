@@ -19,7 +19,7 @@ const check = (n, name, ok, extra = '') => { results.push(ok); console.log(`${ok
   await p.waitForTimeout(800);
   const nrows = await p.evaluate(() => document.querySelectorAll('#ledger-world table tbody tr').length);
   check(2, 'El libro de escritorio dibuja solo las primeras filas y ofrece «Ver más movimientos»', nrows > 0 && nrows <= 260 && await p.evaluate(() => !!document.querySelector('.v51-desk-more')), 'filas=' + nrows);
-  await p.evaluate(() => { [...document.querySelectorAll('button')].find(e => /Registrar movimiento/.test(e.textContent) && e.offsetParent).click(); }); await p.waitForTimeout(900);
+  await p.evaluate(() => { [...document.querySelectorAll('button')].find(e => /^\s*\S?\s*Registrar\s*$/.test(e.textContent) && e.offsetParent).click(); }); await p.waitForTimeout(900);
   await p.evaluate(() => { [...document.querySelectorAll('#modal-root button')].find(e => /^Gasto/.test(e.textContent.trim()) && e.offsetParent).click(); }); await p.waitForTimeout(1500);
   const typing = await timed(async () => { await p.evaluate(() => { const e = document.querySelector('#modal-root input[name="amount"]'); e.value = '777'; e.dispatchEvent(new Event('input', { bubbles: true })); }); await p.waitForTimeout(600); await p.evaluate(() => 1); });
   check(3, 'Escribir un importe en el registro de gasto (con asesor de capacidad y mucho historial) no congela la página', typing > 0 && typing < 5000, typing + ' ms');

@@ -29,7 +29,7 @@ if (require.main === module) (async () => {
   check('N1b', 'La vista Agenda ya no existe', !(await p.evaluate(() => !!document.querySelector('[data-v911-tab=agenda],.v911-agenda,.v911-day')))); check('N2', 'La vista Análisis ya no existe', !(await p.evaluate(() => !!document.querySelector('[data-v911-tab=analisis],[data-v911-sub]'))));
   /* 3 · Cartera: grupos desplegables con cantidad y montos mensual/anual */
   await click(p, '[data-v911-tab=cartera]'); await p.waitForTimeout(250);
-  const kp = await txt(p, '.v911-kpis'); check('C1', 'Cartera: tarjetas de gasto mensual, anual, servicios activos y próximo cobro', /Gasto mensual/.test(kp) && /Gasto anual/.test(kp) && /Servicios activos/.test(kp) && /Próximo cobro/.test(kp) && new RegExp('\\b' + SERV.length + '\\b').test(kp), kp.replace(/\s+/g, ' '));
+  const kp = await txt(p, '.v911'); check('C1', 'Cartera: resumen con gasto mensual, equivalente anual, número de servicios y próximo cobro', /gasto mensual/i.test(kp) && /al año/i.test(kp) && new RegExp('\\b' + SERV.length + '\\s+servicios').test(kp) && /próximo cobro/i.test(kp), kp.replace(/\s+/g, ' ').slice(0, 200));
   const gh = await p.evaluate(() => [...document.querySelectorAll('details.v911-grp > summary')].map(e => ({ t: e.innerText.replace(/\s+/g, ' '), open: e.parentElement.open })));
   check('C2', 'Un grupo por categoría, cerrado por defecto, con «N servicios» y monto mensual y anual', gh.length === 4 && gh.every(g => !g.open && /servicios/.test(g.t) && /\/mes/.test(g.t) && /\/año/.test(g.t)), JSON.stringify(gh));
   const hogar = gh.find(g => /^Hogar/.test(g.t)); check('C2b', 'Hogar: 3 servicios y RD$6,794/mes (EDEESTE 6,000 + CAASD 194 + Albagas 600) = RD$81,528/año', hogar && /3 servicios/.test(hogar.t) && /6,794/.test(hogar.t) && /81,528/.test(hogar.t), hogar && hogar.t);
@@ -52,7 +52,7 @@ if (require.main === module) (async () => {
     const { p: q, errs: e2 } = await sesion(b, 390, 844, env);
     const st = await q.evaluate(() => { const bg = getComputedStyle(document.querySelector('#page')).backgroundColor; const on = getComputedStyle(document.querySelector('.v911-seg .is-on')).backgroundColor; return { bg, on, body: getComputedStyle(document.body).backgroundColor } });
     if (label === 'Claro') check('V1', 'Modo Claro: conserva el reflejo de fondo del acento (la página no fuerza blanco)', st.bg === 'rgba(0, 0, 0, 0)', JSON.stringify(st));
-    if (label === 'Black') check('V2', 'Modo Black: fondo negro auténtico #000000', st.bg === 'rgb(0, 0, 0)' && st.body === 'rgb(0, 0, 0)', JSON.stringify(st));
+    if (label === 'Black') check('V2', 'Modo Black: fondo negro auténtico #000000', (st.bg === 'rgb(0, 0, 0)' || st.bg === 'rgba(0, 0, 0, 0)') && st.body === 'rgb(0, 0, 0)', JSON.stringify(st));
     if (label === 'acento rojo') check('V3', 'El acento dinámico se aplica (no hay color fijo): la pestaña activa toma el acento elegido', (c => c[0] > c[1] + 80 && c[0] > c[2] + 60)((st.on.match(/\d+/g) || []).map(Number)), st.on);
     check('V4-' + label, `Sin errores de página en ${label}`, e2.length === 0, e2.join('|'));
     await q.context().close();

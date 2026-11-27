@@ -52,6 +52,8 @@ const out = { vista: W + 'x' + H, formularios: [] }; let asistenteHecho = proces
       const ok = await p.evaluate(k => { const vis = e => { const r = e.getBoundingClientRect(); return r.width > 0 && r.height > 0 && !e.closest('#modal-root'); };
         const el = [...document.querySelectorAll('#app button,#app [data-act],#app summary,#app [role=button]')].filter(vis).find(e => ((e.dataset.act || '') + '|' + (e.dataset.id || '') + '|' + (e.dataset.mode || '') + '|' + (e.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 28)) === k); if (!el) return false; el.click(); return true; }, k).catch(() => false);
       if (!ok) continue; await p.waitForTimeout(450); await analizar(pg + ' › ' + k.split('|')[3]);
+      /* Si la acción abre primero el selector universal de producto (p. ej. avance de efectivo), se elige el primero y se analiza el formulario que sigue */
+      if (await p.evaluate(() => !!document.querySelector('#modal-root .v789-picker-row'))) { await p.evaluate(() => { document.querySelector('#modal-root .v789-picker-row').click(); const c = document.querySelector('#modal-root .v789-picker-confirm'); if (c && c.offsetParent) c.click(); }); await p.waitForTimeout(600); await analizar(pg + ' › ' + k.split('|')[3] + ' › formulario'); }
       // asistente de registro: abrir cada operación de cada grupo
       const grupos = asistenteHecho ? [] : await p.evaluate(() => [...document.querySelectorAll('#modal-root [data-act=registrationGroup]')].map(e => e.dataset.id));
       if (grupos.length) asistenteHecho = true;

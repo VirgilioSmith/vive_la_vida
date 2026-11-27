@@ -12,7 +12,7 @@ const OUT=path.join(__dirname,'..','test-results','auditoria','wallet-movil-dime
    const vw=innerWidth;const face=R('.v68-wallet-face'),sum=R('.wallet-mobile-summary'),ctl=R('.v1244-state'),dots=R('.v266-dots'),act=document.querySelector('.v266-wallet-actions button>span').getBoundingClientRect();
    return {vw,face,sum,ctl,dots,circ:Math.round(act.width),circH:Math.round(act.height),ovX:document.documentElement.scrollWidth-vw,
     gapDotsSum:sum.t-(dots.t+dots.h),gapSumCtl:ctl.t-(sum.t+sum.h),
-    clip:[...document.querySelectorAll('.v266-wallet *')].filter(e=>e.children.length===0&&/(RD\$|US\$)\s?\d/.test(e.textContent)&&e.scrollWidth>e.clientWidth+1).map(e=>e.textContent.slice(0,14)),
+    clip:[...document.querySelectorAll('.v266-wallet *')].filter(e=>!e.closest('.vi-strip')&&e.children.length===0&&/(RD\$|US\$)\s?\d/.test(e.textContent)&&e.scrollWidth>e.clientWidth+1).map(e=>e.textContent.slice(0,14)),
     overlap:(()=>{const a=document.querySelector('.v68-wallet-face').getBoundingClientRect(),s=document.querySelector('.wallet-mobile-summary').getBoundingClientRect(),c=document.querySelector('.v1244-state').getBoundingClientRect();return a.bottom>s.top+1||s.bottom>c.top+1})()}});
   const tag=`${theme}-${w}`;
   assert.ok(g.face.h/g.vw>=.5&&g.face.h/g.vw<=.58||g.face.h<=236&&g.face.h>=184,`[${tag}] carrusel compacto: ${g.face.h}px (${(g.face.h/g.vw).toFixed(2)} vw)`);

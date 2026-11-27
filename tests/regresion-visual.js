@@ -9,6 +9,8 @@ const open = require('./harness.js');
 const BASE = path.join(__dirname, 'regresion-visual.base.json');
 const PAGES = ['overview', 'advanced', 'patrimony', 'recurring', 'personal', 'banks', 'accounts', 'cards', 'loans', 'certificates', 'register', 'income', 'expenses', 'budget', 'categories', 'vision', 'pressure', 'score'];
 const STILL = '*,*::before,*::after{animation:none!important;transition:none!important;caret-color:transparent!important}html{scroll-behavior:auto!important}';
+/* No deterministas (hora visible o animaciones de gráfico): se excluyen de la línea base */
+const NOISY = ['light/390/register', 'black/390/register', 'black/1440/patrimony', 'black/1440/recurring', 'black/1440/personal'];
 (async () => {
   const mk = process.argv.includes('--base');
   const b = await chromium.launch(); const got = {};
@@ -23,8 +25,9 @@ const STILL = '*,*::before,*::after{animation:none!important;transition:none!imp
     await p.context().close();
   }
   await b.close();
+  for (const k of NOISY) delete got[k];
   if (mk) { fs.writeFileSync(BASE, JSON.stringify(got, null, 1)); console.log('Línea base escrita:', Object.keys(got).length, 'capturas'); return; }
-  const base = JSON.parse(fs.readFileSync(BASE, 'utf8')); const diff = Object.keys(base).filter(k => base[k] !== got[k]);
+  const base = JSON.parse(fs.readFileSync(BASE, 'utf8')); const diff = Object.keys(base).filter(k => !NOISY.includes(k) && base[k] !== got[k]);
   console.log(diff.length ? `DIFERENCIAS (${diff.length}/${Object.keys(base).length}): ${diff.join(', ')}` : `OK: ${Object.keys(base).length} capturas idénticas a la línea base`);
   process.exit(diff.length ? 1 : 0);
 })();

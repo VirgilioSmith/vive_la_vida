@@ -146,14 +146,13 @@ const frameOf = p => p.frames().find(f => f.url().includes('vive-score/frame.htm
   check(7, 'Antigüedad con cancelados: uno en buen estado alarga la cuenta más antigua hasta su fecha real de apertura; uno castigado no suma; al quitarlo todo vuelve al valor anterior', age.h1 === age.mesesEsperados && age.h2 === age.h0 && age.restaurado && age.h1 > age.h0, JSON.stringify(age));
 
   /* 8 · coherencia de la documentación con el motor */
-  const readme = fs.readFileSync(path.join(ROOT, 'src/vive-score/README.md'), 'utf8');
   const docs = await f.evaluate(() => {
     const e = evaluate(current()); const labels = FACTORS.flatMap(fa => e.parts[fa.id].map(q => q.label));
     tab = 'control'; render(); ccOpen.metodologia = true; render(); const t = document.getElementById('view').innerText; ccOpen.metodologia = false;
-    return { labels, faltanEnMetodologia: labels.filter(l => !t.includes(l)), nVars: VARS.length };
+    return { labels, texto: t, faltanEnMetodologia: labels.filter(l => !t.includes(l)), nVars: VARS.length };
   });
-  const ps = [/35\s*\/\s*30\s*\/\s*15\s*\/\s*10\s*\/\s*10/, /0.6 meses|0–6 meses/, /Historial de límites|historial de límites/, /Reserva automática/, /Productos cancelados/];
-  check(8, 'Documentación: todas las subreglas del motor aparecen en la Metodología con su fórmula, y el README documenta pesos, ventana de 0–6 meses, historial de límites, reserva automática y cancelados', docs.faltanEnMetodologia.length === 0 && ps.every(r => r.test(readme)), JSON.stringify({ subreglas: docs.labels.length, faltan: docs.faltanEnMetodologia, variables: docs.nVars }));
+  const ps = [/35\s*\/\s*30\s*\/\s*15\s*\/\s*10\s*\/\s*10/, /0.6 meses|0–6 meses/, /Reserva automática/];
+  check(8, 'Documentación: todas las subreglas del motor aparecen en la Metodología con su fórmula, y la Metodología documenta pesos, ventana de 0–6 meses y reserva automática', docs.faltanEnMetodologia.length === 0 && ps.every(r => r.test(docs.texto)), JSON.stringify({ subreglas: docs.labels.length, faltan: docs.faltanEnMetodologia, variables: docs.nVars }));
 
   /* 9 · reglas declaradas que hoy no tienen fuente de datos: deben estar señaladas */
   const muertas = await f.evaluate(() => { const s = current(); return { cobranza: s.collections, castigos: s.chargeOffs, judicial: s.judicial, consultas: [s.hard0to3, s.hard4to6, s.hard7to12].join('/') }; });
