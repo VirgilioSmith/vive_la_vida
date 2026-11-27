@@ -21,7 +21,7 @@ window.VIVE_ENABLED=window.VIVE_ENABLED!==false;
   'use strict';
   var VENTANA_ERRORES_MS = 60 * 1000;        // ventana para contar errores repetidos
   var UMBRAL_ERRORES_REPETIDOS = 5;           // a partir de aquí se avisa en consola una sola vez por ventana
-  var ESPERA_LECTURA_MS = 20 * 1000;          // tiempo máximo de una lectura
+  var ESPERA_LECTURA_MS = 8 * 1000;           // tiempo máximo de un intento de lectura (una página tarda < 1 s); 3 reintentos caben en el límite total de 45 s
   var ESPERA_ESCRITURA_MS = 30 * 1000;        // tiempo máximo de una escritura
   var REINTENTOS_MAXIMOS = 3;                 // solo lecturas, nunca escrituras
   var ESPERA_BASE_MS = 400;                   // espera creciente: 400, 800, 1600 ms

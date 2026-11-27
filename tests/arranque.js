@@ -62,7 +62,7 @@ async function hastaEstable(p, ms) { const t = Date.now(); let e; while (Date.no
   await caso('B4', 'Restos de versiones antiguas en localStorage/sessionStorage: la app abre igual', {}, e => !e.colgado && !e.gateVisible && e.app > 0);
   opcionesRestos = K => { localStorage.setItem(K, '{"access_token":"undefined","refresh_token":"","user":null}') };
   await caso('B5', 'Sesión guardada dañada (token inválido): login o recuperación, nunca carga infinita', {}, e => !e.colgado);
-  await caso('B6', 'Servidor de datos colgado (las lecturas nunca responden): recuperación visible en ≤ 45 s, no carga infinita', { tope: 45000, prep: st => { const h = st.handler; st.handler = async route => { if (/\/rest\/v1\//.test(route.request().url()) && !/rpc/.test(route.request().url())) return new Promise(() => { }); return h(route) } } }, e => !e.colgado && /(Reintentar|Volver a iniciar)/i.test(e.gate || ''));
+  await caso('B6', 'Servidor de datos colgado (las lecturas nunca responden): recuperación visible en ≤ 60 s, no carga infinita', { tope: 60000, prep: st => { const h = st.handler; st.handler = async route => { if (/\/rest\/v1\//.test(route.request().url()) && !/rpc/.test(route.request().url())) return new Promise(() => { }); return h(route) } } }, e => !e.colgado && /(Reintentar|Volver a iniciar)/i.test(e.gate || ''));
   await caso('B7', 'Supabase completamente caído (red rechazada): pantalla de reintento, no carga infinita', { tope: 30000, prep: st => { st.caido = true } }, e => !e.colgado);
   await caso('B8', 'Supabase responde 500 en lecturas: mensaje de error con salida, no carga infinita', { tope: 45000, prep: st => { const h = st.handler; st.handler = async route => { if (/\/rest\/v1\//.test(route.request().url()) && !/rpc/.test(route.request().url())) return route.fulfill({ status: 500, headers: { 'access-control-allow-origin': '*', 'content-type': 'application/json' }, body: '{"message":"boom"}' }); return h(route) } } }, e => !e.colgado);
   /* B9 · pestaña en segundo plano / ahorro de energía de Safari: requestAnimationFrame no se ejecuta nunca. El arranque no puede depender de animaciones. */
@@ -86,5 +86,27 @@ async function hastaEstable(p, ms) { const t = Date.now(); let e; while (Date.no
     const page=await p.evaluate(()=>document.body.dataset.page);
     check('B11','Recuperación: abre Inicio sin restaurar la vista anterior',e.fase==='ready'&&!e.gateVisible&&page==='overview',JSON.stringify({e,page}));await ctx.close();
   }
+  /* B12–B14 · Incidente real en iPhone (27-nov): una página de finance_values falla en Safari con «TypeError: Load failed» sin llegar al servidor,
+     o la conexión queda colgada. Un fallo transitorio de UNA lectura no puede impedir abrir VIVE. */
+  /* Servidor con documento existente (si no, el arranque no lee finance_values): primer arranque crea los datos; luego se arma el fallo y se recarga. */
+  const conDatos = async (id, nombre, modo, cuantas, tope) => {
+    global.__paso = id; const st = servidorAuth(); const { p, ctx, errs } = await abrir(b, st, null, { semilla: null });
+    /* «cuerpo»: Safari recibe HTTP 200 y falla al descargar el cuerpo (TypeError: Load failed). Se reproduce sustituyendo fetch antes de early.js. */
+    if (modo === 'cuerpo') await ctx.addInitScript(n => { const F = window.fetch; let quedan = +(sessionStorage.getItem('__cuerpo') || 0); sessionStorage.removeItem('__cuerpo'); window.fetch = async (u, o) => { const r = await F(u, o); const url = typeof u === 'string' ? u : u.url; if (quedan > 0 && /\/rest\/v1\/finance_values/.test(url) && (!o || !o.method || o.method === 'GET')) { quedan--; window.__cuerposRotos = (window.__cuerposRotos || 0) + 1; return new Response(new ReadableStream({ start(c) { c.error(new TypeError('Load failed')) } }), { status: 200, headers: r.headers }) } return r } }, cuantas);
+    await p.evaluate(([k, v]) => localStorage.setItem(k, v), [KEY, st.semilla()]); await p.reload(); await hastaEstable(p, 14000);
+    const lecturasAntes = st.db.reads; const h = st.handler; let quedan = cuantas, armados = 0;
+    st.handler = async route => { const u = route.request().url(); if (route.request().method() === 'GET' && /\/rest\/v1\/finance_values/.test(u) && quedan > 0) { quedan--; armados++; if (modo === 'cuelga') return new Promise(() => { }); return route.abort('failed') } return h(route) };
+    open.apiHandler = st.handler; if (modo === 'cuerpo') { quedan = 0; await p.evaluate(k => sessionStorage.setItem('__cuerpo', k), cuantas) } await p.reload();
+    const e = await hastaEstable(p, tope);
+    if (modo === 'cuerpo') armados = await p.evaluate(() => window.__cuerposRotos || 0).catch(() => -1);
+    check(id, nombre, armados === cuantas && !e.colgado && !e.gateVisible && e.app > 0 && e.fase === 'ready', JSON.stringify(e) + ' fallos inyectados=' + armados + ' lecturas=' + (st.db.reads - lecturasAntes) + (errs.length ? ' errs=' + errs.slice(0, 2) : '')); await ctx.close();
+  };
+  /* B12–B14 · Incidente real en iPhone (27-nov): una página de finance_values falla en Safari con «TypeError: Load failed» sin llegar al servidor,
+     o la conexión queda colgada. Un fallo transitorio de UNA lectura no puede impedir abrir VIVE. */
+  await conDatos('B12', 'Con datos existentes, una lectura falla una vez («Load failed» de Safari): VIVE abre igual', 'falla', 1, 30000);
+  await conDatos('B13', 'Con datos existentes, dos lecturas seguidas fallan: VIVE abre igual', 'falla', 2, 30000);
+  await conDatos('B15', 'Con datos existentes, Safari recibe 200 y falla al descargar el cuerpo («Load failed», caso exacto del iPhone): VIVE abre igual', 'cuerpo', 1, 30000);
+  await conDatos('B16', 'Con datos existentes, la misma lectura queda colgada dos veces seguidas: los reintentos caben dentro del límite y VIVE abre', 'cuelga', 2, 60000);
+  await conDatos('B14', 'Con datos existentes, una lectura queda colgada (conexión muerta de Safari tras dormir el iPhone): VIVE abre igual en ≤ 45 s', 'cuelga', 1, 45000);
   console.log(fails ? `\nFALLAN: ${fails} de ${n}` : `\nOK: ${n} comprobaciones superadas`); clearTimeout(guardia); await b.close(); process.exit(fails ? 1 : 0);
 })();

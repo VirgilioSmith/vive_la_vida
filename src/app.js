@@ -9220,8 +9220,8 @@ f33LoadUser=async function(user){
     '<button class="f33-primary" data-f33="load">Comprobar conexión</button>');
    f33Phase='failure';return;
   }
-  /* Tope de 25 s: sin respuesta se ofrece reintentar o volver a entrar, en lugar de un spinner eterno. */
-  let remote=await Promise.race([v405Read(user.id,controller.signal),new Promise((_,rej)=>{readTimer=setTimeout(()=>{controller.abort();rej(Error('La conexión con Supabase tarda demasiado en responder.'));},25000)})]);
+  /* Tope de 45 s: deja completar los reintentos por lectura de early.js (8 s × 4 intentos); sin respuesta se ofrece reintentar o volver a entrar. */
+  let remote=await Promise.race([v405Read(user.id,controller.signal),new Promise((_,rej)=>{readTimer=setTimeout(()=>{controller.abort();rej(Error('La conexión con Supabase tarda demasiado en responder.'));},45000)})]);
   clearTimeout(readTimer);
   if(token!==f151CloudLoadToken||f33User?.id!==user.id)return;
   if(!remote.documento){
@@ -9457,13 +9457,13 @@ function authEscuchar(){
  const revisar=()=>{if(document.visibilityState==='hidden')return;f33Api.auth.getSession().catch(()=>{});if(!f33User&&f33Phase==='retry')f33Boot()};
  document.addEventListener('visibilitychange',revisar);window.addEventListener('pageshow',e=>{if(e.persisted)revisar()});window.addEventListener('online',revisar);
 }
-/* Vigilante de arranque: 40 s permiten completar los límites de sesión (8 s) y lectura (25 s); la pantalla de reintento conserva su recuperación automática. */
+/* Vigilante de arranque: 60 s permiten completar los límites de sesión (8 s) y lectura (45 s); la pantalla de reintento conserva su recuperación automática. */
 let f33UltimoError='';
 window.addEventListener('error',e=>{f33UltimoError=String(e.message||e.error||'').slice(0,200)+(e.filename?' ('+String(e.filename).split('/').pop()+':'+e.lineno+')':'')});
 window.addEventListener('unhandledrejection',e=>{f33UltimoError=String((e.reason&&e.reason.message)||e.reason||'').slice(0,200)});
 setTimeout(()=>{if(f33Phase==='ready'&&document.querySelector('#app')?.children.length){v980DismissSplash(document.getElementById('f33-gate'));return}if(f33Phase==='loading'||(f33Phase==='ready'&&!document.querySelector('#app')?.children.length)){
  f33Phase='failure';f33Active=false;
- f33Shell('La app tarda en abrir.','Tus datos en Supabase no se han modificado.','<div class="f33-error" role="alert">'+sanitize(f33UltimoError||'Sin error registrado: el servidor no respondió.')+'</div><button class="f33-primary" data-f33="boot">Reintentar</button><button class="f33-primary" data-f33="relogin" style="margin-top:8px;opacity:.85">Volver a iniciar sesión</button>')}},40000);
+ f33Shell('La app tarda en abrir.','Tus datos en Supabase no se han modificado.','<div class="f33-error" role="alert">'+sanitize(f33UltimoError||'Sin error registrado: el servidor no respondió.')+'</div><button class="f33-primary" data-f33="boot">Reintentar</button><button class="f33-primary" data-f33="relogin" style="margin-top:8px;opacity:.85">Volver a iniciar sesión</button>')}},60000);
 async function f33Boot(silencioso){
  if(authArrancando)return authArrancando;
  authArrancando=(async()=>{
