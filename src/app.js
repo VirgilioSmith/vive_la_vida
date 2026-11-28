@@ -720,7 +720,6 @@ function v994ClearAll(){
  const c=v994Cleared();
  try{for(const o of v36DueItems())c.d.add(v994DueKey(o));}catch(_){}
  try{for(const a of v123CategoryAlerts())c.s.add(v994SpendKey(a));}catch(_){}
- try{for(const e of v246ReportEvents()){c.r.add(e.id);if(typeof v246MarkReportRead==='function')v246MarkReportRead(e.id);}}catch(_){}
  try{localStorage.setItem(V994_KEY,JSON.stringify({d:[...c.d].slice(-400),s:[...c.s].slice(-100),r:[...c.r].slice(-200)}))}catch(_){}
 }
 document.addEventListener('click',e=>{const b=e.target.closest?.('[data-v994-clear]');if(!b)return;e.preventDefault();e.stopPropagation();v994ClearAll();render();toast('Notificaciones eliminadas.')},true);
@@ -743,10 +742,9 @@ function v36Bell(){
    return `<button type="button" class="v36-notice v988-notice ${d<0?'v36-expired':d<=3?'v36-urgent':''} v988-${o.kind}" ${act} aria-label="Pagar ${sanitize(o.name)}, ${kind}, ${state}"><span class="v988-nico v1280-ico ${nbank(o)?'has-logo':''}" aria-hidden="true">${nbank(o)||nsvg(o.kind)}</span><div><strong>${sanitize(o.name)}</strong><small>${d<0?(-d>=60?'Vencido · '+Math.floor(-d/30)+' meses':'Vencido · '+(-d)+(-d===1?' día':' días')):d===0?'Vence hoy':d===1?'Vence mañana':'En '+d+' días'}</small></div><span class="v988-amt"><b>${money(o.amount,o.currency,2)}</b><em>Pagar</em></span></button>`;
  }).join('');
  const spendingItems=spendAlerts.map(a=>`<article class="v36-notice v123-bell-alert"><span class="v1280-ico v1280-spend" aria-hidden="true">${nsvg('spend')}</span><div><strong>${sanitize(a.category)} · ${a.kind==='trend'?'Tendencia al alza':'Gasto elevado'}</strong><small>${sanitize(v123AlertText(a))}</small></div></article>`).join('');
- const v994Reports=(()=>{try{return v246ReportEvents()}catch(_){return []}})();const v994AllRead=v994Reports.length>0&&v994Reports.every(r=>v994.r.has(r.id));
- const totalAlerts=urgent+spendAlerts.length+(v994AllRead?0:v246UnreadReportCount());
- const v994HasAny=items||spendingItems||(!v994AllRead&&v994Reports.length>0);
- return `<details class="v36-notifications"><summary aria-label="Notificaciones: ${totalAlerts} avisos">${svg}${totalAlerts?`<span class="v36-notification-count">${totalAlerts>99?'99+':totalAlerts}</span>`:''}</summary><div class="v36-notice-pop"><div class="v36-notice-head"><div><strong>Notificaciones</strong><small>Los informes aparecen a medida que cierra cada período</small></div>${v994HasAny?'<button type="button" class="v994-clear" data-v994-clear="1">Limpiar todo</button>':''}</div>${v994AllRead?'':'<div class="v1280-sec">Informes</div>'+v216BellItems()}${spendingItems?'<div class="v1280-sec">Alertas de gasto</div>'+spendingItems:''}${items?'<div class="v1280-sec">Próximos vencimientos</div>'+items:''}${v994HasAny?'':'<p class="v994-empty">No tienes notificaciones pendientes.</p>'}<p class="v36-notice-disclaimer">Los informes de la campanita se habilitan por fecha y hora; no equivalen a notificaciones push cuando la app está cerrada. Los recordatorios de vencimientos se configuran por separado.</p></div></details>`;
+ const totalAlerts=urgent+spendAlerts.length;
+ const v994HasAny=items||spendingItems;
+ return `<details class="v36-notifications"><summary aria-label="Notificaciones: ${totalAlerts} avisos">${svg}${totalAlerts?`<span class="v36-notification-count">${totalAlerts>99?'99+':totalAlerts}</span>`:''}</summary><div class="v36-notice-pop"><div class="v36-notice-head"><div><strong>Notificaciones</strong><small>Tus alertas importantes y tus historias</small></div>${v994HasAny?'<button type="button" class="v994-clear" data-v994-clear="1">Limpiar todo</button>':''}</div>${window.ViveWrapped?.inbox(v216NowParts().date)||''}${spendingItems?'<div class="v1280-sec">Alertas de gasto</div>'+spendingItems:''}${items?'<div class="v1280-sec">Próximos vencimientos</div>'+items:''}${v994HasAny?'':'<p class="v994-empty">No tienes notificaciones pendientes.</p>'}<p class="v36-notice-disclaimer">Wrapped se calcula al consultar tus historias. Los recordatorios de vencimientos se configuran por separado.</p></div></details>`;
 }
 function mobileHeader(){
  if(ui.page!=='overview')return '';
@@ -15266,6 +15264,12 @@ function v216Amounts(start,end){
  }
  return {income:rnd(income),expense:rnd(expense),net:rnd(income-expense),count,appleCount,byCategory};
 }
+/* Wrapped reutiliza las reglas contables de los informes, sin almacenar cortes ni datos adicionales. */
+window.ViveWrappedHost={asOf:()=>v216NowParts().date,amounts(start,end){
+ const missing=(db.transactions||[]).some(t=>typeof t.date==='string'&&t.date>=start&&t.date<=end&&
+  (t.currency==='USD'||t.paymentFeeCurrency==='USD'||account(t.accountId)?.currency==='USD')&&!(num(t.fxRateSnapshot)>0||num(db.settings.fx)>0));
+ return missing?{unavailable:true}:v216Amounts(start,end);
+}};
 function v216Previous(p){
  const length=Math.max(1,Math.round((Date.parse(p.end+'T12:00:00Z')-Date.parse(p.start+'T12:00:00Z'))/86400000)+1);
  const end=v216Shift(p.start,-1);
@@ -15344,18 +15348,6 @@ document.addEventListener('keydown',e=>{
   else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}
  }
 });
-// Si la app permanece abierta, se actualiza al pasar el corte; no equivale a envío push.
-let v216LastClosed=v216ClosedDay();
-setInterval(()=>{
- const next=v216ClosedDay();
- if(next!==v216LastClosed){
-  v216LastClosed=next;
-  if(document.getElementById('app')?.children.length&&!document.getElementById('v216-layer')){
-   render();toast('Tu resumen financiero al corte de las 7:00 p. m. está disponible en Notificaciones.');
-  }
- }
-},60000);
-
 /* V230 — Beneficios pertenece a Tarjetas como vista interna completa.
    Reutiliza v144BenefitsPage, sin cambiar métricas, registros ni formularios. */
 function v230BenefitsWorkspace(scope=null,back=null,action='closeBenefitComparison'){
@@ -16739,16 +16731,6 @@ function v246BellItems(){
  return `${label}<div class="v246-current-feed">${recent.map(row).join('')}</div>${older.length?`<details class="v246-report-history"><summary>${icon('calendar')} Informes anteriores <b>${older.length}</b>${icon('arrow')}</summary><div class="v246-history-list">${older.map(row).join('')}</div></details>`:''}`;
 }
 v216BellItems=v246BellItems;
-
-// If a suspended app regains focus after a cutoff, refresh the internal inbox.
-let v246LastClosed=v216ClosedDay();
-function v246RefreshAfterResume(){
- const now=v216ClosedDay();if(now===v246LastClosed||document.getElementById('v216-layer'))return;
- v246LastClosed=now;
- if(document.getElementById('app')?.children.length)render();
-}
-document.addEventListener('visibilitychange',()=>{if(!document.hidden)v246RefreshAfterResume();});
-window.addEventListener('focus',v246RefreshAfterResume,{passive:true});
 
  document.addEventListener('DOMContentLoaded',()=>f33Boot(),{once:true});
 

@@ -17,6 +17,7 @@ jobs:
         run: |
           node --test supabase/tests/ingest.test.mjs supabase/tests/link.test.mjs supabase/tests/shortcuts.test.mjs
           node --test tests/logica/reglas.test.js tests/logica/red.test.js
+          node tests/wrapped-unit.js
       - name: Navegador
         run: |
           node tests/smoke.js
@@ -127,6 +128,10 @@ jobs:
         run: node tests/arranque.js
         env:
           ARRANQUE_BROWSER: ${{ matrix.browser }}
+      - name: VIVE Wrapped móvil y PC
+        run: node tests/wrapped-browser.js
+        env:
+          WRAPPED_BROWSER: ${{ matrix.browser }}
   wallet-credit-global:
     runs-on: ubuntu-latest
     timeout-minutes: 10

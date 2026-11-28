@@ -1,0 +1,15 @@
+'use strict';
+const assert=require('node:assert/strict');
+const E=require('../src/wrapped/engine.js');
+const p=(k,d='2026-11-28',n=0)=>E.period(k,d,n);
+assert.equal(p('day').start,'2026-11-27');
+assert.equal(p('week').start,'2026-11-16');assert.equal(p('week').end,'2026-11-22');
+assert.equal(p('month','2026-01-01').start,'2025-12-01');
+assert.equal(p('quarter').end,'2026-09-30');assert.equal(p('year').start,'2025-01-01');
+assert.equal(p('month','2024-03-01').end,'2024-02-29');
+assert.equal(p('month','2026-11-28',1).start,'2026-09-01');
+assert.equal(E.story(p('day'),{count:0}).length,1);
+assert.equal(E.story(p('day'),{unavailable:true}).length,1);
+assert.equal(E.story(p('day'),{count:1,income:100,expense:40,net:60,byCategory:{Comida:40}},{count:1,net:50}).length,7);
+assert.throws(()=>p('week','2026-02-31'));
+console.log('OK Wrapped: períodos cerrados, historia y datos insuficientes.');

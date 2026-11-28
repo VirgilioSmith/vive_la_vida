@@ -11,6 +11,7 @@ index.html · manifest.webmanifest   entrada (sin Service Worker)
 src/app.js                          lógica y vistas
 src/*.css                           estilos (cascada por versión ?v=)
 src/intelligence/                   VIVE Intelligence (motor + interfaz, cálculo local)
+src/wrapped/                        VIVE Wrapped (historias de períodos cerrados, cálculo local)
 src/liquid-glass.{css,js} · liquid-art.js   motor óptico y ilustraciones
 src/supabase-rpc-guard.js           guardián del motor de sincronización
 vendor/                             supabase-js (sin compilación)
