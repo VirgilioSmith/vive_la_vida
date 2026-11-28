@@ -601,6 +601,29 @@
      'El saldo proviene de las tarjetas de esta vista.',[['Deuda',fmt(debt,2)]],{engine:'credit'});
    }
   }
+  // Premisas de las lentes originales, aplicadas únicamente a las entidades visibles.
+  const cardGroups=new Map();
+  for(const card of data.cards||[]){
+   if(!card.id||!card.name)continue;
+   const group=cardGroups.get(card.id)||{id:card.id,name:card.name,debt:0,limit:0};
+   group.debt+=num(card.debt);group.limit+=num(card.limit);cardGroups.set(card.id,group);
+  }
+  for(const card of cardGroups.values()){
+   if(card.limit<=0||card.debt<=.3*card.limit)continue;
+   const reduction=card.debt-.3*card.limit;
+   add('credit-target',card.name+' · reducir la utilización al 30 %',
+    'Si el límite y el resto del saldo no cambian, reducir la deuda en '+fmt(reduction,2)+' dejaría la utilización en 30 %. Es una referencia de planificación, no una garantía de score ni una instrucción de pago.',
+    [['Deuda registrada',fmt(card.debt,2)],['Límite',fmt(card.limit,2)],['Reducción hipotética',fmt(reduction,2)]],
+    {key:JSON.stringify([scope.subject||scope.module,card.id]),engine:'credit',kind:'projection',priority:'opportunity',confidence:.9,magnitude:reduction});
+  }
+  if(cardGroups.size>=2){
+   const cards=[...cardGroups.values()].filter(c=>c.debt>0),debt=total(cards,'debt');
+   const top=[...cards].sort((a,b)=>b.debt-a.debt)[0];
+   if(top&&debt>0&&top.debt/debt>=.75)add('credit-concentration',top.name+' concentra '+fmtP(100*top.debt/debt,1)+' de la deuda visible',
+    'La decisión de pago depende también de tasas, vencimientos y liquidez; revisar primero esta tarjeta identifica la exposición principal.',
+    [[top.name,fmt(top.debt,2)],['Deuda positiva de las tarjetas visibles',fmt(debt,2)]],
+    {engine:'credit',kind:'interpretation',priority:'opportunity',confidence:.9,magnitude:top.debt});
+  }
   if(data.due?.length){
    for(const due of [...data.due].sort((a,b)=>a.days-b.days)){
    const when=due.days<0?'venció hace '+(-due.days)+' d':due.days===0?'vence hoy':'vence en '+due.days+' d';
@@ -615,6 +638,36 @@
    add('position',(scope.name||'Tus cuentas y productos bancarios')+' · '+signed(net)+' netos',
     'Saldo de cuentas más capital en certificados, menos deuda registrada en tarjetas y préstamos.',
     [['Cuentas',signed(funds)],['Certificados',signed(invested)],['Deuda',signed(debt)]]);
+  }
+  if(data.position){
+   const {funds,invested,debt}=data.position,assets=num(funds)+num(invested);
+   if(assets>0&&num(debt)>0)add('bank-leverage','La deuda equivale al '+fmtP(100*debt/assets,1)+' de los activos bancarios visibles',
+    'Esta relación indica qué parte de la posición bancaria está financiada. No incluye activos ni deudas ajenos a la selección.',
+    [['Activos bancarios',fmt(assets,2)],['Deuda bancaria',fmt(debt,2)]],
+    {engine:'risk',kind:'interpretation',priority:debt>=assets?'attention':'info',confidence:.95});
+  }
+  if(data.benefits&&data.benefits.paid>0){
+   const {received,paid}=data.benefits;
+   add('benefit-efficiency','Por cada RD$100 de costo pagado, recuperaste '+fmt(100*received/paid,2),
+    received<paid?'Los beneficios acreditados aún no compensan los costos pagados en esta selección. Evalúa las condiciones del producto antes de la próxima anualidad.':'Los beneficios acreditados igualan o superan los costos pagados en esta selección; no supone que todos los beneficios potenciales estén aprovechados.',
+    [['Beneficios acreditados',fmt(received,2)],['Costos pagados',fmt(paid,2)],['Retorno neto sobre costo',fmtP(100*(received-paid)/paid,1)]],
+    {engine:'opportunity',kind:'interpretation',priority:received<paid?'attention':'info',confidence:.95});
+  }
+  for(const loan of data.loans||[]){
+   if(!(loan.balanceDop>0)||!(loan.remaining>0)||!Number.isFinite(loan.remaining))continue;
+   add('loan-horizon',loan.name+' · '+loan.remaining+' cuotas programadas restantes',
+    'El horizonte proviene del calendario vigente del préstamo, no de dividir el saldo entre una cuota que puede incluir intereses y cargos. Contrasta el calendario antes de evaluar una amortización anticipada.',
+    [['Capital pendiente',fmt(loan.balanceDop,2)],['Próxima cuota',fmt(loan.installmentDop,2)],['Cuotas restantes',String(loan.remaining)]],
+    {key:JSON.stringify([scope.subject||scope.module,loan.id]),engine:'credit',kind:'projection',priority:'info',confidence:.85});
+  }
+  const originalInputs={accounts:data.accounts||[],recurring:(data.subscriptions||[]).map(r=>({id:r.id||r.name,name:r.name,monthlyDop:r.monthly}))};
+  const originalContext=Context.build({today:scope.today,...originalInputs},Learning.normalize(state).prefs);
+  for(const id of ['risk.negative-account','risk.account-concentration','pat.subscription-duplicate']){
+   const rule=RULES.find(r=>r.id===id),finding=rule&&rule.run(originalContext);
+   if(finding){
+    finding.key=JSON.stringify([finding.key,scope.subject||scope.key||scope.module]);finding.id=finding.key+':'+period;
+    finding.period=period;finding.modules=[scope.module];findings.push(finding);
+   }
   }
   for(const product of data.products||[]){
    add(product.rule,product.title,product.detail,product.evidence,product.options);
@@ -671,8 +724,15 @@
    if(monthly>0)add('subscription-cost',fmt(monthly,2)+' al mes en suscripciones',
     'Es el equivalente mensual de las tarifas y frecuencias registradas en esta vista.',
     [['Servicios activos',String(data.subscriptions.length)],['Equivalente mensual',fmt(monthly,2)]]);
-   if(data.subscriptions.length>=3&&monthly>0){
+   if(monthly>0)add('subscription-annual',fmt(monthly*12,2)+' de compromiso anual equivalente',
+    'Si las tarifas y frecuencias actuales se mantienen durante doce meses, ese sería el costo equivalente. No es un cobro ya realizado ni supone renovaciones garantizadas.',
+    [['Costo mensual equivalente',fmt(monthly,2)],['Escenario de 12 meses',fmt(monthly*12,2)]],
+    {engine:'prediction',kind:'projection',confidence:.85});
+   if(data.subscriptions.length>=2&&monthly>0){
     const top=data.subscriptions.reduce((a,b)=>a.monthly>b.monthly?a:b);
+    if(top.monthly>0)add('subscription-scenario','Reducir a la mitad el costo de '+top.name+' liberaría '+fmt(top.monthly*6,2)+' al año',
+     'Escenario hipotético: mantener el resto de los compromisos y reducir a la mitad esta tarifa durante doce meses. Solo aplica si existe un plan o alternativa compatible.',
+     [['Costo mensual actual',fmt(top.monthly,2)],['Ahorro mensual hipotético',fmt(top.monthly/2,2)]],{engine:'opportunity',kind:'projection',priority:'opportunity',confidence:.85,magnitude:top.monthly*6});
     if(top.monthly>=monthly*.5)add('subscription-share',top.name+' concentra '+fmtP(100*top.monthly/monthly)+' del costo',
      'Es el mayor costo recurrente de la selección. Revisar primero ese servicio permite evaluar el mayor ahorro potencial.',
      [['Servicio al mes',fmt(top.monthly,2)],['Total mensual',fmt(monthly,2)]],{engine:'opportunity',priority:'opportunity'});
