@@ -20537,7 +20537,15 @@ function vIntelContextData(scope){
    const st=cardStatus(c,currency);
    return {id:c.id,name:c.name,currency,debt:num(st.debt),limit:num(st.limit),due:st.dueMap};
   }));
-  return {cards:values.every(v=>usable(v.currency,v.debt)&&usable(v.currency,v.limit))?
+  // Referencia global agregada: solo se usa para medir el peso de las tarjetas seleccionadas.
+  // No transporta nombres ni hallazgos de otras tarjetas; respeta la conversión disponible.
+  const allCredit=v68WalletCards().filter(c=>!c.archived&&!/debit|débito|debito/i.test([c.type,c.cardType,c.kind].join(' ')));
+  let globalCredit=null;
+  if(cards.length&&allCredit.length>cards.length&&cards.every(c=>allCredit.some(a=>a.id===c.id))){
+   const totals=allCredit.map(c=>({dop:num(cardStatus(c,'DOP').debt),usd:num(cardStatus(c,'USD').debt)}));
+   if(totals.every(v=>usable('USD',v.usd)))globalCredit=totals.reduce((sum,v)=>sum+Math.max(0,fx(v.dop,'DOP')+fx(v.usd,'USD')),0);
+  }
+  return {globalCredit,cards:values.every(v=>usable(v.currency,v.debt)&&usable(v.currency,v.limit))?
    values.map(v=>({id:v.id,name:v.name,currency:v.currency,debt:fx(v.debt,v.currency),limit:fx(v.limit,v.currency)})):[],
    due:page==='score'?[]:values.flatMap(c=>Object.entries(c.due||{}).filter(([date,amount])=>amount>0&&diffDays(date,t)<=7)
     .map(([date,amount])=>({id:c.id,name:c.name,currency:c.currency,date,amount,days:diffDays(date,t),kind:'card'})))};
