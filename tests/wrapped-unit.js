@@ -28,3 +28,21 @@ assert.deepEqual(E.story(p('day'),a,b).map(x=>x.scene),['cover','income','expens
 assert.deepEqual(E.story(p('day'),a,b).find(x=>x.scene==='comparison').data,{previous:50,current:60});
 assert.equal(E.story(p('day'),{count:0})[0].scene,'empty');
 assert.equal(E.story(p('day'),a,b).find(x=>x.scene==='category').data.items[0][1],40);
+
+const anchor='2026-11-30';
+assert.equal(E.containing('week',anchor,'2026-11-23').end,'2026-11-29');
+assert.equal(E.containing('month',anchor,'2024-02-29').start,'2024-02-01');
+assert.equal(E.containing('day',anchor,anchor),null);
+assert.equal(E.containing('day',anchor,'2026-02-31'),null);
+const milestone={date:'2026-11-22',title:'Cuenta · Viaje'};
+assert.equal(E.story(p('day'),{count:0},null,[milestone])[0].date,milestone.date);
+assert.equal(E.story(p('week'),a,b,[milestone]).find(s=>s.scene==='milestone').data.events[0],milestone);
+
+const annual=p('year','2027-01-02');
+const quarters=E.chapters(annual);
+assert.equal(quarters.length,4);
+assert.equal(quarters[0].start,annual.start);
+assert.equal(quarters.at(-1).end,annual.end);
+const arc=E.story(annual,a,b,[],quarters.map((q,i)=>({...q,count:2,net:(i-2)*500}))).find(s=>s.scene==='arc');
+assert.deepEqual(arc.data.items.map(x=>x[1]),[-1000,-500,0,500]);
+assert.match(E.story(p('day'),{...a,estimatedFx:true},b).find(s=>s.scene==='income').detail,/se estimó con la tasa configurada/);

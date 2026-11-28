@@ -387,7 +387,7 @@ const personalTotals=()=>({receivable:db.personalLoans.filter(l=>l.direction==='
  const certificate=id=>db.certificates.find(x=>x.id===id);
 const dueChip=(date,complete=false)=>{if(complete)return '<span class="pill green">Pagado</span>';let n=diffDays(date,today());return `<span class="pill ${n<0?'red':n<=5?'orange':'blue'}">${n<0?`${Math.abs(n)} d vencidos`:n===0?'Vence hoy':`${n} ${n===1?'día':'días'}`}</span>`};
 const whenTxt=s=>{let n=diffDays(s,today());return n<0?`Vencido hace ${-n} día${n===-1?'':'s'}`:n===0?'Vence hoy':(n===1?'Falta 1 día':`Faltan ${n} días`)};
-const v102AccountBalanceRaw=(a,asOf=today())=>{let bal=a.opened<=asOf?num(a.opening):0;for(const t of v115AccountTransactions(a.id)){if(t.date>asOf)continue;const amt=num(t.amount),src=num(t.sourceAmount||t.amount);if(['income','bank_reward'].includes(t.type)&&t.accountId===a.id)bal+=amt;
+const v102AccountBalanceRaw=(a,asOf=today(),movements=v115AccountTransactions(a.id))=>{let bal=a.opened<=asOf?num(a.opening):0;for(const t of movements){if(t.date>asOf)continue;const amt=num(t.amount),src=num(t.sourceAmount||t.amount);if(['income','bank_reward'].includes(t.type)&&t.accountId===a.id)bal+=amt;
 if(t.type==='expense'&&t.accountId===a.id)bal-=amt+num(t.paymentTax)+num(t.paymentFee);
 if(t.type==='adjustment'&&t.accountId===a.id)bal+=amt;
  if(t.type==='certificate_funding'&&t.accountId===a.id)bal-=amt;
@@ -744,7 +744,7 @@ function v36Bell(){
  const spendingItems=spendAlerts.map(a=>`<article class="v36-notice v123-bell-alert"><span class="v1280-ico v1280-spend" aria-hidden="true">${nsvg('spend')}</span><div><strong>${sanitize(a.category)} · ${a.kind==='trend'?'Tendencia al alza':'Gasto elevado'}</strong><small>${sanitize(v123AlertText(a))}</small></div></article>`).join('');
  const totalAlerts=urgent+spendAlerts.length;
  const v994HasAny=items||spendingItems;
- return `<details class="v36-notifications"><summary aria-label="Notificaciones: ${totalAlerts} avisos">${svg}${totalAlerts?`<span class="v36-notification-count">${totalAlerts>99?'99+':totalAlerts}</span>`:''}</summary><div class="v36-notice-pop"><div class="v36-notice-head"><div><strong>Notificaciones</strong><small>Tus alertas importantes y tus historias</small></div>${v994HasAny?'<button type="button" class="v994-clear" data-v994-clear="1">Limpiar todo</button>':''}</div>${window.ViveWrapped?.inbox(v216NowParts().date)||''}${spendingItems?'<div class="v1280-sec">Alertas de gasto</div>'+spendingItems:''}${items?'<div class="v1280-sec">Próximos vencimientos</div>'+items:''}${v994HasAny?'':'<p class="v994-empty">No tienes notificaciones pendientes.</p>'}<p class="v36-notice-disclaimer">Wrapped se calcula al consultar tus historias. Los recordatorios de vencimientos se configuran por separado.</p></div></details>`;
+ return `<details class="v36-notifications"><summary aria-label="Notificaciones: ${totalAlerts} avisos">${svg}${totalAlerts?`<span class="v36-notification-count">${totalAlerts>99?'99+':totalAlerts}</span>`:''}</summary><div class="v36-notice-pop"><div class="v36-notice-head"><div><strong>Notificaciones</strong><small>Tus alertas importantes y tus historias</small></div>${v994HasAny?'<button type="button" class="v994-clear" data-v994-clear="1">Limpiar todo</button>':''}</div>${window.ViveWrapped?.inbox(v216NowParts().date)||''}<button type="button" class="v36-notice vt-link" data-vtime-open>VIVE Time Machine</button>${spendingItems?'<div class="v1280-sec">Alertas de gasto</div>'+spendingItems:''}${items?'<div class="v1280-sec">Próximos vencimientos</div>'+items:''}${v994HasAny?'':'<p class="v994-empty">No tienes notificaciones pendientes.</p>'}<p class="v36-notice-disclaimer">Wrapped se calcula al consultar tus historias. Los recordatorios de vencimientos se configuran por separado.</p></div></details>`;
 }
 function mobileHeader(){
  if(ui.page!=='overview')return '';
@@ -4670,10 +4670,10 @@ function v12Percent(now,previous,risk=false){
  return `<span class="v12-gap ${cls}" tabindex="0" data-chart-tip="Comparación vs. ${Number(ui.month.slice(0,4))-1}|Actual: ${money(now)}|Valor en ${Number(ui.month.slice(0,4))-1}: ${money(previous)}|Diferencia vs. ${Number(ui.month.slice(0,4))-1}: ${(delta>=0?'+':'')+money(delta)}|Diferencia: ${pct>0?'+':''}${pct.toFixed(1)}%"><small class="comparison-year">vs. ${Number(ui.month.slice(0,4))-1}</small>${comparisonInline(pct,delta)}</span>`;
 }
 
-function v12CardHistorical(c,cur,end){
+function v12CardHistorical(c,cur,end,movements=db.transactions){
  if((c.opened||today())>end)return 0;
  const opening=cur==='USD'?num(c.openingUSD):num(c.openingDOP);
- const change=db.transactions.filter(t=>t.cardId===c.id&&t.currency===cur&&t.date<=end).reduce((v,t)=>{
+ const change=movements.filter(t=>t.cardId===c.id&&t.currency===cur&&t.date<=end).reduce((v,t)=>{
   const l=personalLoan(t.personalLoanId);
   const issue=t.type==='personal_issue',pay=t.type==='personal_settlement';
   const plus=['card_charge','card_advance'].includes(t.type)||(t.type==='adjustment'&&!t.accountId)||(issue&&l?.direction==='lent')||(pay&&l?.direction==='borrowed');
@@ -4878,14 +4878,14 @@ document.addEventListener('change',e=>{if(e.target.id==='expenseMonthPicker'&&/^
    Sin solicitudes remotas ni escrituras en datos financieros. */
 
 
-function v134WealthLoanAsOf(l,cut){
+function v134WealthLoanAsOf(l,cut,rows=db.transactions){
  const started=l.startDate||l.contractDate||(l.firstDue?plusMonths(l.firstDue,-1):l.openingBalanceDate)||today();
  if(started>cut)return {balance:0,estimated:false};
  const original=Math.max(0,num(l.principal));
  const known=l.openingMode==='existing'&&l.openingDebt!==undefined&&l.openingDebt!==null&&l.openingDebt!=='';
  const snapshot=String(l.openingBalanceDate||'').slice(0,10);
  if(known&&snapshot&&cut>=snapshot){
-  const after=db.transactions.filter(t=>t.type==='loan_payment'&&t.loanId===l.id&&t.date>snapshot&&t.date<=cut).reduce((sum,t)=>sum+Math.max(0,num(t.principal)),0);
+  const after=rows.filter(t=>t.type==='loan_payment'&&t.loanId===l.id&&t.date>snapshot&&t.date<=cut).reduce((sum,t)=>sum+Math.max(0,num(t.principal)),0);
   return {balance:rnd(Math.max(0,num(l.openingDebt)-after)),estimated:false};
  }
  if(known&&snapshot&&cut<snapshot&&l.firstDue){
@@ -4897,27 +4897,28 @@ function v134WealthLoanAsOf(l,cut){
   }
   return {balance:rnd(balance),estimated:true};
  }
- const paid=db.transactions.filter(t=>t.type==='loan_payment'&&t.loanId===l.id&&t.date<=cut).reduce((sum,t)=>sum+Math.max(0,num(t.principal)),0);
+ const paid=rows.filter(t=>t.type==='loan_payment'&&t.loanId===l.id&&t.date<=cut).reduce((sum,t)=>sum+Math.max(0,num(t.principal)),0);
  return {balance:rnd(Math.max(0,original-paid)),estimated:false};
 }
-function v134WealthSnapshot(cut,groups=null){
+function v134WealthSnapshot(cut,groups=null,currency=null,rows=db.transactions){
  const source=groups||db;
+ const convert=currency?(v,c)=>(c||'DOP')===currency?v:0:fx;
  const calculate=()=>{
-  const liquid=source.accounts.reduce((sum,a)=>sum+(a.opened&&a.opened>cut?0:fx(getAccountBalance(a,cut),a.currency)),0);
-  const cardDebt=source.cards.reduce((sum,c)=>sum+(c.opened&&c.opened>cut?0:fx(v12CardHistorical(c,'DOP',cut),'DOP')+fx(v12CardHistorical(c,'USD',cut),'USD')),0);
+  const liquid=source.accounts.reduce((sum,a)=>sum+(a.opened&&a.opened>cut?0:convert(currency?vTimeAccountBalance(a,cut):getAccountBalance(a,cut),a.currency)),0);
+  const cardDebt=source.cards.reduce((sum,c)=>sum+(c.opened&&c.opened>cut?0:convert(v12CardHistorical(c,'DOP',cut,rows),'DOP')+convert(v12CardHistorical(c,'USD',cut,rows),'USD')),0);
   let estimatedLoan=false;
-  const loanDebt=source.loans.reduce((sum,l)=>{const res=v134WealthLoanAsOf(l,cut);estimatedLoan=estimatedLoan||res.estimated;return sum+fx(res.balance,l.currency)},0);
+  const loanDebt=source.loans.reduce((sum,l)=>{if(currency&&(l.currency||'DOP')!==currency)return sum;const res=v134WealthLoanAsOf(l,cut,rows);estimatedLoan=estimatedLoan||res.estimated;return sum+convert(res.balance,l.currency)},0);
   const certificates=source.certificates.reduce((sum,c)=>{
    if(c.startDate&&c.startDate>cut)return sum;
-   const initial=c.capitalMode==='pending'?db.transactions.filter(t=>t.type==='certificate_funding'&&t.certificateId===c.id&&t.date<=cut).reduce((n,t)=>n+num(t.amount),0):num(c.principal);
-   const withdrawn=db.transactions.filter(t=>t.type==='certificate_redemption'&&t.certificateId===c.id&&t.date<=cut).reduce((n,t)=>n+num(t.amount),0);
-   return sum+fx(Math.max(0,initial-withdrawn),c.currency);
+   const initial=c.capitalMode==='pending'?rows.filter(t=>t.type==='certificate_funding'&&t.certificateId===c.id&&t.date<=cut).reduce((n,t)=>n+num(t.amount),0):num(c.principal);
+   const withdrawn=rows.filter(t=>t.type==='certificate_redemption'&&t.certificateId===c.id&&t.date<=cut).reduce((n,t)=>n+num(t.amount),0);
+   return sum+convert(Math.max(0,initial-withdrawn),c.currency);
   },0);
   const people=(source.personalLoans||[]).reduce((acc,l)=>{
    if(l.date&&l.date>cut)return acc;
-   const paid=db.transactions.filter(t=>t.type==='personal_settlement'&&t.personalLoanId===l.id&&t.date<=cut).reduce((n,t)=>n+Math.max(0,num(t.principal)),0);
+   const paid=rows.filter(t=>t.type==='personal_settlement'&&t.personalLoanId===l.id&&t.date<=cut).reduce((n,t)=>n+Math.max(0,num(t.principal)),0);
    const forgiven=l.forgiveness?.date&&l.forgiveness.date<=cut?num(l.forgiveness.amount):0;
-   const remaining=fx(Math.max(0,num(l.principal)-paid-forgiven),l.currency);
+   const remaining=convert(Math.max(0,num(l.principal)-paid-forgiven),l.currency);
    if(l.direction==='lent')acc.receivable+=remaining;else acc.payable+=remaining;
    return acc;
   },{receivable:0,payable:0});
@@ -4986,8 +4987,8 @@ function v134WealthWorld(){
  const averageIncome=elapsed?Array.from({length:elapsed},(_,i)=>monthlyTotals(year,i+1).income).reduce((sum,amount)=>sum+amount,0)/elapsed:0;
  return `<div class="v134-patrimony v142-wealth-complete v187-patrimony" id="v134Patrimony">
   ${window.matchMedia&&window.matchMedia('(max-width:790px)').matches
-   ?`<header class="vwm-head"><h1>Patrimonio</h1><label class="vwm-month">${icon('calendar')}<span>${MONTHS_FULL[Number(p.slice(5,7))-1]} de ${p.slice(0,4)}</span><input type="month" data-v137-wealth-month="1" aria-label="Seleccionar mes de patrimonio" value="${p}" max="${today().slice(0,7)}"></label></header>`
-   :`<header class="v134-top v187-wealth-top v1133-compact"><div class="v137-wealth-top-tools"><label class="v137-wealth-month-control"><span>Consultar cierre</span><input type="month" data-v137-wealth-month="1" aria-label="Seleccionar mes de patrimonio" value="${p}" max="${today().slice(0,7)}"></label></div></header>`}
+   ?`<header class="vwm-head"><h1>Patrimonio</h1><button type="button" class="btn ghost sm" data-vtime-open>Time Machine</button><label class="vwm-month">${icon('calendar')}<span>${MONTHS_FULL[Number(p.slice(5,7))-1]} de ${p.slice(0,4)}</span><input type="month" data-v137-wealth-month="1" aria-label="Seleccionar mes de patrimonio" value="${p}" max="${today().slice(0,7)}"></label></header>`
+   :`<header class="v134-top v187-wealth-top v1133-compact"><div class="v137-wealth-top-tools"><button type="button" class="btn ghost sm" data-vtime-open>Time Machine</button><label class="v137-wealth-month-control"><span>Consultar cierre</span><input type="month" data-v137-wealth-month="1" aria-label="Seleccionar mes de patrimonio" value="${p}" max="${today().slice(0,7)}"></label></div></header>`}
   ${vPatrimonyPositionHero(s,previous,cut)}
  
   <section class="v187-charts" aria-label="Tres gráficos del patrimonio">
@@ -15229,12 +15230,12 @@ function v216Period(kind,closed=v216ClosedDay()){
  return {title:'Acumulado mensual',start:first,end:closed};
 }
 
-function v216Amounts(start,end){
- let income=0,expense=0,count=0,appleCount=0;const byCategory={};
- const convert=(v,c,rate)=>num(v)*(c==='USD'?num(rate)||num(db.settings.fx):1);
+function v216Amounts(start,end,currency=null){
+ let income=0,expense=0,count=0,appleCount=0;const byCategory=Object.create(null);
+ const convert=(v,c,rate)=>currency?(c===currency?num(v):0):num(v)*(c==='USD'?num(rate)||num(db.settings.fx):1);
  const addExpense=(v,cat)=>{expense+=v;byCategory[cat]=(byCategory[cat]||0)+v;};
  for(const t of db.transactions||[]){
-  if(typeof t.date!=='string'||t.date<start||t.date>end)continue;
+  if(typeof t.date!=='string'||t.date<start||t.date>end||currency&&!vTimeConfirmed(t))continue;
   count++;
   if(t.applePayEventId||t.applePaySource==='wallet-shortcuts'||String(t.tags||'').split(',').includes('apple-pay'))appleCount++;
   const rate=t.fxRateSnapshot||db.settings.fx,ccy=t.currency||'DOP',value=convert(t.amount,ccy,rate);
@@ -15264,11 +15265,102 @@ function v216Amounts(start,end){
  }
  return {income:rnd(income),expense:rnd(expense),net:rnd(income-expense),count,appleCount,byCategory};
 }
+/* Historia local: los modelos contables existentes trabajan en su moneda nativa. */
+const vTimeConfirmed=t=>!t.deleted&&t.postingStatus!=='pending'&&t.pendingStatus!=='pending';
+const vTimeGroups=[['accounts','Cuenta',x=>x.opened],['cards','Tarjeta',x=>x.opened],['loans','Préstamo',x=>x.startDate||x.contractDate],['certificates','Certificado',x=>x.startDate],['personalLoans','Acuerdo',x=>x.date]];
+function vTimeAccountBalance(account,date){
+ const rows=v99Memo('history:account:'+account.id,()=>v115AccountTransactions(account.id).filter(vTimeConfirmed));
+ return v102AccountBalanceRaw(account,date,rows);
+}
+function vTimeHistory(){
+ const now=v216NowParts().date;
+ return v99Memo('history:inventory:'+now,()=>{
+  const openings=[],groups={};
+  let unknown=0;
+  for(const [key,label,date] of vTimeGroups){
+   groups[key]=(db[key]||[]).filter(x=>{
+    const d=date(x);
+    if(!window.ViveWrappedEngine.validDate(d)){unknown++;return false}
+    if(d<=now&&key!=='personalLoans')openings.push({date:d,title:label+' · '+x.name});
+    return true;
+   });
+  }
+  const dates=[...openings.map(x=>x.date),...groups.personalLoans.map(x=>x.date),...(db.transactions||[]).filter(vTimeConfirmed).map(x=>x.date)].filter(d=>d<=now&&window.ViveWrappedEngine.validDate(d));
+  return {first:dates.reduce((min,d)=>!min||d<min?d:min,null),groups,openings,unknown};
+ });
+}
+function vTimeSnapshot(date,currency){
+ if(privacyMode||!f33User||!['DOP','USD'].includes(currency)||!window.ViveWrappedEngine.validDate(date))return null;
+ const {first,groups,unknown}=vTimeHistory();
+ if(!first||date<first||date>v216NowParts().date)return null;
+ return v99Memo('history:snapshot:'+currency+':'+date,()=>{
+  const position=v134WealthSnapshot(date,groups,currency,v99Memo('history:confirmed',()=>db.transactions.filter(vTimeConfirmed)));
+  const flows=v216Amounts(date.slice(0,7)+'-01',date,currency);
+  const cards=groups.cards.filter(c=>c.opened<=date);
+  const limitField=currency==='USD'?'limitUSD':'limitDOP';
+  const limits=cards.map(c=>financeRuleAt('tarjeta.condiciones',c.id,date)?.[limitField]);
+  const creditLimit=limits.reduce((sum,l)=>sum+num(l),0);
+  const benefits=(db.transactions||[]).filter(t=>vTimeConfirmed(t)&&t.date>=date.slice(0,7)+'-01'&&t.date<=date&&(t.currency||'DOP')===currency&&['card_reward','bank_reward'].includes(t.type)).reduce((sum,t)=>sum+num(t.amount),0);
+  return {...position,flows,benefits,unknown,utilization:limits.every(l=>l!=null)&&creditLimit>0?100*position.cards/creditLimit:null,
+   banks:groups.accounts.filter(a=>a.opened<=date&&(a.currency||'DOP')===currency&&a.kind!=='cash').map(a=>({id:a.id,name:a.name,kind:a.kind,balance:vTimeAccountBalance(a,date)}))};
+ });
+}
+function vTimePayoffs(start,end){
+ const {groups}=vTimeHistory();
+ const rows=v99Memo('history:confirmed',()=>db.transactions.filter(vTimeConfirmed));
+ const dates=new Map();
+ for(const t of rows){
+  if(t.type==='loan_payment'&&t.date>=start&&t.date<=end&&num(t.principal)>0){
+   if(!dates.has(t.loanId))dates.set(t.loanId,new Set());
+   dates.get(t.loanId).add(t.date);
+  }
+ }
+ return groups.loans.flatMap(loan=>{
+  for(const date of [...dates.get(loan.id)||[]].sort().reverse()){
+   const before=v134WealthLoanAsOf(loan,v216Shift(date,-1),rows),after=v134WealthLoanAsOf(loan,date,rows);
+   if(!before.estimated&&!after.estimated&&before.balance>0&&after.balance===0)return [{date,title:'Capital liquidado · '+loan.name,kind:'payoff'}];
+  }
+  return [];
+ });
+}
+function vTimeMilestones(currency){
+ return v99Memo('history:milestones:'+currency,()=>{
+  const {first,unknown,openings}=vTimeHistory(),now=v216NowParts().date;
+  if(!first)return [];
+  const closed=[];
+  for(let offset=0;offset<24;offset++){
+   const {end}=window.ViveWrappedEngine.period('month',now,offset);
+   if(end<first)break;
+   const point=vTimeSnapshot(end,currency);
+   if(point&&!point.estimatedLoan)closed.push(point);
+  }
+  const extrema=[['net','Mayor patrimonio entre los cierres consultados',1],['liquid','Mayor saldo disponible entre los cierres consultados',1],['liabilities','Menor deuda entre los cierres consultados',-1]];
+  const records=unknown||closed.length<2?[]:extrema.flatMap(([key,title,direction])=>{
+   const best=closed.reduce((a,b)=>a[key]*direction>=b[key]*direction?a:b);
+   return closed.some(x=>Math.abs(x[key]-best[key])>=.01)?[{title,date:best.date}]:[];
+  });
+  return [...records,...openings,...vTimePayoffs(first,now)].sort((a,b)=>b.date.localeCompare(a.date)||a.title.localeCompare(b.title));
+ });
+}
+window.ViveTimeHost=Object.freeze({asOf:()=>v216NowParts().date,available:()=>!privacyMode&&!!f33User,
+ history:()=>({first:!privacyMode&&f33User?vTimeHistory().first:null}),milestones:currency=>!privacyMode&&f33User?vTimeMilestones(currency):[],snapshot:vTimeSnapshot,
+ async insights(point,currency){
+  if(currency!=='DOP'||point.unknown||point.estimatedLoan)return [];
+  await vIntelEnsure();
+  const rules=['risk.net-worth-negative','risk.debt-to-assets','risk.negative-account'];
+  const accounts=point.banks.map(a=>({...a,balanceDop:a.balance}));
+  return window.ViveIntelligence?.analyze({today:point.date,accounts,position:{assets:point.assets,debt:point.liabilities,net:point.net}},null).all.filter(f=>rules.includes(f.rule))||[];
+ }});
 /* Wrapped reutiliza las reglas contables de los informes, sin almacenar cortes ni datos adicionales. */
-window.ViveWrappedHost={asOf:()=>v216NowParts().date,amounts(start,end){
- const missing=(db.transactions||[]).some(t=>typeof t.date==='string'&&t.date>=start&&t.date<=end&&
-  (t.currency==='USD'||t.paymentFeeCurrency==='USD'||account(t.accountId)?.currency==='USD')&&!(num(t.fxRateSnapshot)>0||num(db.settings.fx)>0));
- return missing?{unavailable:true}:v216Amounts(start,end);
+window.ViveWrappedHost={asOf:()=>v216NowParts().date,available:()=>!privacyMode&&!!f33User,events(start,end,kind){
+ if(privacyMode||!f33User)return [];
+ const {openings}=vTimeHistory();
+ return [...vTimePayoffs(start,end),...openings.filter(event=>event.date>=start&&event.date<=end)]
+  .sort((a,b)=>Number(b.kind==='payoff')-Number(a.kind==='payoff')||(kind==='year'?a.date.localeCompare(b.date):b.date.localeCompare(a.date)));
+},amounts(start,end){
+ const requiresRate=(db.transactions||[]).some(t=>typeof t.date==='string'&&t.date>=start&&t.date<=end&&
+  (t.currency==='USD'||t.paymentFeeCurrency==='USD'||account(t.accountId)?.currency==='USD')&&!(num(t.fxRateSnapshot)>0));
+ return requiresRate&&!(num(db.settings.fx)>0)?{unavailable:true}:{...v216Amounts(start,end),estimatedFx:requiresRate};
 }};
 function v216Previous(p){
  const length=Math.max(1,Math.round((Date.parse(p.end+'T12:00:00Z')-Date.parse(p.start+'T12:00:00Z'))/86400000)+1);

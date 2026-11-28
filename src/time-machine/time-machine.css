@@ -1,0 +1,49 @@
+.vt-dialog {
+ width: min(100% - 32px, 880px);
+ max-width: none;
+ max-height: calc(100dvh - 32px);
+ padding: 0;
+ color: var(--ink, #15243a);
+ background: var(--panel, #fafbff);
+ border: 1px solid var(--line, #dce3ed);
+ border-radius: 26px;
+ overflow: hidden;
+}
+.vt-dialog::backdrop {background: rgba(10,16,31,.58); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px)}
+.vt-dialog[open] {display: flex; flex-direction: column}
+.vt-dialog > header {display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px clamp(16px,4vw,34px); border-bottom: 1px solid var(--line,#dce3ed)}
+.vt-dialog h1 {margin: 0; font-size: 1.15rem}
+.vt-dialog button,.vt-dialog input,.vt-dialog select {font: inherit; color: inherit; min-height: 44px; padding: 8px 12px; border-radius: 12px; border: 1px solid var(--line,#dce3ed); background: var(--panel,#fafbff)}
+.vt-dialog button {cursor: pointer}
+.vt-dialog [data-vt-close] {min-width: 44px; font-size: 1.45rem}
+.vt-body {overflow: auto; min-height: 0; padding: 18px clamp(16px,4vw,34px) 32px; overscroll-behavior: contain}
+.vt-controls {display: grid; grid-template-columns: repeat(2,minmax(0,1fr)) minmax(0,.65fr) auto; gap: 10px; align-items: end}
+.vt-controls label {display: grid; gap: 5px; font-size: .88rem; min-width: 0}
+.vt-controls input,.vt-controls select {width: 100%; min-width: 0; box-sizing: border-box}
+.vt-hero {position: relative; isolation: isolate; padding: clamp(24px,7vw,66px) clamp(16px,5vw,40px); margin: 18px 0; overflow: hidden; border-radius: 22px; color: #fff; background: radial-gradient(ellipse at 88% 65%,#506e95,transparent 65%),linear-gradient(125deg,#182444,#243954 55%,#3d4d71)}
+.vt-hero::after {content: ''; position: absolute; z-index: -1; width: 70%; aspect-ratio: 1; top: -68%; right: -20%; border: 1px solid #fff5; border-radius: 50%; box-shadow: 0 0 0 26px #fff1,0 0 0 55px #fff1,0 0 0 86px #fff1}
+.vt-hero h2 {font-size: clamp(1.85rem,6vw,4rem); line-height: 1.05; margin: .34em 0; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; animation: vt-arrive 180ms ease-out both}
+@keyframes vt-arrive {from {opacity: .55; transform: translateY(4px)}}
+.vt-hero p,.vt-reflection p {margin: 6px 0; line-height: 1.55}
+.vt-reflection h2,.vt-related h2 {font-size: 1rem; margin: 0 0 8px}
+.vt-metrics {display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 0 16px; margin: 16px 0}
+.vt-metrics > div {border-bottom: 1px solid var(--line,#dce3ed); padding: 10px 0; min-width: 0; overflow-wrap: anywhere}
+.vt-metrics dt {font-size: .88rem}
+.vt-metrics dd {margin: 4px 0 0; font-weight: 700; font-variant-numeric: tabular-nums}
+.vt-metrics small,.vt-timeline time {display: block; font-weight: 400}
+.vt-body details {padding: 12px 0}
+.vt-timeline button {display: grid; width: 100%; text-align: start}
+.vt-timeline > div {display: grid; gap: 6px; padding-top: 10px}
+.vt-related {margin-top: 20px}
+.vt-related button {margin: 0 6px 6px 0}
+@media(max-width: 550px) {
+ .vt-dialog {width: calc(100% - 16px); max-height: calc(100dvh - 16px); border-radius: 18px}
+ .vt-controls {grid-template-columns: repeat(2,minmax(0,1fr))}
+}
+@media(prefers-reduced-motion: reduce) {.vt-hero h2 {animation: none}}
+.vt-comparison {margin: 20px 0 0; padding-top: 12px; border-top: 1px solid #fff4}
+.vt-comparison figcaption {font-size: .84rem; margin-bottom: 8px}
+.vt-comparison > div {display: grid; grid-template-columns: minmax(0,1fr) minmax(25px,1fr) auto; align-items: center; gap: 8px; padding: 4px 0; font-size: .78rem}
+.vt-comparison svg {width: 100%; height: 7px; color: #c9ddff}
+.vt-comparison strong {overflow-wrap: anywhere}
+.vt-method {font-size: .85rem; line-height: 1.45; margin: 10px 0}

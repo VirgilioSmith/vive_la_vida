@@ -130,7 +130,9 @@ jobs:
         env:
           ARRANQUE_BROWSER: ${{ matrix.browser }}
       - name: VIVE Wrapped móvil y PC
-        run: node tests/wrapped-browser.js
+        run: |
+          node tests/wrapped-browser.js
+          node tests/time-machine.js
         env:
           WRAPPED_BROWSER: ${{ matrix.browser }}
   wallet-credit-global:

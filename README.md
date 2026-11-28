@@ -81,3 +81,11 @@ GitHub Pages desde `main`. Cada cambio de un archivo servido sube su `?v=` en `i
 * **Riesgos pendientes:** prueba manual en un iPhone real (WebKit de escritorio no es idéntico a Safari iOS).
 
 Reglas permanentes del proyecto: [`AGENTS.md`](AGENTS.md).
+
+### Time Machine y Wrapped
+
+Time Machine se abre desde Patrimonio o Notificaciones. Selecciona un día, un corte de comparación y RD$ o US$. El modelo patrimonial reconstruye los saldos a partir de aperturas y movimientos fechados. El flujo y los beneficios se muestran acumulados desde el primer día del mes. Los productos sin fecha verificable quedan fuera del corte. Los préstamos con reconstrucción contractual se identifican como estimados. La utilización requiere límites vigentes documentados. Queda pendiente reconstruir la vigencia de suscripciones y compromisos cuando exista historial suficiente.
+
+La línea temporal muestra aperturas registradas, liquidaciones de capital verificables y extremos de los últimos 24 cierres mensuales consultables. Los extremos se omiten si faltan fechas de origen. En Wrapped, un acontecimiento lleva a su fecha y una escena de período lleva al cierre. Desde Time Machine se pueden abrir los Wrapped que ya se estrenaron y contienen el día seleccionado. El calendario y el archivo conservan la publicación a las 8:00 a. m. de Santo Domingo. Wrapped etiqueta como estimados los equivalentes que dependen de la tasa configurada. Los cálculos se hacen localmente con los registros ya cargados.
+
+Pruebas de calendario y narración con `node tests/wrapped-unit.js`. Los recorridos cruzados, las monedas y los cortes se prueban con `node tests/time-machine.js`. La matriz de CI ejecuta ambos recorridos de navegador en Chromium y WebKit.
