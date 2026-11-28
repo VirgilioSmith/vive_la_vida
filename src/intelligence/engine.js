@@ -616,6 +616,13 @@
     [['Deuda registrada',fmt(card.debt,2)],['Límite',fmt(card.limit,2)],['Reducción hipotética',fmt(reduction,2)]],
     {key:JSON.stringify([scope.subject||scope.module,card.id]),engine:'credit',kind:'projection',priority:'opportunity',confidence:.9,magnitude:reduction});
   }
+  if(cardGroups.size&&data.globalCredit>0){
+   const visibleDebt=[...cardGroups.values()].reduce((sum,card)=>sum+Math.max(0,card.debt),0);
+   if(visibleDebt>0&&visibleDebt<=data.globalCredit+.005)add('credit-global-share','La selección representa '+fmtP(100*visibleDebt/data.globalCredit,1)+' de tu deuda crediticia global',
+    'Compara la deuda positiva de las tarjetas seleccionadas con la cartera crediticia global visible. Permite dimensionar su importancia sin mostrar otras tarjetas ni sus datos individuales.',
+    [['Deuda de la selección',fmt(visibleDebt,2)],['Referencia agregada global',fmt(data.globalCredit,2)]],
+    {engine:'credit',kind:'interpretation',confidence:.95});
+  }
   if(cardGroups.size>=2){
    const cards=[...cardGroups.values()].filter(c=>c.debt>0),debt=total(cards,'debt');
    const top=[...cards].sort((a,b)=>b.debt-a.debt)[0];
@@ -666,7 +673,12 @@
    const rule=RULES.find(r=>r.id===id),finding=rule&&rule.run(originalContext);
    if(finding){
     finding.key=JSON.stringify([finding.key,scope.subject||scope.key||scope.module]);finding.id=finding.key+':'+period;
-    finding.period=period;finding.modules=[scope.module];findings.push(finding);
+    finding.period=period;finding.modules=[scope.module];
+    if(id==='risk.account-concentration'){
+     finding.title+=' (selección visible)';
+     finding.evidence=finding.evidence.map(e=>e.label==='Liquidez total'?{...e,label:'Saldos positivos visibles'}:e);
+    }
+    findings.push(finding);
    }
   }
   for(const product of data.products||[]){
@@ -730,7 +742,8 @@
     const f={windows:{},weeks:[]};
     const allowed=new Set(['expense-volatility','expense-stable']);
     if(data.seriesLabel!=='Gasto del período'&&series.every(x=>x.income>0)){
-     for(const type of ['savings-rate','best-worst','net-trend'])allowed.add(type);
+     for(const type of ['savings-rate','net-trend'])allowed.add(type);
+     if(series.some(x=>x.income>=x.expense))allowed.add('best-worst');
     }
     for(const h of root.ViveStrategy.lens(f,snap,root.ViveDiscovery.confidence)){
      if(h.lens!=='analytics'||!allowed.has(h.type))continue;
