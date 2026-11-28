@@ -17,6 +17,7 @@ jobs:
         run: |
           node --test supabase/tests/ingest.test.mjs supabase/tests/link.test.mjs supabase/tests/shortcuts.test.mjs
           node --test tests/logica/reglas.test.js tests/logica/red.test.js
+          node tests/intelligence-profundidad.js
       - name: Navegador
         run: |
           node tests/smoke.js
@@ -127,8 +128,10 @@ jobs:
         run: node tests/arranque.js
         env:
           ARRANQUE_BROWSER: ${{ matrix.browser }}
-      - name: Verificar el aislamiento contextual de VIVE Intelligence
-        run: node tests/intelligence-contexto.js
+      - name: Verificar el aislamiento contextual y la presentación de VIVE Intelligence
+        run: |
+          node tests/intelligence-contexto.js
+          node tests/intelligence-linea.js
         env:
           INTELLIGENCE_BROWSER: ${{ matrix.browser }}
   wallet-credit-global:

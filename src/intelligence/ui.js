@@ -22,41 +22,19 @@
   const extra=items.length-1;
   const el=document.createElement('button');el.type='button';el.dataset.vi='open';el.setAttribute('aria-haspopup','dialog');
   el.innerHTML=`<span class="vi-mark">${spark}</span><span class="vi-copy"><strong></strong></span>${extra?`<span class="vi-more" aria-hidden="true">+${extra}</span>`:''}<span class="vi-chev" aria-hidden="true">${CHEV}</span>`;
-  el.__items=items.slice(0,4);
   el.addEventListener('click',openSheet);
   show(el,items[0],extra);
   return el;
  }
- let rotation;
- function rotate(el,extra){
-  clearTimeout(rotation);
-  if(el.__items.length<2||window.matchMedia('(prefers-reduced-motion:reduce)').matches)return;
-  let idx=0;
-  function advance(){
-   if(!el.isConnected)return;
-   if(document.hidden||open||el.matches(':active')){rotation=setTimeout(advance,7500);return}
-   const text=el.querySelector('strong');
-   text.classList.add('is-swap');
-   rotation=setTimeout(()=>{
-    if(!el.isConnected)return;
-    idx=(idx+1)%el.__items.length;
-    show(el,el.__items[idx],extra);
-    text.classList.remove('is-swap');
-    rotation=setTimeout(advance,7500);
-   },240);
-  }
-  rotation=setTimeout(advance,7500);
- }
-
  /* Dónde va: SIEMPRE justo debajo del título principal de la pantalla.
     PC: bajo el título de la barra superior (.topbar-intro). Móvil: bajo el encabezado propio de la página (h1 + su fila de controles); en Inicio, bajo el saludo.
     El subtítulo descriptivo estático de ese encabezado se retira: la línea de inteligencia ocupa su lugar. Sin lecturas de layout (sin reflow). */
- const hideSubs=root=>{if(!root)return;root.querySelectorAll('p,.top-sub').forEach(p=>{if(!p.querySelector('button,input,select,a,label,summary'))p.classList.add('vi-sub-off')})};
+ const hideSubs=root=>{if(!root)return;root.querySelectorAll(':scope > p,:scope > .top-sub').forEach(p=>{if(!p.querySelector('button,input,select,a,label,summary'))p.classList.add('vi-sub-off')})};
  function place(el,scope){
   const overlayTitle=scope.overlay?.querySelector('h1,h2');
   if(overlayTitle){overlayTitle.after(el);return true}
   const home=document.querySelector('.vive-mobile-home'),page=document.getElementById('page');
-  const detail=page?.querySelector('[data-vi-heading],.v1190-card h1,.v56-profile-header h2,.vBanks-detail h1');
+  const detail=page?.querySelector('[data-vi-heading],.v1190-card h1,.v56-profile-header h2,.vBanks-detail h1,.vbd-face h2');
   if(detail){detail.after(el);return true}
   const wide=!window.matchMedia('(max-width:790px)').matches;
   if(wide){const intro=document.querySelector('.topbar .topbar-intro'),t=intro&&intro.querySelector('.top-title');
@@ -70,7 +48,7 @@
   const h=h1s.find(vis)||(h1s.length?null:[...document.querySelectorAll('#page h2')].find(vis));
   if(h){let anchor=h;
    for(let n=0;n<4;n++){const p=anchor.parentElement;if(!p||p===page||p===main||p.id==='app'||p.querySelectorAll('*').length>45)break;anchor=p}
-   hideSubs(anchor);anchor.after(el);return true}
+   hideSubs(h.parentElement);anchor.after(el);return true}
   return false;
  }
  let retry=null;
@@ -79,7 +57,6 @@
  function mount(stage=0){
   try{
    if(!stage&&retry){retry.forEach(clearTimeout);retry=null}
-   clearTimeout(rotation);
    if(!B())return;
    const view=current();
    if(previousContext!==view.revision){if(open)closeSheet();previousContext=view.revision}
@@ -88,7 +65,6 @@
    if(!view.items.length)return;
    const el=strip(view.items);
    const placed=place(el,view.scope);
-   if(placed)rotate(el,view.items.length-1);
    if(!stage&&!placed)retry=[90,220,450,800].map((ms,i)=>setTimeout(()=>{
     if(!document.querySelector('.vi-strip'))mount(i+1);
    },ms));
@@ -134,12 +110,13 @@ const plainLabel=l=>String(l).replace(/^z robustos?$/i,'Distancia a lo habitual'
  }
  function discCard(h){
   const D=window.ViveDiscovery,q=D.reflect(h);
+  const feedback=h.scopeKey?FB.filter(([id])=>D.SCOPED_FEEDBACK.includes(id)):FB;
   return `<article class="vi-card vi-disc ${VAL[h.valence]||'vi-p-info'}" data-vi-dkey="${esc(h.key)}">
    <header><span class="vi-ico" aria-hidden="true">✦</span><div><span class="vi-kicker">${esc(h.kicker||'Mira esto')}</span><h4>${esc(h.title)}</h4><div class="vi-tags"><span class="vi-kind vi-k-${esc(h.kind)}">${esc(window.ViveIntelligence.engines.narrative.kindLabel(h.kind))}</span><span class="vi-conf">Confianza ${esc(h.confidence.level)}</span></div></div></header>
    <p>${esc(h.summary)}</p>${h.question?`<div class="vi-ask"><span>${esc(h.question.text)}</span>${h.question.options.map(o=>`<button type="button" class="vi-chip" data-vi="dfb" data-a="${o[1]}">${esc(o[0])}</button>`).join('')}</div>`:(q?`<p class="vi-q">${esc(q)}</p>`:'')}
    ${howHTML(h)}
    <footer>${h.action?`<button type="button" class="vi-act" data-vi="go" data-target="${esc(h.action.target)}">${esc(h.action.label)} <span aria-hidden="true">→</span></button>`:'<span></span>'}
-    <details class="vi-opts"><summary aria-label="Retroalimentación">Opciones</summary><div role="menu">${FB.map(([a,l])=>`<button type="button" role="menuitem" data-vi="dfb" data-a="${a}">${esc(l)}</button>`).join('')}</div></details></footer></article>`;
+    <details class="vi-opts"><summary aria-label="Retroalimentación">Opciones</summary><div role="menu">${feedback.map(([a,l])=>`<button type="button" role="menuitem" data-vi="dfb" data-a="${a}">${esc(l)}</button>`).join('')}</div></details></footer></article>`;
  }
  const OFF=[['spending','Gastos y consumo'],['liquidity','Liquidez y vencimientos'],['habits','Hábitos y relaciones entre variables']];
 
@@ -204,7 +181,7 @@ const plainLabel=l=>String(l).replace(/^z robustos?$/i,'Distancia a lo habitual'
   if(k==='close'){closeSheet();return}
   if(k==='go'){const id=t.dataset.target;closeSheet();B().go(id);return}
   if(k==='why'){const c=t.closest('.vi-card');const w=c.querySelector('.vi-why');w.hidden=!w.hidden;t.closest('details')?.removeAttribute('open');return}
-  if(k==='dfb'){const c=t.closest('.vi-card');const d=B().discover();const h=[...d.discoveries,...d.internal,...Object.values(d.lens||{}).flat()].find(x=>x.key===c.dataset.viDkey);
+  if(k==='dfb'){const c=t.closest('.vi-card');const h=current().discoveries.find(x=>x.key===c.dataset.viDkey);
    if(h){B().discFeedback(h,t.dataset.a);B().toast(({correct:'Patrón confirmado y recordado.',incorrect:'Anotado: lo descartamos y ajustamos.',exception:'Excepción anotada: no altera tu línea base.',intentional:'Decisión intencional registrada.',known:'Entendido: lo silenciamos por un tiempo.',not_interested:'Listo: no lo mostraremos por un tiempo.',follow:'Lo seguiremos observando.',improve:'Meta de mejora creada.',helped:'Gracias: priorizaremos este tipo de hallazgo.',never:'No volverás a ver este tipo de hallazgo.'})[t.dataset.a]);}
    mount();openSheet();return}
   if(k==='dforget'){B().memOp('forget',t.dataset.key);mount();openSheet();return}

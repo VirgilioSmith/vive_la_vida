@@ -200,7 +200,7 @@ function accountDetail(a){
  return original.replace('<div class="gap"></div>',plot+'<div class="gap"></div>');
 }
 function loanDetail(l){
-  let b=loanBundle(l),a=b.actual,status=a.settled?'Liquidado':diffDays(a.next,today())<0?'Cuota vencida':'Activo',next=a.settled?'Sin cuotas pendientes':prettyDate(a.next);
+  let b=loanDetailBundle(l),a=b.actual,status=a.settled?'Liquidado':diffDays(a.next,today())<0?'Cuota vencida':'Activo',next=a.settled?'Sin cuotas pendientes':prettyDate(a.next);
   let tabs=[['vision','Visión general'],['amort','Amortización'],['payments','Historial real'],['simulate','Simulador de abonos']];
   let tab=loanWorkspace.tab||'vision';
   let body=tab==='vision'?loanVision(l,b)+loanConditions(l):tab==='amort'?loanAmortView(l,b):tab==='payments'?loanPaymentHistory(l,b):loanSimulator(l,b);
@@ -2959,6 +2959,20 @@ function v176CardInsight(cardList=db.cards,currency,pendingOnly=false){
  const totalBilled=list.reduce((n,x)=>n+fx(x.s.billed,x.ccy),0);
  const totalDebt=list.reduce((n,x)=>n+fx(x.s.debt,x.ccy),0);
  el.innerHTML=`<div class="modal-layer" data-backdrop="true"><section class="modal wide v176-card-insight-modal" role="dialog" aria-modal="true" aria-label="Composición del portafolio de tarjetas"><div class="modal-head"><div><h2>Tu crédito, por producto</h2><p>Saldo total y facturado con fecha de corte, sin duplicar deuda.</p></div><button type="button" class="close" data-act="closeModal">×</button></div><div class="v176-credit-total"><span><small>DEUDA TOTAL</small><b>${money(totalDebt)}</b></span><span><small>ESTADOS FACTURADOS PENDIENTES</small><b>${money(totalBilled)}</b></span></div><div class="v176-credit-rows">${list.map(({c,ccy,s})=>`<button type="button" class="v176-credit-row" data-act="${cardList===db.cards?'goCard':'v68WalletGlobalAction'}" ${cardList===db.cards?'':'data-mode="card-cut"'} data-id="${sanitize(c.id)}"><span><strong>${sanitize(c.name)}</strong><small>${sanitize(ccy)} · corte ${prettyDate(s.cut)} · vencimiento ${prettyDate(s.nextDue||s.due||s.cut)}</small></span><span><b>${money(s.debt,ccy,2)}</b><small>Facturado ${money(s.billed,ccy,2)}</small></span>${icon('arrow')}</button>`).join('')||'<p>Sin saldos de tarjeta registrados.</p>'}</div><p class="form-note">El importe facturado es parte de la deuda total, no una deuda adicional. Las anualidades y el cashback se consultan por separado en Beneficios.</p></section></div>`;
+ const amounts=new Map();
+ for(const {ccy,s} of list){
+  const value=amounts.get(ccy)||{debt:0,billed:0};
+  value.debt+=num(s.debt);value.billed+=num(s.billed);amounts.set(ccy,value);
+ }
+ const evidence=[...amounts].flatMap(([ccy,value])=>[
+  ['Facturado · '+ccy,money(value.billed,ccy,2)],['Deuda · '+ccy,money(value.debt,ccy,2)]
+ ]);
+ vIntelOverlay(el.querySelector('.v176-card-insight-modal'),'cards',
+  JSON.stringify(['cuts',currency,pendingOnly,cardList.map(c=>c.id)]),
+  evidence.length?{products:[{rule:'card-cuts',title:'Cortes de las tarjetas visibles',
+   detail:'Lo facturado forma parte de la deuda. Los importes se mantienen separados por moneda.',
+   evidence,options:{engine:'credit'}}]}:{},null,currency);
+
 }
 document.addEventListener('click',e=>{if(e.target.closest?.('[data-v176-card-insight]')){e.preventDefault();v176CardInsight()}},true);
 document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.closest?.('[data-v176-card-insight]')){e.preventDefault();v176CardInsight()}},true);
@@ -3222,6 +3236,8 @@ function loanBundle(l){
     projectedInterestSavings:rnd(baseline.interest-scenario.interest),projectedInsuranceSavings:rnd(baseline.insurance-scenario.insurance),
     globalInterestDifference:rnd(original.interest-scenarioInterest),monthsAdvanced:baseline.rows.length-scenario.rows.length};
 }
+
+function loanDetailBundle(l){return v99Memo('loan-detail:'+l.id,()=>loanBundle(l))}
 
 function loans(scope=null){
   const arr=scope||db.loans,visible=arr.filter(l=>ui.showHidden||!isHidden(l)),active=arr.filter(l=>!loanAccounting(l).settled);
@@ -10338,6 +10354,7 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
    payrollSnapshot). Las deducciones NO crean movimientos bancarios ni alteran saldos: el neto depositado ya excluye lo retenido,
    por eso solo se reconocen aquí, una vez, desde su comprobante. Los pagos de tarjeta y el capital de préstamos no se suman. */
 const V_EXP_FIXED=new Set(['Vivienda','Servicios básicos','Seguros','Educación','Suscripciones','Deudas e intereses','Impuestos y comisiones']);
+const vExpFixedPart=(month,category,amount)=>V_EXP_FIXED.has(category)?num(amount):num(month.payFixed[category]);
 const V_EXP_PAYROLL_NAME={'AFP (Pensiones)':'AFP · pensiones','SFS (Salud)':'Seguro médico (SFS / ARS)','ISR (Impuesto)':'ISR · impuesto sobre la renta'};
 const V_EXP_METHOD_MAP={'Tarjetas de crédito':'Tarjetas de crédito','Cuentas y efectivo':'Cuentas y efectivo','Costos de tarjetas':'Costos de tarjetas','Costos de préstamos':'Costos de préstamos','Costos del pago de préstamo':'Costos de préstamos','Costos del pago de tarjeta':'Costos del pago de tarjeta','Costos de la operación':'Costos de la operación','Costos de transferencia':'Costos de la operación'};
 const V_EXP_MEMO=new Map();
@@ -10368,7 +10385,7 @@ function vExpModel(){
  const S=vExpScope(),cats=new Map();let total=0,fixedTotal=0;
  for(const m of S.months){const d=vExpMonth(m);
   for(const [cat,val] of Object.entries(d.by)){const v=num(val);const c=cats.get(cat)||{cat,total:0,fixed:0,subs:new Map()};
-   const fixedPart=V_EXP_FIXED.has(cat)?v:num(d.payFixed[cat]||0);c.total+=v;c.fixed+=fixedPart;cats.set(cat,c);total+=v;fixedTotal+=fixedPart}
+   const fixedPart=vExpFixedPart(d,cat,v);c.total+=v;c.fixed+=fixedPart;cats.set(cat,c);total+=v;fixedTotal+=fixedPart}
   for(const [k,val] of Object.entries(d.sub)){const [cat,name]=k.split('||');const c=cats.get(cat);if(!c)continue;const s=c.subs.get(name)||{name,amount:0,fixed:V_EXP_FIXED.has(cat)||!!d.paySubs[k]};s.amount+=num(val);c.subs.set(name,s)}
  }
  for(const c of cats.values()){const sum=[...c.subs.values()].reduce((a,s)=>a+s.amount,0);const rest=rnd(c.total-sum);if(Math.abs(rest)>.005)c.subs.set('Sin subcategoría',{name:'Sin subcategoría',amount:rest,fixed:V_EXP_FIXED.has(c.cat)})}
@@ -11209,7 +11226,7 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
 
 /* V55 · Ingresos recurrentes: navegación anidada, nómina y joseo.
    Lectura sin duplicaciones: cobros contabilizados frente a programación estimada. */
-let v55DetailHtml=null;
+let v55DetailHtml=null,v55IntelIncome=null;
 (function(){
  Object.assign(ICONS,{
   'briefcase':'<rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v3M3 12h18"/>',
@@ -11285,6 +11302,25 @@ let v55DetailHtml=null;
   }
   return {sources,movements,current,formal,informal,timeline,sumAmount,monthlyExpected,formalExpected,informalExpected,years};
  }
+ const visibleModel=()=>v99Memo('income-recurring:'+ui.v55RecurringRange+':'+ym(),model);
+ function visibleSources(m,kind){
+  const schedules=m.sources.filter(s=>!s._manual&&(s.kind==='formal')===(kind==='formal'));
+  const manual=m.sources.find(s=>s.id==='__v55_'+kind);
+  const options=m.movements.some(row=>row.sourceId===manual.id)?[...schedules,manual]:schedules;
+  const id=kind==='formal'?ui.v55FormalId:ui.v55InformalId;
+  return {schedules,options,selected:options.find(s=>s.id===id)||options[0]};
+ }
+ v55IntelIncome=kind=>{
+  const m=visibleModel(),selected=kind==='general'?null:visibleSources(m,kind).selected;
+  const source=selected?{id:selected.id,name:selected.name}:null;
+  const range=ui.v55RecurringRange;
+  const period=range==='all'?null:range==='year'?ym().slice(0,4):ym();
+  return {source,range,period,rows:()=>{
+   const names=new Map(m.sources.map(s=>[s.id,s.name]));
+   return m.current.filter(row=>kind==='general'||row.sourceId===source?.id)
+    .map(row=>({...row,name:names.get(row.sourceId)}));
+  }};
+ };
  const tag=(label,tone='')=>`<span class="v55-tag ${tone}">${txt(label)}</span>`;
  const metric=(iconName,label,value,sub,tone='')=>`<div class="v55-metric ${tone}"><div class="v55-metric-top"><span class="v55-metric-icon">${icon(iconName)}</span><span>${txt(label)}</span></div><strong>${value}</strong><small>${sub}</small></div>`;
  const empty=(title,text,button='')=>`<div class="v55-empty"><span class="v55-empty-symbol">${icon('wallet')}</span><strong>${txt(title)}</strong><p>${txt(text)}</p>${button}</div>`;
@@ -11314,7 +11350,7 @@ let v55DetailHtml=null;
   if(!entries.length)return [];
   return entries;
  }
- function formal(m){const schedules=m.sources.filter(s=>s.kind==='formal'&&!s._manual),manual=m.sources.find(s=>s.id==='__v55_formal'),opts=[...schedules,...(sourceTotals(m,manual).arr.length?[manual]:[])];const chosen=opts.find(s=>s.id===ui.v55FormalId)||opts[0];const actual=m.formal,all=m.movements.filter(x=>m.sources.find(s=>s.id===x.sourceId)?.kind==='formal'),acc=m.sumAmount(all),total=m.sumAmount(actual);
+ function formal(m){const {options:opts,selected:chosen}=visibleSources(m,'formal');const actual=m.formal,all=m.movements.filter(x=>m.sources.find(s=>s.id===x.sourceId)?.kind==='formal'),acc=m.sumAmount(all),total=m.sumAmount(actual);
   if(!chosen)return `<div class="v55-section-lead"><span class="v55-overline">TRABAJO FORMAL</span><h2>Nómina y crecimiento salarial</h2><p>La parte corporativa de tus ingresos, con AFP, SFS, ISR y evolución de aumentos.</p></div>${empty('Registra tu primer trabajo formal','Crea una fuente y selecciona trabajo formal para obtener el desglose automático de nómina.',addButton('Registrar trabajo formal'))}`;
   const s=chosen,sDetails=sourceTotals(m,s),hasSchedule=!s._manual,ref=today();let monthly=null,period=null;
   if(hasSchedule){try{monthly=v40Payroll({...s,frequency:'monthly'},ref);period=v40Payroll(s,ref);}catch(e){}}
@@ -11331,16 +11367,16 @@ let v55DetailHtml=null;
   <section class="v55-metrics v55-metrics-secondary">${metric('layers','Neto acumulado · este empleo',cash(sDetails.total),'Todo el historial contabilizado')}${metric('receipt','Bruto histórico en recibos',cash(grossPaid),'Recibos con desglose guardado')}${metric('shield','Descuentos históricos',cash(deduct),'Retenidos antes de depositar')}${metric('calendar','Neto del período',cash(sDetails.currentAmount),txt(periodDescription()))}</section>
   <div class="v55-two"><section class="v55-panel"><div class="v55-panel-head"><div><span class="v55-overline">DINERO RECIBIDO</span><h3>Histórico de depósitos del empleo</h3><p>Montos netos confirmados por mes · ${ym().slice(0,4)}</p></div></div>${lineChart(Array.from({length:12},(_,k)=>{const mm=ym().slice(0,4)+'-'+String(k+1).padStart(2,'0');const pm=(+ym().slice(0,4)-1)+'-'+String(k+1).padStart(2,'0');return {label:monthNames[k],total:m.sumAmount(sDetails.arr.filter(x=>x.t.date.startsWith(mm))),previous:m.sumAmount(sDetails.arr.filter(x=>x.t.date.startsWith(pm)))}}))}<div class="v55-legends"><span><i class="v55-leg formal"></i>${ym().slice(0,4)}</span><span><i class="v55-leg prior"></i>${+ym().slice(0,4)-1}</span></div></section><section class="v55-panel"><div class="v55-panel-head"><div><span class="v55-overline">HISTORIAL DE NÓMINA</span><h3>Últimos depósitos</h3><p>Contabilizados sin duplicar AFP, SFS ni ISR en gastos</p></div></div>${txList(sDetails.arr,7)}</section></div>`;
  }
- function informal(m){const ss=m.sources.filter(s=>s.kind!=='formal'&&!s._manual),manual=m.sources.find(s=>s.id==='__v55_informal'),extra=sourceTotals(m,manual);const options=[...ss,...(extra.arr.length?[manual]:[])],selected=options.find(s=>s.id===ui.v55InformalId)||options[0];const all=m.movements.filter(x=>m.sources.find(s=>s.id===x.sourceId)?.kind!=='formal');const actual=m.informal,amount=m.sumAmount(actual);const categories={};for(const x of actual){const name=x.t.category||'Ingresos independientes';categories[name]=(categories[name]||0)+x.amount;}const parts=Object.entries(categories).sort((a,b)=>b[1]-a[1]);
+ function informal(m){const {schedules:ss,options,selected}=visibleSources(m,'informal');const all=m.movements.filter(x=>m.sources.find(s=>s.id===x.sourceId)?.kind!=='formal');const actual=m.informal,amount=m.sumAmount(actual);const categories={};for(const x of actual){const name=x.t.category||'Ingresos independientes';categories[name]=(categories[name]||0)+x.amount;}const parts=Object.entries(categories).sort((a,b)=>b[1]-a[1]);
   return `<section class="v55-joseo-hero"><span class="v55-joseo-icon">${icon('trending-up')}</span><div><span class="v55-overline">TU NEGOCIO, TUS VENTAS, TU JOSEO</span><h2>Ingresos que tú produces.</h2><p>Ventas, actividades independientes, servicios y cualquier otra fuente recurrente. Separado completamente de la nómina.</p></div>${addButton('Nueva actividad')}</section>
   <section class="v55-metrics">${metric('wallet','Joseo ingresado · período',cash(amount),'Cobros reconocidos: '+txt(periodDescription()),'amber')}${metric('layers','Joseo acumulado histórico',cash(m.sumAmount(all)),'Ingresos reales desde el inicio')}${metric('calendar','Neto previsto / mes',cash(m.informalExpected),'Fuentes informales activas, sin cobros manuales','amber')}${metric('store','Actividades programadas',String(ss.filter(s=>s.active!==false).length),'Fuentes independientes activas')}</section>
   <div class="v55-two"><section class="v55-panel"><div class="v55-panel-head"><div><span class="v55-overline">MIS ACTIVIDADES</span><h3>Trabajos, emprendimientos y ventas</h3><p>Selecciona un negocio para consultar su detalle</p></div></div><div class="v55-informal-list">${options.length?options.map(s=>{const d=sourceTotals(m,s);return `<button class="v55-informal-card ${selected?.id===s.id?'active':''}" data-v55-informal="${txt(s.id)}"><span class="v55-informal-icon">${icon('store')}</span><span><strong>${txt(s.name)}</strong><small>${s._manual?'Ventas y cobros sin programación':v45FreqName(s.frequency)+' · '+(s.active===false?'Pausado':'Activo')}</small></span><b>${cash(d.currentAmount)}</b>${icon('chevron-right')}</button>`}).join(''):empty('Aún sin ingresos independientes','Registra una actividad informal recurrente o un ingreso de ventas.',addButton('Agregar actividad'))}</div></section>
   <section class="v55-panel"><div class="v55-panel-head"><div><span class="v55-overline">¿QUÉ GENERA EL JOSEO?</span><h3>Composición de ingresos independientes</h3><p>Clasificación por categoría del movimiento</p></div></div>${parts.length?parts.map(([cat,v])=>`<div class="v55-cat"><div><b>${txt(cat)}</b><strong>${cash(v)}</strong></div>${fullBar(v,amount,'informal')}<small>${amount?(v/amount*100).toFixed(1):0}% del total informal</small></div>`).join(''):empty('Todavía no hay cobros este período','Las ventas y servicios aparecerán cuando se registren.')}</section></div>
   ${selected?`<section class="v55-panel v55-informal-detail"><div class="v55-panel-head"><div><span class="v55-overline">DESGLOSE DE ACTIVIDAD</span><h3>${txt(selected.name)}</h3><p>${selected._manual?'Ingresos registrados sin programación; no son una mensualidad garantizada.':'Importes por frecuencia y depósitos confirmados.'}</p></div>${selected._manual?tag('SIN PROGRAMAR','amber'):`<div class="v940-source-actions"><button class="btn sm soft" data-v40-action="editIncome" data-id="${txt(selected.id)}">${icon('pencil')} Editar fuente</button><button class="btn sm ghost" data-v40-action="v940Advance" data-id="${txt(selected.id)}">Registrar cobro anticipado</button><button class="btn sm ghost" data-v40-action="v940Additional" data-id="${txt(selected.id)}">+ Ingreso adicional</button></div>`}</div>${(()=>{const data=sourceTotals(m,selected);let p=null;if(!selected._manual)try{p=v40Payroll({...selected,frequency:'monthly'},today())}catch(e){}return `<div class="v55-informal-stats"><div><small>INGRESADO EN EL PERÍODO</small><b>${cash(data.currentAmount)}</b></div><div><small>ACUMULADO DE ESTA FUENTE</small><b>${cash(data.total)}</b></div><div><small>BRUTO PREVISTO / MES</small><b>${p?cash(p.gross,selected.currency,2):'No aplica'}</b></div><div><small>NETO PREVISTO / MES</small><b>${p?cash(p.net,selected.currency,2):'No aplica'}</b></div></div>${!selected._manual?`<div class="v55-informal-info"><span>Cuenta receptora: <b>${txt(account(selected.accountId)?.name||'Sin cuenta vinculada')}</b></span><span>Próximo cobro: <b>${prettyDate(selected.nextDue)}</b></span><span>Registro: <b>${selected.postingMode==='auto'?'Automático al sincronizar':'Confirmación manual'}</b></span></div>`:''}<div class="v55-two"><div><h4>Cobros por mes</h4>${lineChart(Array.from({length:12},(_,k)=>{const mm=ym().slice(0,4)+'-'+String(k+1).padStart(2,'0');const pm=(+ym().slice(0,4)-1)+'-'+String(k+1).padStart(2,'0');return {label:monthNames[k],total:m.sumAmount(data.arr.filter(x=>x.t.date.startsWith(mm))),previous:m.sumAmount(data.arr.filter(x=>x.t.date.startsWith(pm)))}}))}</div><div><h4>Últimos cobros de esta actividad</h4>${txList(data.arr,6)}</div></div>`;})()}</section>`:''}`;
  }
- v55DetailHtml=kind=>{const m=model();ui.v55RecurringRange=ui.expenseRange==='year'?'year':ui.expenseRange==='all'?'all':'month';return kind==='formal'?formal(m):informal(m)};
+ v55DetailHtml=kind=>{ui.v55RecurringRange=ui.expenseRange==='year'?'year':ui.expenseRange==='all'?'all':'month';const m=visibleModel();return kind==='formal'?formal(m):informal(m)};
  function v55RecurringWorkspace(){
-  const m=model(),tab=['general','formal','informal'].includes(ui.v55RecurringTab)?ui.v55RecurringTab:'general';
+  const m=visibleModel(),tab=['general','formal','informal'].includes(ui.v55RecurringTab)?ui.v55RecurringTab:'general';
   const tabs=[['general','Visión general','layout-dashboard'],['formal','Trabajo formal','briefcase'],['informal','Trabajo informal · Joseo','trending-up']];
   return `<div class="v55-shell"><header class="v55-hero"><div class="v55-hero-left"><div class="v55-eyebrow">INGRESOS <span>›</span> INGRESOS RECURRENTES</div><h1>Ingresos</h1></div><div class="v55-hero-right">${tag('PANEL DE INGRESOS','blue')}${addButton('Agregar fuente')}<button type="button" class="btn ghost" data-v40-action="v940Advance">Registrar cobro anticipado</button></div></header>
   <nav class="v55-subnav" aria-label="Módulos dentro de ingresos recurrentes">${tabs.map(([id,label,ico])=>`<button type="button" class="v55-subtab ${tab===id?'active':''}" aria-current="${tab===id?'page':'false'}" data-v55-tab="${id}">${icon(ico)}<span>${label}</span></button>`).join('')}</nav>
@@ -17831,7 +17867,8 @@ let vIntelMobileMovements;
   function base(){return all().filter(periodPass);}
   vIntelMobileMovements={
     active:()=>isMobileViewport()||(state.view==='detail'&&!!state.selected),
-    context:()=>[state.view,state.selected,state.query,state.flow,state.category,state.otherCategories,state.product,state.period,state.month,state.productType],
+    context:()=>({view:state.view,selected:state.selected,query:state.query,flow:state.flow,category:state.category,
+     otherCategories:state.otherCategories,product:state.product,period:state.period,month:state.month,productType:state.productType}),
     rows:()=>state.view==='detail'?all().filter(t=>String(t.id)===String(state.selected)):
       state.view==='list'?filtered():state.view==='categories'?v731ExpenseRows():state.view==='products'?
       v708ProductMovements():base()
@@ -20078,6 +20115,7 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
 })();
 
 /* V1191 · Cuenta → «Ver evolución»: un único gráfico interactivo del saldo (cierres mensuales reales calculados de tus registros). */
+let vIntelAccountCloses;
 (()=>{
  const esc=v=>sanitize(String(v??''));
  const MS=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
@@ -20090,6 +20128,7 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
   while(y<cy||(y===cy&&m<=cm)){const last=new Date(y,m,0);const d=(y===cy&&m===cm)?t0:dateStr(last);ends.push({d,lab:MS[m-1]+' '+String(y).slice(2),v:getAccountBalance(a,d)});m++;if(m>12){m=1;y++}}
   const r=St().range;return r==='all'?ends:ends.slice(-r);
  }
+ vIntelAccountCloses=a=>v99Memo('v1191:closes:'+a.id+':'+St().range+':'+today(),()=>serie(a));
  function grafico(a,pts){
   const W=760,H=300,L=58,R=18,T=18,B=34,cw=W-L-R,ch=H-T-B;
   const vals=pts.map(x=>x.v),mx=Math.max(...vals,0),mn=Math.min(...vals,0),span=Math.max(1,mx-mn);
@@ -20105,10 +20144,10 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
   return `<svg class="v1191-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Evolución del saldo" data-pts="${data}" data-cur="${esc(a.currency)}"><defs><linearGradient id="v1191a" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--ac)" stop-opacity=".28"/><stop offset="1" stop-color="var(--ac)" stop-opacity="0"/></linearGradient></defs>${grid}<path d="${area}" fill="url(#v1191a)"/><path d="${line}" class="v1191-line"/>${xl}<line class="v1191-cur" x1="0" x2="0" y1="${T}" y2="${T+ch}"/><circle class="v1191-dot" r="5.5" cx="${X(pts.length-1).toFixed(1)}" cy="${Y(pts.at(-1).v).toFixed(1)}"/>${hit}</svg>`;
  }
  function vista(a){
-  const pts=serie(a),r=St().range,last=pts.at(-1),prev=pts.length>1?pts.at(-2):null;
+  const pts=vIntelAccountCloses(a),r=St().range,last=pts.at(-1),prev=pts.length>1?pts.at(-2):null;
   const btn=(k,l)=>`<button type="button" class="${r===k?'is-on':''}" data-v1191-range="${k}">${l}</button>`;
   const cur=a.currency;
-  return `<div class="v1191"><header class="v1191-head"><button type="button" class="v1191-back" data-act="closeAccountDetails" aria-label="Volver a cuentas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><div><h2>${esc(a.name)}</h2><small>${esc(cur)}${a.kind==='cash'?' · Efectivo':''}</small></div><div class="v1191-ranges" role="group" aria-label="Período">${btn(6,'6M')}${btn(12,'12M')}${btn('all','Todo')}</div></header>
+  return `<div class="v1191"><header class="v1191-head"><button type="button" class="v1191-back" data-act="closeAccountDetails" aria-label="Volver a cuentas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><div><h2 data-vi-heading>${esc(a.name)}</h2><small>${esc(cur)}${a.kind==='cash'?' · Efectivo':''}</small></div><div class="v1191-ranges" role="group" aria-label="Período">${btn(6,'6M')}${btn(12,'12M')}${btn('all','Todo')}</div></header>
    <div class="v1191-read" aria-live="polite"><small id="v1191-d">${esc(prettyDate(last.d))}</small><strong id="v1191-v">${money(last.v,cur,2)}</strong><em id="v1191-c">${prev?(last.v-prev.v>=0?'+':'−')+money(Math.abs(last.v-prev.v),cur,2)+' frente al cierre anterior':'Primer cierre registrado'}</em></div>
    ${pts.length>1?grafico(a,pts):`<p class="v1191-empty">Todavía no hay suficientes cierres para trazar la evolución.</p>`}</div>`;
  }
@@ -20426,10 +20465,10 @@ function vIntelBuildSnapshot(){
 /* Adapters read the same selections and records as the rendered views. */
 /* A temporary detail view can provide its own data and heading through the same engine. */
 const vIntelOverlays=new WeakMap();
-function vIntelOverlay(root,module,key,data,period){
+function vIntelOverlay(root,module,key,data,period,currency){
  if(!root)return;
  root.dataset.viContext='';
- vIntelOverlays.set(root,{page:ui.page,module,key,data,period});
+ vIntelOverlays.set(root,{page:ui.page,module,key,data,period,currency,level:'detail'});
  window.ViveIntelUI?.mount();
 }
 function vIntelCommitmentData(events,total,period,detail){
@@ -20441,36 +20480,83 @@ function vIntelCommitmentData(events,total,period,detail){
 function vIntelMovementData(rows,includeFuture=false){
  const end=today();
  const posted=rows.filter(x=>!x.deleted&&x.postingStatus!=='pending'&&x.pendingStatus!=='pending'&&(includeFuture||x.date<=end));
- if(posted.some(x=>x.currency==='USD'&&!(num(x.fxRateSnapshot)>0||num(db.settings?.fx)>0)))return {};
+ if(posted.some(x=>!(num(x.fxRateSnapshot)>0||num(db.settings?.fx)>0)&&(x.currency==='USD'||
+  (num(x.paymentTax)||num(x.paymentFee)||num(x.transferFee))&&(x.paymentFeeCurrency||account(x.accountId)?.currency)==='USD')))return {};
  return {movements:posted.map(x=>{
   const value=num(txDop(x));
-  return {income:x.type==='income'?value:0,expense:x.type==='card_refund'?-value:['expense','card_charge'].includes(x.type)?value:0,
-   category:x.category||'',label:transactionTitle(x),date:x.date};
+  return {id:x.id,income:x.type==='income'?value:0,expense:x.type==='card_refund'?-value:['expense','card_charge'].includes(x.type)?value:0,
+   category:x.category||'',label:transactionTitle(x),date:x.date,card:x.type==='card_charge'||x.type==='card_refund'};
  })};
+}
+function vIntelMovementAnalysis(scope,movements){
+ const month=scope.period;
+ const thru=scope.thru||(/^\d{4}-\d{2}$/.test(month||'')?periodEnd(+month.slice(0,4),+month.slice(5,7)):scope.today);
+ const closed=thru<scope.today;
+ const end=closed?addDays(thru,1):scope.today;
+ const start=addDays(end,-365);
+ const ledger=movements.filter(r=>r.date>=start&&r.date<end&&(r.expense||r.income)).map(r=>({
+  d:r.date,a:r.expense||r.income,k:r.expense?'x':'i',c:r.category,l:r.label,p:r.card?'c':'a'
+ }));
+ if(ledger.length<12)return null;
+ const observedFrom=ledger.reduce((first,r)=>r.d<first?r.d:first,ledger[0].d);
+ const months=new Map();
+ for(const r of ledger){
+  const ym=r.d.slice(0,7);
+  if(ym<observedFrom.slice(0,7)||ym===observedFrom.slice(0,7)&&!observedFrom.endsWith('-01')||ym>=end.slice(0,7))continue;
+  if(!months.has(ym))months.set(ym,{ym,income:0,expense:0,txCount:0,expenseBy:Object.create(null)});
+  const m=months.get(ym);
+  m.txCount++;
+  if(r.k==='i')m.income+=r.a;
+  else{m.expense+=r.a;if(r.c)m.expenseBy[r.c]=(m.expenseBy[r.c]||0)+r.a}
+ }
+ const ordered=[...months.values()].sort((a,b)=>a.ym.localeCompare(b.ym));
+ const lastGap=ordered.reduce((gap,row,i)=>i&&row.ym!==plusMonths(ordered[i-1].ym+'-01',1).slice(0,7)?i:gap,0);
+ return {snapshot:{today:end,ledger,months:ordered.slice(lastGap)},closed,fullFlow:scope.fullFlow};
+}
+// La identidad persistida separa selecciones sin guardar el texto de sus filtros.
+function vIntelScopeIdentity(scope){
+ let a=0x811c9dc5,b=0x9e3779b9;
+ for(let i=0;i<scope.key.length;i++){
+  const ch=scope.key.charCodeAt(i);
+  a=Math.imul(a^ch,0x01000193);b=Math.imul(b^ch,0x5bd1e995);
+ }
+ return scope.module+'-'+(a>>>0).toString(36)+'-'+(b>>>0).toString(36);
 }
 function vIntelContext(){
  const page=ui.page,t=today(),mobile=isMobileViewport();
  const overlay=document.querySelector('[data-vi-context]');
  const active=overlay&&vIntelOverlays.get(overlay);
  if(active?.page===page)return {...active,key:JSON.stringify([page,active.key]),subject:active.key,overlay,today:t};
- const scope={page,module:page,today:t};
+ const scope={page,module:page,today:t,level:'view'};
+ const benefitsPeriod=()=>String(ui.v144BenefitYear||nowYear())+(ui.v144BenefitMonth&&ui.v144BenefitMonth!=='all'?'-'+ui.v144BenefitMonth:'');
  const state=(...parts)=>Object.assign(scope,{key:JSON.stringify([page,mobile,...parts])});
- if(page==='overview')return {...state(),global:true};
+ if(page==='overview')return {...state(),global:true,level:'global'};
  if(page==='banks'){
   const detail=ui.vBanksProductDetail;
   const kind=detail?.kind||ui.vBanksDesktopSection||ui.vBanksPcProduct||'all';
-  return {...state(ui.bankId,kind,detail?.id,ui.showHidden,v61InstitutionProfile,v42InstitutionFilter,ui.vBanksPcBenefits,ui.vWalletPcCard,ui.vWalletPcConsumption,ui.bankHistory,ui.bankHistoryRange,ui.v144BenefitsCard,ui.v144BenefitYear,ui.v144BenefitMonth),
-   module:kind,kind,entity:detail?.id,subject:detail?.id||ui.bankId,benefits:ui.vBanksPcBenefits||kind==='benefits'};
+  const loanState=detail?.kind==='loans'?[loanWorkspace.tab,loanWorkspace.plan,loanWorkspace.period,loanWorkspace.sim[detail.id]]:null;
+  return {...state(ui.bankId,kind,detail?.id,loanState,detail?.kind==='accounts'?ui.v1191?.range:null,ui.showHidden,v61InstitutionProfile,v42InstitutionFilter,ui.vBanksPcBenefits,ui.vWalletPcCard,ui.vWalletPcConsumption,ui.bankHistory,ui.bankHistoryRange,ui.v144BenefitsCard,ui.v144BenefitYear,ui.v144BenefitMonth),
+   module:kind,kind,period:ui.vBanksPcBenefits||kind==='benefits'?benefitsPeriod():null,view:loanState?.[0]||kind,level:detail?.id?'entity':ui.bankId?'institution':'view',entity:detail?.id,subject:detail?.id||ui.bankId,benefits:ui.vBanksPcBenefits||kind==='benefits'};
  }
- if(page==='wallet'||page==='cards'||page==='score'){
+ if(page==='wallet'||page==='cards'||page==='score'||page==='benefits'){
   const id=page!=='wallet'?null:ui.walletCardDetail?ui.cardId:mobile?ui.v68WalletId:null;
   return {...state(id,ui.vWalletPcCard,ui.vWalletPcConsumption,ui.cardDetailTab,ui.vWalletPcBenefits,ui.showHidden,ui.v144BenefitsCard,ui.v144BenefitYear,ui.v144BenefitMonth),
-   module:page==='score'?'score':'cards',entity:id===V68_GLOBAL_ID?null:id,subject:id===V68_GLOBAL_ID?null:id,benefits:page==='cards'||page==='wallet'&&ui.vWalletPcBenefits};
+   module:page==='score'?'score':'cards',period:page==='cards'||page==='benefits'||ui.vWalletPcBenefits?benefitsPeriod():null,view:ui.vWalletPcBenefits||page==='benefits'?'benefits':id&&id!==V68_GLOBAL_ID?'cycle':'overview',level:id&&id!==V68_GLOBAL_ID?'entity':'view',entity:id===V68_GLOBAL_ID?null:id,subject:id===V68_GLOBAL_ID?null:id,benefits:page==='benefits'||page==='cards'||page==='wallet'&&ui.vWalletPcBenefits};
  }
  if(page==='register'||page==='transactions'){
-  if(vIntelMobileMovements?.active())return {...state(...vIntelMobileMovements.context()),module:'register',movements:vIntelMobileMovements.rows};
+  if(vIntelMobileMovements?.active()){
+   const ctx=vIntelMobileMovements.context(),{view,selected,product,period,month}=ctx;
+   return {...state(ctx),module:'register',view,entity:view==='detail'?selected:product==='all'?null:product,
+    period:view==='detail'?null:period==='month'?(month||t.slice(0,7)):period==='30'?'Últimos 30 días':null,
+    fullFlow:product==='all'&&view==='list'&&ctx.flow==='all'&&ctx.category==='all'&&!ctx.query,movements:vIntelMobileMovements.rows};
+  }
+  const period=ui.ledgerMonth||ui.month;
+  const monthEnd=/^\d{4}-\d{2}$/.test(period||'')?periodEnd(+period.slice(0,4),+period.slice(5,7)):null;
+  const thru=ui.txPeriod==='range'?ui.ledgerTo:ui.txPeriod==='month'?monthEnd:null;
   return {...state(ui.movementTab,ui.bankScope,ui.transType,ui.search,ui.reviewFilter,ui.txPeriod,ui.ledgerMonth||ui.month,ui.v361Category,ui.ledgerCurrency,ui.ledgerProducts,ui.ledgerFrom,ui.ledgerTo),
-   module:'register',ledger:!mobile,period:ui.txPeriod==='month'?(ui.ledgerMonth||ui.month):null,movements:ui.movementTab==='all'?vLedgerVisibleTransactions:null};
+   module:'register',ledger:!mobile,thru,currency:ui.ledgerCurrency==='all'?null:ui.ledgerCurrency,
+   fullFlow:ui.transType==='all'&&ui.bankScope==='all'&&ui.v361Category==='all'&&ui.reviewFilter==='all'&&!ui.search&&!ui.ledgerProducts?.length&&(!ui.ledgerCurrency||ui.ledgerCurrency==='all'),
+   period:ui.txPeriod==='month'?period:ui.txPeriod==='range'?[ui.ledgerFrom,ui.ledgerTo].filter(Boolean).join(' → '):null,movements:ui.movementTab==='all'?vLedgerVisibleTransactions:null};
  }
  if(page==='recurring'){
   const sub=ui.v911||{};
@@ -20480,9 +20566,16 @@ function vIntelContext(){
    entity,view,query:mobile?sub.query:'',review:view==='historial'?sub.review:'',
    category:!mobile?ui.v1170open:'',period:!mobile&&view==='month'?ui.month:null,subject:entity||(!mobile&&ui.v1170open)||null};
  }
+ if(page==='income'&&(ui.incDetail||ui.innerViews?.income==='recurring')){
+  const view=ui.incDetail||ui.v55RecurringTab||'general';
+  const income=v55IntelIncome?.(view),entity=income?.source?.id;
+  return {...state(view,entity,income?.range,income?.period),view,entity,subject:entity,income,period:income?.period,
+   level:entity?'entity':'view'};
+ }
  if(['budget','patrimony','payments','vision','income','expenses','flow','annual','advanced','analytics','kpis','projection','pressure'].includes(page)){
   const monthly=['budget','patrimony','payments','vision'].includes(page)||['income','expenses','flow'].includes(page)&&ui.expenseRange==='month';
-  return {...state(ui.month,ui.year,ui.incDetail,ui.v55RecurringTab,ui.expenseRange,ui.innerViews?.[page],ui.forecastScenario,v362PressureMonthOffset),
+  const view=page==='expenses'?ui.vExpKind||'all':null;
+  return {...state(ui.month,ui.year,ui.incDetail,ui.v55RecurringTab,ui.expenseRange,ui.innerViews?.[page],ui.forecastScenario,v362PressureMonthOffset,view),view,
    period:monthly?ui.month:['annual','advanced','analytics','kpis'].includes(page)?String(ui.year):null};
  }
  if(page==='personal')
@@ -20503,19 +20596,19 @@ function vIntelContextData(scope){
  const usable=(currency,amount)=>currency!=='USD'||hasFx||!num(amount);
  const product=(rule,title,detail,evidence,options)=>({rule,title,detail,evidence,options});
  const due=(types,ids)=>upcoming().filter(u=>types.includes(u.kind)&&ids.has(u.ref)&&u.amount>0&&u.date&&diffDays(u.date,t)<=7)
-  .map(u=>({...u,days:diffDays(u.date,t)}));
+  .map(u=>({...u,id:u.id||u.ref,days:diffDays(u.date,t)}));
+ const accountData=(a,balance)=>({id:a.id,name:a.name,kind:a.kind,balanceDop:fx(balance,a.currency)});
  const bankScope=page==='banks'?vBanksScope():null;
  if(bankScope&&ui.bankId&&!bankScope.selected)return {};
- if(scope.benefits){
+ if(scope.benefits||page==='benefits'){
   const visible=bankScope?.active.cards||v68WalletCards();
   const selected=ui.v144BenefitsCard;
   const rows=visible.filter(c=>!c.archived&&(!selected||selected==='all'||c.id===selected));
-  const ids=new Set(rows.map(c=>c.id));
-  if(!hasFx&&db.transactions.some(x=>ids.has(x.cardId)&&x.currency==='USD'&&v144PeriodMatch(x.date)))return {};
   const values=rows.map(c=>v144CardStats(c));
+  if(!values.every(s=>[...s.rewards,...s.paid].every(x=>usable(x.currency,x.amount)||num(x.fxRateSnapshot)>0)))return {};
   const received=values.reduce((sum,x)=>sum+x.realizedCashback+x.realizedOther,0);
   const paid=values.reduce((sum,x)=>sum+x.paidAmount,0);
-  return received||paid?{products:[product('benefits','Resultado de beneficios: '+money(received-paid),
+  return received||paid?{benefit:{received,cost:paid},products:[product('benefits','Resultado de beneficios: '+money(received-paid),
    'Beneficios acreditados menos costos efectivamente pagados para la selección y el período visibles.',
    [['Acreditados',money(received)],['Pagados',money(paid)]])]}:{};
  }
@@ -20535,12 +20628,41 @@ function vIntelContextData(scope){
   }
   const values=cards.flatMap(c=>['DOP','USD'].map(currency=>{
    const st=cardStatus(c,currency);
-   return {name:c.name,currency,debt:num(st.debt),limit:num(st.limit),due:st.dueMap};
+   return {id:c.id,name:c.name,currency,debt:num(st.debt),limit:num(st.limit),available:Math.max(0,num(st.availableWithOverdraft)),billed:num(st.billed),nextCut:st.nextCut,due:st.dueMap};
   }));
-  return {cards:values.every(v=>usable(v.currency,v.debt)&&usable(v.currency,v.limit))?
-   values.map(v=>({debt:fx(v.debt,v.currency),limit:fx(v.limit,v.currency)})):[],
+  const selected=entity&&cards[0];
+  const products=[];
+  const spending=v1301WalletConsumption(cards);
+  if(selected&&scope.view!=='benefits'){
+  const month=t.slice(0,7),totals=spending.months.get(month);
+   if(totals){
+    const evidence=['DOP','USD'].filter(c=>totals[c]).map(c=>['Consumo neto · '+c,money(totals[c],c,2)]);
+    if(evidence.length)products.push(product('card-month','Consumo de '+selected.name+' este mes',
+     'Compras menos devoluciones de esta tarjeta, por moneda.',evidence,{engine:'pattern',period:month}));
+   }
+   const stats=v144CardStats(selected,false);
+   if((stats.gross||stats.paidAmount)&&[...stats.rewards,...stats.paid].every(x=>usable(x.currency,x.amount)||num(x.fxRateSnapshot)>0))
+    products.push(product('card-benefit','Beneficios netos de '+selected.name+': '+money(stats.net),
+     'Total histórico acreditado menos costos pagados para esta tarjeta.',
+     [['Acreditados',money(stats.gross)],['Costos pagados',money(stats.paidAmount)]],{engine:'opportunity'}));
+  }
+  const closedMonth=t.slice(0,7),previous=plusMonths(closedMonth+'-01',-1).slice(0,7),earlier=plusMonths(previous+'-01',-1).slice(0,7);
+  const recent=spending.months.get(previous),past=spending.months.get(earlier);
+  if(recent&&past&&!recent.missingFx&&!past.missingFx&&past.equivalent>0){
+   const change=(recent.equivalent-past.equivalent)/past.equivalent;
+   if(Math.abs(change)>=.2)products.push(product('card-spend-change','El consumo con tarjeta '+(change>0?'subió':'bajó')+' '+Math.round(Math.abs(change)*100)+' %',
+    'Compara compras menos devoluciones de dos meses cerrados para las tarjetas visibles. Los pagos y costos financieros quedan fuera del consumo.',
+    [[earlier,money(past.equivalent,'DOP',2)],[previous,money(recent.equivalent,'DOP',2)]],{engine:'pattern',period:previous,priority:change<0?'recognition':'info'}));
+  }
+  const cycle=selected?values.filter(v=>v.debt||v.limit||v.billed):[];
+  const unrestricted=values.every(v=>usable(v.currency,v.debt)&&usable(v.currency,v.limit));
+  const ids=new Set(cards.map(c=>c.id));
+  const advances=db.transactions.filter(x=>ids.has(x.cardId)&&x.type==='card_advance'&&confirmed(x)&&x.date<=t&&x.date>=addDays(t,-90));
+  return {products,cycle,cards:unrestricted?
+   values.map(v=>({id:v.id,name:v.name,currency:v.currency,debt:fx(v.debt,v.currency),limit:fx(v.limit,v.currency)})):[],
+   cashAdvance90:advances.every(x=>usable(x.currency,x.amount)||num(x.fxRateSnapshot)>0)?advances.reduce((n,x)=>n+txDop(x),0):null,
    due:page==='score'?[]:values.flatMap(c=>Object.entries(c.due||{}).filter(([date,amount])=>amount>0&&diffDays(date,t)<=7)
-    .map(([date,amount])=>({name:c.name,currency:c.currency,date,amount,days:diffDays(date,t),kind:'card'})))};
+    .map(([date,amount])=>({id:c.id,name:c.name,currency:c.currency,date,amount,days:diffDays(date,t),kind:'card'})))};
  }
  if(bankScope){
   const groups=bankScope.active;
@@ -20557,13 +20679,41 @@ function vIntelContextData(scope){
   if(kind==='all'&&V_BANKS_GROUPS.some(([k])=>groups[k].length)){
    const convertible=V_BANKS_GROUPS.every(([k])=>groups[k].every(p=>p.currency!=='USD'||hasFx))&&
     groups.cards.every(c=>hasFx||(!num(cardStatus(c,'USD').debt)&&!num(c.limitUSD)));
-   return convertible?{position:vBanksPosition(groups)}:{};
+   return {position:convertible?vBanksPosition(groups):null,accounts:groups.accounts.filter(a=>usable(a.currency,getAccountBalance(a))).map(a=>accountData(a,getAccountBalance(a)))};
   }
   const rows=groups[kind]?.filter(p=>!p.archived&&(!entity||p.id===entity))||[];
   if(!rows.length)return {};
+  if(kind==='accounts'&&entity&&!isMobileViewport()&&vIntelAccountCloses){
+   const a=rows[0],closes=vIntelAccountCloses(a),last=closes.at(-1),first=closes[0];
+   if(!last)return {};
+   const products=[product('account-balance',a.name+' · '+money(last.v,a.currency,2),
+    'Es el saldo al último corte mostrado en la evolución de esta cuenta.',[[last.d,money(last.v,a.currency,2)]])];
+   const change=last.v-first.v;
+   if(closes.length>1&&Math.abs(change)>=.01)products.push(product('account-evolution','El saldo '+(change>0?'subió ':'bajó ')+money(Math.abs(change),a.currency,2),
+    'Compara el primer y último saldo del rango seleccionado. Un cambio de saldo puede incluir transferencias propias.',
+    [[first.d,money(first.v,a.currency,2)],[last.d,money(last.v,a.currency,2)]],{engine:'pattern'}));
+   return {products,accounts:usable(a.currency,last.v)?[accountData(a,last.v)]:[]};
+  }
+  if(kind==='loans'&&entity){
+   const l=rows[0],mode=scope.view||'vision',currency=l.currency||'DOP';
+   const a=loanAccounting(l);
+   const loanData={mode,currency,payments:a.rows.filter(row=>row.txId).length,recordedPrincipal:a.recordedPrincipal,interest:a.interest};
+   if(mode==='amort'||mode==='simulate'){
+    const bundle=loanDetailBundle(l);
+    if(mode==='amort'){
+     const plan=loanWorkspace.plan,forecast=plan==='original'?bundle.original:plan==='strategy'?bundle.scenario:bundle.baseline;
+     loanData.plan={end:forecast.end,interest:forecast.interest,rows:forecast.rows.length,label:plan==='original'?'Original':plan==='strategy'?'Con estrategia':'Real + proyectado'};
+    }else if(!bundle.scenario.error){
+     loanData.simulation={saving:bundle.projectedInterestSavings,baseline:bundle.baseline.interest,scenario:bundle.scenario.interest};
+    }
+   }
+   if(mode!=='vision')return {loan:loanData};
+  }
   if(kind==='accounts'||kind==='certificates'||kind==='loans'){
-   const amount=p=>kind==='accounts'?getAccountBalance(p):kind==='loans'?loanStatus(p).balance:certificateCapital(p);
-   const amounts=rows.map(p=>({p,value:amount(p)}));
+   const amounts=rows.map(p=>{
+    const loan=kind==='loans'?loanStatus(p):null;
+    return {p,loan,value:loan?loan.balance:kind==='accounts'?getAccountBalance(p):certificateCapital(p)};
+   });
    const label={accounts:'Saldo de cuentas',loans:'Saldo de préstamos pendiente',certificates:'Capital en certificados'}[kind];
    const name=rows.length===1?rows[0].name:label;
    const totals=new Map();
@@ -20571,12 +20721,16 @@ function vIntelContextData(scope){
    const evidence=[...totals].map(([c,v])=>[label+' · '+c,money(v,c,2)]);
    const title=name+' · '+evidence.map(([,v])=>v).join(' / ');
    return {products:[product(kind,title,'Saldos de los productos visibles, agrupados por moneda.',evidence)],
-    due:kind==='loans'?due(['loan'],new Set(rows.map(p=>p.id))):[]};
+    due:kind==='loans'?due(['loan'],new Set(rows.map(p=>p.id))):[],
+    accounts:kind==='accounts'&&amounts.every(({p,value})=>usable(p.currency,value))?amounts.map(({p,value})=>accountData(p,value)):[],
+    loans:kind==='loans'?amounts.map(({p,value,loan})=>({id:p.id,name:p.name,balance:value,installment:loan.installment,currency:p.currency||'DOP',remaining:loan.remaining})):[],
+    certificates:kind==='certificates'?amounts.filter(({p})=>p.maturityDate).map(({p,value})=>({id:p.id,name:p.name,capital:value,currency:p.currency||'DOP',date:p.maturityDate,days:diffDays(p.maturityDate,t)})):[]};
   }
  }
  if(scope.movements){
   const rows=scope.movements(),data=vIntelMovementData(rows,scope.ledger);
-  return scope.ledger&&data.movements?{...data,ledgerTotals:vLedgerTotals(rows)}:data;
+  if(!data.movements)return {};
+  return {...data,ledgerTotals:scope.ledger?vLedgerTotals(rows):null,analysis:vIntelMovementAnalysis(scope,data.movements)};
  }
  if(page==='recurring'){
   const name=r=>r.name||'Suscripción';
@@ -20587,12 +20741,12 @@ function vIntelContextData(scope){
   const byId=new Map(services.map(r=>[r.id,r]));
   const visible=active.filter(r=>byId.has(r.id));
   const charges=(db.transactions||[]).filter(x=>x.recurringId&&confirmed(x)&&x.date&&x.date<=t&&
-   ['expense','card_charge'].includes(x.type)&&(scope.view==='historial'||byId.has(x.recurringId))&&
+   ['expense','card_charge'].includes(x.type)&&((scope.view==='historial'&&!entity&&!scope.query&&!scope.category)||byId.has(x.recurringId))&&
    (!scope.review||x.id===scope.review)&&(!scope.period||x.date.startsWith(scope.period)))
    .map(x=>({service:x.recurringId,name:name(byId.get(x.recurringId)||{name:x.note}),amount:num(x.amount),currency:x.currency||'DOP',date:x.date}));
   const history=scope.view==='historial'||!!scope.period;
   return {charges,compareCharges:history,subscriptions:!history&&visible.every(r=>usable(r.currency,r.amount))?
-   visible.map(r=>({name:name(r),monthly:v339MonthlyEquivalent(r.amount,r.currency,r.frequency)})):[],
+   visible.map(r=>({id:r.id,name:name(r),monthly:v339MonthlyEquivalent(r.amount,r.currency,r.frequency)})):[],
    due:!history&&visible.length?due(['recurring'],new Set(visible.map(r=>r.id))):[]};
  }
  if(['patrimony','payments','vision'].includes(page)){
@@ -20600,7 +20754,8 @@ function vIntelContextData(scope){
   const value=rows.length&&rows.every(r=>usable(r.currency,1))&&
    db.cards.every(c=>hasFx||(!num(c.limitUSD)&&!num(cardStatus(c,'USD').debt)))&&v134WealthMonth(scope.period).snapshot;
   if(!value)return {};
-  return {products:[product('wealth','Patrimonio neto de '+money(value.net),'Activos menos pasivos al cierre visible.',
+  const previous=v134WealthMonth(plusMonths((scope.period||t.slice(0,7))+'-01',-1).slice(0,7)).snapshot;
+  return {wealth:{current:value,previous},products:[product('wealth','Patrimonio neto de '+money(value.net),'Activos menos pasivos al cierre visible.',
    [['Fecha de corte',value.date],['Activos',money(value.assets)],['Pasivos',money(value.liabilities)]],{kind:value.estimatedLoan?'interpretation':'fact',confidence:value.estimatedLoan?.75:1})]};
  }
  if(page==='budget'){
@@ -20634,29 +20789,40 @@ function vIntelContextData(scope){
    'Saldo pendiente de los acuerdos visibles, separado por dirección y moneda.',[...sums].map(([key,x])=>[key,money(x.balance,x.currency)]))]};
  }
  if(page==='income'){
-  const selected=ui.incDetail||(ui.innerViews?.income==='recurring'?ui.v55RecurringTab:null);
-  const scheduled=ui.innerViews?.income==='recurring'||!!ui.incDetail;
+  if(scope.income){
+   const rows=scope.income.rows().filter(row=>confirmed(row.t));
+   if(!rows.length||rows.some(({t:x})=>!usable(x.currency,x.amount)&&!(num(x.fxRateSnapshot)>0)))return {};
+   const amounts=new Map();
+   for(const {name,amount} of rows)amounts.set(name,(amounts.get(name)||0)+amount);
+   const value=rnd([...amounts.values()].reduce((sum,amount)=>sum+amount,0));
+   const label=scope.income.source?.name||'Ingresos recurrentes';
+   return value>0?{products:[product('income',label+' · '+money(value,'DOP',2),
+    'Cobros confirmados de las fuentes y el período visibles.',[...amounts].map(([name,amount])=>[name,money(amount,'DOP',2)]))]}:{};
+  }
   const months=new Set(vExpScope().months);
   const rows=db.transactions.filter(x=>confirmed(x)&&x.date<=t&&months.has(x.date?.slice(0,7))&&
-   ['income','card_reward','bank_reward','personal_settlement'].includes(x.type)&&
-   (!selected||selected==='general'||vIncClass(x)===selected)&&(!scheduled||x.incomeScheduleId));
+   ['income','card_reward','bank_reward','personal_settlement'].includes(x.type));
   if(!rows.length||rows.some(x=>!usable(x.currency,x.amount)))return {};
   const amounts=new Map();
   for(const x of rows){const kind=vIncClass(x);amounts.set(kind,(amounts.get(kind)||0)+vIncAmount(x))}
   const value=[...amounts.values()].reduce((a,b)=>a+b,0);
-  return value>0?{products:[product('income',(V_INC_NAMES[selected]||'Ingresos reconocidos')+' · '+money(value),
+  return value>0?{products:[product('income','Ingresos reconocidos · '+money(value),
    'Acreditaciones confirmadas del período y origen visibles.',[...amounts].map(([k,v])=>[V_INC_NAMES[k],money(v)]))]}:{};
  }
  if(page==='flow'||page==='expenses'||['annual','advanced','analytics','kpis'].includes(page)){
   const economic=page==='flow'||page==='expenses';
+  const spendOnly=page==='expenses',kind=spendOnly?scope.view:'all';
+  const seriesLabel=spendOnly?(kind==='fixed'?'Gastos fijos':kind==='var'?'Gastos variables':'Gasto del período'):'Resultado del período';
   const months=economic?vExpScope().months:Array.from({length:12},(_,i)=>String(ui.year)+'-'+String(i+1).padStart(2,'0'));
   const dates=new Set(months.filter(m=>m<=t.slice(0,7)));
   if(!dates.size||(!hasFx&&db.transactions.some(x=>x.currency==='USD'&&dates.has(x.date?.slice(0,7)))))return {};
   return {series:[...dates].map(m=>{
    const base=economic?null:monthlyTotals(+m.slice(0,4),+m.slice(5,7));
-   return {period:m,complete:m<t.slice(0,7),income:page==='expenses'?0:economic?vFlowIncomeMonth(m):base.income,
-    expense:economic?vExpMonth(m).total:base.expense};
-  }),seriesLabel:page==='expenses'?'Gasto del período':'Resultado del período'};
+   const month=economic?vExpMonth(m):null;
+   const fixed=kind==='fixed'||kind==='var'?Object.entries(month.by).reduce((sum,[category,amount])=>sum+vExpFixedPart(month,category,amount),0):0;
+   const expense=kind==='fixed'?rnd(fixed):kind==='var'?rnd(month.total-fixed):month?.total??base.expense;
+   return {period:m,complete:m<t.slice(0,7),income:spendOnly?0:economic?vFlowIncomeMonth(m):base.income,expense};
+  }),seriesLabel,spendOnly};
  }
  if(page==='pressure'){
   const now=dateObj(t),date=new Date(now.getFullYear(),now.getMonth()+v362PressureMonthOffset,1);
@@ -20683,19 +20849,20 @@ function vIntelContextData(scope){
  }
  return {};
 }
-const vIntelActiveCache={source:null,key:'',findings:[]};
+const vIntelActiveCache={source:null,overlay:null,key:'',presentation:null};
 function vIntelActive(){
  const scope=vIntelContext(),prefs=db.settings?.intelligence;
  const engine=window.ViveIntelligence;
  if(privacyMode)return {scope,...engine.present([]),revision:'private'};
- if(scope.global)return {scope,...engine.present(vIntelRun().findings,vIntelDiscover()),global:true,
-  revision:JSON.stringify([scope.today,window.__viveIntelRev,prefs||null])};
- const key=JSON.stringify([scope.key,today(),window.__viveIntelRev,prefs||null]);
- if(db!==vIntelActiveCache.source||key!==vIntelActiveCache.key){
-  const findings=engine.contextual(scope,scope.data||vIntelContextData(scope),prefs);
-  Object.assign(vIntelActiveCache,{source:db,key,findings});
+ scope.identity=vIntelScopeIdentity(scope);
+ const mem=db.settings?.intelligenceMem;
+ const key=JSON.stringify([scope.key,scope.today,window.__viveIntelRev,prefs||null,mem?.audit,mem?.fb,mem?.prefs]);
+ if(db!==vIntelActiveCache.source||key!==vIntelActiveCache.key||scope.overlay!==vIntelActiveCache.overlay){
+  const presentation=scope.global?engine.present(vIntelRun().findings,vIntelDiscover()):
+   engine.contextualView(scope,scope.data||vIntelContextData(scope),prefs,mem);
+  Object.assign(vIntelActiveCache,{source:db,overlay:scope.overlay,key,presentation});
  }
- return {scope,...engine.present(vIntelActiveCache.findings),revision:key};
+ return {scope,...vIntelActiveCache.presentation,global:scope.global===true,revision:key};
 }
 
 const vIntelCache={source:null,key:'',res:null};
@@ -20703,7 +20870,7 @@ function vIntelRun(){
  const key=(window.__viveIntelRev|0)+'|'+today()+'|'+JSON.stringify((db.settings||{}).intelligence||null);
  if(vIntelCache.source===db&&vIntelCache.res&&vIntelCache.key===key)return vIntelCache.res;
  const t0=performance.now();
- const snap=vIntelSnapshot();const res=window.ViveIntelligence.analyze(snap,(db.settings||{}).intelligence);
+ const snap=vIntelSnapshot();const res=window.ViveIntelligence.analyze(snap,(db.settings||{}).intelligence,{exhaustive:true});
  res.meta.ms=Math.round(performance.now()-t0);res.snapshot=snap;
  Object.assign(vIntelCache,{source:db,key,res});return res;
 }
@@ -20720,26 +20887,26 @@ function vIntelDiscover(){
  if(!window.ViveDiscovery)return null;
  const mem=vIntelMem();const key=(window.__viveIntelRev|0)+'|'+today()+'|'+JSON.stringify(mem.audit)+'|'+Object.keys(mem.exc).length+'|'+mem.fb.length+'|'+JSON.stringify(mem.prefs)+'|'+JSON.stringify(mem.w);
  if(vDiscCache.source===db&&vDiscCache.res&&vDiscCache.key===key)return vDiscCache.res;
- const snap=vIntelSnapshot();const res=window.ViveDiscovery.discover(snap,mem);res.snapshot=snap;
+ const snap=vIntelSnapshot();const res=window.ViveDiscovery.discover(snap,mem,{exhaustive:true});res.snapshot=snap;
  Object.assign(vDiscCache,{source:db,key,res});
  // persistencia: solo si cambió el conocimiento Y no se guardó hoy (≤ 1 escritura/día); nunca durante la lectura de otras pantallas
  try{const prev=JSON.stringify((db.settings||{}).intelligenceMem||null);const next=JSON.stringify(res.mem);
   if(prev!==next&&(!(db.settings||{}).intelligenceMem||(db.settings.intelligenceMem.audit||{}).last!==today()||!mem.audit.runs)){
    const source=db;
    (window.requestIdleCallback||(f=>setTimeout(f,400)))(()=>{try{
-    if(db!==source||JSON.stringify(db.settings.intelligenceMem||null)!==prev)return;
+    if(db!==source||privacyMode||ui.page!=='overview'||JSON.stringify(db.settings.intelligenceMem||null)!==prev)return;
     db.settings.intelligenceMem=res.mem;persist();
    }catch(_){}});}}catch(_){}
  return res;
 }
 function vIntelDiscFeedback(h,action){
- const D=window.ViveDiscovery;db.settings.intelligenceMem=D.feedback(vIntelMem(),h,action,today());persist();vDiscCache.res=null;
+ const D=window.ViveDiscovery;db.settings.intelligenceMem=D.feedback(vIntelMem(),h,action,today());persist();vDiscCache.res=null;vIntelActiveCache.source=null;
 }
 function vIntelMemOp(op,arg){
  const D=window.ViveDiscovery;let m=vIntelMem();
  if(op==='forget')m=D.Memory.forget(m,arg);else if(op==='forgetAll')m=D.Memory.forgetAll();else if(op==='setOff'){m.prefs.off=m.prefs.off||{};if(arg.v)m.prefs.off[arg.k]=true;else delete m.prefs.off[arg.k]}
  else if(op==='export')return D.Memory.exportJSON(m);
- db.settings.intelligenceMem=m;persist();vDiscCache.res=null;return true;
+ db.settings.intelligenceMem=m;persist();vDiscCache.res=null;vIntelActiveCache.source=null;return true;
 }
 function vIntelStrategic(){return window.ViveDiscovery.strategic(vIntelSnapshot(),vIntelMem())}
 function vIntelAnswer(id,v){const s=vIntelStrategic();db.settings.intelligenceMem=s.answer(id,v);persist();vDiscCache.res=null}
@@ -20747,7 +20914,11 @@ function vIntelSimulate(sc){return window.ViveDiscovery.simulate(vIntelSnapshot(
 /* Hallazgos seleccionados para el Centro Estratégico (solo los más relevantes; sin felicitaciones si hay críticos) */
 function vIntelForMomentos(){
  try{if(!window.ViveDiscovery||!window.ViveIntelligence)return [];
-  const d=vDiscCache.res||null;if(!d)return [];const crit=vIntelCache.res&&vIntelCache.res.findings.some(f=>f.priority==='critical'||f.priority==='attention');
+  if(privacyMode||ui.page!=='overview')return [];
+  const revision=(window.__viveIntelRev|0)+'|'+today()+'|';
+  const d=vDiscCache.source===db&&vDiscCache.key.startsWith(revision)?vDiscCache.res:null;
+  if(!d)return [];
+  const crit=vIntelCache.source===db&&vIntelCache.key.startsWith(revision)&&vIntelCache.res?.findings.some(f=>f.priority==='critical'||f.priority==='attention');
   return d.discoveries.filter(h=>!h.repeat&&!(crit&&h.valence==='positive')).slice(0,2).map(h=>({id:h.key,kicker:h.kicker,text:h.summary,valence:h.valence,go:(h.action&&h.action.target)||'overview',label:(h.action&&h.action.label)||'Ver más'}));
  }catch(_){return []}
 }
@@ -20760,9 +20931,9 @@ function vIntelEnsure(){
  if(window.ViveIntelligence&&window.ViveIntelUI)return Promise.resolve();
  if(vIntelLoading)return vIntelLoading;
  vIntelLoading=new Promise(done=>{
-  try{const css=document.createElement('link');css.rel='stylesheet';css.href='./src/intelligence/intelligence.css?v=16';document.head.appendChild(css)}catch(_){}
+  try{const css=document.createElement('link');css.rel='stylesheet';css.href='./src/intelligence/intelligence.css?v=17';document.head.appendChild(css)}catch(_){}
   const load=src=>new Promise((ok,ko)=>{const el=document.createElement('script');el.src=src;el.onload=ok;el.onerror=ko;document.head.appendChild(el)});
-  load('./src/intelligence/engine.js?v=6').then(()=>load('./src/intelligence/stats.js?v=2')).then(()=>load('./src/intelligence/strategy.js?v=6')).then(()=>load('./src/intelligence/discovery.js?v=9')).then(()=>load('./src/intelligence/ui.js?v=34')).then(()=>done()).catch(()=>done());
+  load('./src/intelligence/engine.js?v=9').then(()=>load('./src/intelligence/stats.js?v=2')).then(()=>load('./src/intelligence/strategy.js?v=6')).then(()=>load('./src/intelligence/discovery.js?v=10')).then(()=>load('./src/intelligence/ui.js?v=36')).then(()=>done()).catch(()=>done());
  });
  return vIntelLoading;
 }

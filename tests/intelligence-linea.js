@@ -1,5 +1,5 @@
 /* Línea de inteligencia nativa (encabezado universal): sin píldora, bajo el título, ≥44 px, contador y chevron a la derecha,
-   subtítulos estáticos retirados, rotación sin desplazamientos, todas las páginas con Intelligence, móvil y PC, claro y Black.
+   subtítulos estáticos retirados, hallazgo principal estable, todas las páginas con Intelligence, móvil y PC, claro y Black.
    Ejecutar: node tests/intelligence-linea.js */
 const assert=require('node:assert/strict');
 const {chromium,webkit}=require('playwright');
@@ -47,22 +47,10 @@ let ok=0;const t=(c,m)=>{assert.ok(c,m);ok++;console.log('✓',m)};
   t(await p.locator('.vi-sheet').count()===1,`[${w}px ${theme}] pulsar la línea abre Vive Intelligence`);
   await p.keyboard.press('Escape');await p.evaluate(()=>document.querySelector('.vi-layer [data-vi=close]')?.click());await p.waitForTimeout(400);
   /* El contador es real: distintos hallazgos disponibles − 1 */
-  const cnt=await p.evaluate(()=>({n:Number(document.querySelector('.vi-more')?.textContent.replace('+','')||0)}));
-  t(Number.isInteger(cnt.n)&&cnt.n>=0,`[${w}px ${theme}] contador numérico real (+${cnt.n})`);
+  const cnt=await p.evaluate(()=>({n:Number(document.querySelector('.vi-more')?.textContent.replace('+','')||0),actual:window.__viveIntel.active().items.length-1}));
+  t(Number.isInteger(cnt.n)&&cnt.n===cnt.actual,`[${w}px ${theme}] contador numérico real (+${cnt.n})`);
   await ctx.close();
  }
- /* Rotación suave sin desplazamientos (PC, claro) */
- delete process.env.TOUCH;process.env.THEME='light';
- {const {p,ctx}=await open(b,1440,900);await p.evaluate(g=>window.__T.go(g),'overview');await p.waitForTimeout(1200);
-  const a=await p.evaluate(()=>{const e=document.querySelector('.vi-strip');const r=e.getBoundingClientRect();return {n:e.__items.length,t:e.querySelector('strong').textContent,top:r.top,h:r.height,next:document.querySelector('.vi-strip').nextElementSibling?.getBoundingClientRect().top}});
-  if(a.n>1){await p.waitForTimeout(8600);
-   const c=await p.evaluate(()=>{const e=document.querySelector('.vi-strip');const r=e.getBoundingClientRect();return {t:e.querySelector('strong').textContent,top:r.top,h:r.height,next:e.nextElementSibling?.getBoundingClientRect().top}});
-   t(c.t!==a.t,'la línea alterna a otro hallazgo real ('+a.n+' disponibles)');
-   t(c.top===a.top&&c.h===a.h&&c.next===a.next,'la rotación no desplaza el contenido');}
-  else t(true,'(un solo hallazgo: no hay rotación)');
-  await ctx.close()}
- /* Movimiento reducido: no rota */
- {const ctx=await b.newContext({reducedMotion:'reduce',viewport:{width:1440,height:900}});await ctx.close();t(true,'movimiento reducido: la rotación se desactiva por matchMedia (revisión de código)')}
  t(errs.length===0,'sin errores de JavaScript'+(errs.length?': '+errs[0]:''));
  console.log(`\nLÍNEA DE INTELIGENCIA: ${ok} verificaciones aprobadas`);await b.close()
 })().catch(e=>{console.error(e);process.exit(1)});

@@ -79,7 +79,7 @@ const lum=c=>{const m=c.match(/[\d.]+/g).map(Number);const f=v=>{v/=255;return v
    tit:[...document.querySelectorAll('.v721-category-tile .v154-category-title')].map(e=>({c:getComputedStyle(e).webkitTextFillColor,bg:getComputedStyle(e.closest('.v721-category-tile')).backgroundColor})),
    line:!!document.querySelector('.vi-strip'),sub:[...document.querySelectorAll('.v154-search-heading p')].some(e=>getComputedStyle(e).display!=='none'&&e.getBoundingClientRect().height>0),overlap:(()=>{const out=[];document.querySelectorAll('.v721-category-tile').forEach(tl=>{const ar=tl.querySelector('.v721-tile-art').getBoundingClientRect(),tx=tl.querySelector('.v721-tile-copy').getBoundingClientRect();const rg=document.createRange();rg.selectNodeContents(tl.querySelector('.v154-category-sub'));const sub=rg.getBoundingClientRect();const pw=ar.width*.14,ph=ar.height*.14;const L=ar.left+pw,R=ar.right-pw,T=ar.top+ph,B=ar.bottom-ph;const x=Math.min(R,sub.right)-Math.max(L,sub.left),y=Math.min(B,sub.bottom)-Math.max(T,sub.top);if(x>6&&y>4)out.push(tl.dataset.v154Category)});return out})()}));
   t(a.art.length===6&&a.art.every(x=>x.defs>=3&&x.filters>=2&&x.anim===0),`[${theme}] 6 ilustraciones de cristal (gradientes, filtros, sin animación)`);
-  t(a.line&&!a.sub,`[${theme}] Buscar: línea de Vive Intelligence y sin subtítulo estático`);
+  t(!a.line&&a.sub,`[${theme}] Buscar conserva su subtítulo cuando no hay hallazgos contextuales`);
   if(theme==='black')t(a.tit.every(x=>lum(x.c)>.6),'[black] títulos de las tarjetas de Buscar legibles (antes azul oscuro sobre negro)');
   t(a.overlap.length===0,`[${theme}] el texto de cada tarjeta no queda tapado por la ilustración ${a.overlap.join(',')}`);
   await ctx.close()}

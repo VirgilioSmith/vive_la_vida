@@ -532,6 +532,7 @@
     f.score=Priority.score(f,state);vis.push(f);
    }
    vis.sort((a,b)=>PRIORITY[a.priority].rank-PRIORITY[b.priority].rank||b.score-a.score);
+   if(o.exhaustive)return vis;
    const out=[];let rec=0;const perEngineInfo={};
    for(const f of vis){
     if(f.priority==='recognition'){if(rec>=1)continue;rec++}
@@ -581,9 +582,10 @@
  function contextual(scope,data,state){
   const findings=[];
   const period=scope.period||scope.today;
+  const key=scope.identity||scope.subject||scope.module;
   const ctx={today:scope.today,ym:period};
   const add=(rule,title,explanation,evidence,options={})=>{
-   findings.push(make(ctx,{rule:'active.'+rule,key:scope.subject||scope.module,engine:'financial',
+   findings.push(make(ctx,{rule:'active.'+rule,key,engine:'financial',
     priority:'info',confidence:1,modules:[scope.module],title,explanation,evidence,...options}));
   };
   if(data.cards?.length){
@@ -601,22 +603,127 @@
      'El saldo proviene de las tarjetas de esta vista.',[['Deuda',fmt(debt,2)]],{engine:'credit'});
    }
   }
+  // Premisas de las lentes originales, aplicadas únicamente a las entidades visibles.
+  const cardGroups=new Map();
+  for(const card of data.cards||[]){
+   if(!card.id||!card.name)continue;
+   const group=cardGroups.get(card.id)||{id:card.id,name:card.name,debt:0,limit:0};
+   group.debt+=num(card.debt);group.limit+=num(card.limit);cardGroups.set(card.id,group);
+  }
+  for(const card of cardGroups.values()){
+   if(card.limit<=0||card.debt<=.3*card.limit)continue;
+   const reduction=card.debt-.3*card.limit;
+   add('credit-target',card.name+' · reducir la utilización al 30 %',
+    'Si el límite y el resto del saldo no cambian, reducir la deuda en '+fmt(reduction,2)+' dejaría la utilización en 30 %. Es una referencia de planificación, no una garantía de score ni una instrucción de pago.',
+    [['Deuda registrada',fmt(card.debt,2)],['Límite',fmt(card.limit,2)],['Reducción hipotética',fmt(reduction,2)]],
+    {key:JSON.stringify([key,card.id]),engine:'credit',kind:'projection',priority:'opportunity',confidence:.9,magnitude:reduction});
+  }
+  if(cardGroups.size>=2){
+   const cards=[...cardGroups.values()].filter(c=>c.debt>0),debt=total(cards,'debt');
+   const top=[...cards].sort((a,b)=>b.debt-a.debt)[0];
+   if(top&&debt>0&&top.debt/debt>=.75)add('credit-concentration',top.name+' concentra '+fmtP(100*top.debt/debt,1)+' de la deuda visible',
+    'La decisión de pago depende también de tasas, vencimientos y liquidez; revisar primero esta tarjeta identifica la exposición principal.',
+    [[top.name,fmt(top.debt,2)],['Deuda positiva de las tarjetas visibles',fmt(debt,2)]],
+    {engine:'credit',kind:'interpretation',priority:'opportunity',confidence:.9,magnitude:top.debt});
+  }
   if(data.due?.length){
-   const due=[...data.due].sort((a,b)=>a.days-b.days)[0];
-   const when=due.days<0?'venció hace '+(-due.days)+' d':due.days===0?'vence hoy':'vence en '+due.days+' d';
-   const label={card:'Tarjeta',loan:'Cuota de préstamo',recurring:'Suscripción'}[due.kind];
-   add('due',(label?label+' · ':'')+due.name+' '+when,'Importe del compromiso registrado para esa fecha.',
-    [['Importe',native(due.amount,due.currency)],['Fecha',due.date]],
-    {engine:'risk',priority:due.days<0?'critical':'attention',essential:due.days<0});
+   for(const due of [...data.due].sort((a,b)=>a.days-b.days)){
+    const when=due.days<0?'venció hace '+(-due.days)+' d':due.days===0?'vence hoy':'vence en '+due.days+' d';
+    const label={card:'Tarjeta',loan:'Cuota de préstamo',recurring:'Suscripción'}[due.kind];
+    add('due',(label?label+' · ':'')+due.name+' '+when,'Importe del compromiso registrado para esa fecha.',
+     [['Importe',native(due.amount,due.currency)],['Fecha',due.date]],
+     {key:JSON.stringify([key,due.id||due.name,due.kind,due.date,due.currency]),engine:'risk',priority:due.days<0?'critical':'attention',essential:due.days<0,fingerprint:String(due.amount)});
+   }
   }
   if(data.position){
-   const {funds,invested,debt,net}=data.position;
+   const {funds,invested,debt,net}=data.position,assets=num(funds)+num(invested);
    add('position',(scope.name||'Tus cuentas y productos bancarios')+' · '+signed(net)+' netos',
     'Saldo de cuentas más capital en certificados, menos deuda registrada en tarjetas y préstamos.',
     [['Cuentas',signed(funds)],['Certificados',signed(invested)],['Deuda',signed(debt)]]);
+   if(assets>0&&num(debt)>0)add('bank-leverage','La deuda equivale al '+fmtP(100*debt/assets,1)+' de los activos bancarios visibles',
+    'Compara la deuda con la suma del saldo de cuentas y el capital de certificados visibles.',
+    [['Activos bancarios',fmt(assets,2)],['Deuda bancaria',fmt(debt,2)]],
+    {engine:'risk',kind:'interpretation',priority:debt>=assets?'attention':'info',confidence:.95});
+  }
+  for(const loan of data.loans||[]){
+   if(!(loan.balance>0)||!(loan.remaining>0)||!Number.isFinite(loan.remaining))continue;
+   add('loan-horizon',loan.name+' · '+loan.remaining+' cuotas programadas restantes',
+    'El horizonte corresponde al plazo vigente y a los períodos ya aplicados. Consulta el plan de amortización para evaluar abonos adicionales.',
+    [['Capital pendiente',native(loan.balance,loan.currency)],['Próxima cuota',native(loan.installment,loan.currency)],['Cuotas restantes',String(loan.remaining)]],
+    {key:JSON.stringify([key,loan.id]),engine:'credit'});
+  }
+  for(const cert of data.certificates||[]){
+   if(cert.days<0||cert.days>30||!(cert.capital>0))continue;
+   add('certificate-maturity',cert.name+(cert.days?' vence en '+cert.days+' d':' vence hoy'),
+    'Revisa las instrucciones de renovación y el destino del capital antes de la fecha pactada.',
+    [['Capital registrado',native(cert.capital,cert.currency)],['Vencimiento',cert.date]],
+    {key:JSON.stringify([key,cert.id,cert.date]),engine:'opportunity',priority:'opportunity'});
+  }
+  const originalInputs={accounts:data.accounts||[],cashAdvance90:data.cashAdvance90,
+   recurring:(data.subscriptions||[]).map(r=>({id:r.id||r.name,name:r.name,monthlyDop:r.monthly}))};
+  const originalContext=Context.build({today:scope.today,...originalInputs},Learning.normalize(state).prefs);
+  for(const id of ['crd.cash-advance','risk.negative-account','risk.account-concentration','pat.subscription-duplicate']){
+   const finding=RULES.find(r=>r.id===id).run(originalContext);
+   if(!finding)continue;
+   finding.key=JSON.stringify([finding.key,key]);finding.id=finding.key+':'+period;
+   finding.period=period;finding.modules=[scope.module];
+   if(id==='risk.account-concentration'){
+    finding.title+=' (selección visible)';
+    finding.evidence=finding.evidence.map(e=>e.label==='Liquidez total'?{...e,label:'Saldos positivos visibles'}:e);
+   }
+   findings.push(finding);
   }
   for(const product of data.products||[]){
    add(product.rule,product.title,product.detail,product.evidence,product.options);
+  }
+  if(data.cycle?.length){
+   const evidence=[];
+   for(const c of data.cycle){
+    evidence.push(['Deuda · '+c.currency,native(c.debt,c.currency)],['Disponible · '+c.currency,native(c.available,c.currency)]);
+    if(c.nextCut)evidence.push(['Próximo corte · '+c.currency,c.nextCut]);
+    if(c.billed>0)evidence.push(['Facturado · '+c.currency,native(c.billed,c.currency)]);
+   }
+   add('card-cycle',scope.name+' · estado del ciclo',
+    'Deuda, disponibilidad y fechas según el estado de corte de la tarjeta.',evidence,{engine:'credit'});
+  }
+  if(data.loan){
+   const l=data.loan;
+   if(l.mode==='payments'&&l.payments){
+    add('loan-payments',native(l.recordedPrincipal,l.currency)+' amortizados en pagos registrados',
+     'El capital se separa de los intereses del historial registrado.',
+     [['Movimientos',String(l.payments)],['Capital',native(l.recordedPrincipal,l.currency)],['Intereses',native(l.interest,l.currency)]],{engine:'credit'});
+   }else if(l.mode==='amort'&&l.plan?.end&&l.plan?.rows){
+    const p=l.plan;
+    add('loan-plan','Liquidación estimada · '+p.end,
+     'Fecha e intereses del tramo calculado en el plan visible, según las condiciones y abonos usados por el simulador.',
+     [['Plan',p.label],['Cuotas calculadas',String(p.rows)],['Intereses calculados',native(p.interest,l.currency)]],
+     {engine:'prediction',kind:'projection',confidence:.75});
+   }else if(l.mode==='simulate'&&l.simulation?.saving>0){
+    add('loan-savings',native(l.simulation.saving,l.currency)+' de ahorro estimado en intereses',
+     'Compara la simulación de abonos seleccionada con la proyección sin abonos adicionales. El resultado depende de que se cumpla el escenario.',
+     [['Intereses sin abono',native(l.simulation.baseline,l.currency)],['Intereses con abono',native(l.simulation.scenario,l.currency)]],
+     {engine:'prediction',kind:'projection',priority:'opportunity',confidence:.75});
+   }
+  }
+  if(data.benefit?.cost>0){
+   const {received,cost}=data.benefit;
+   const net=received-cost;
+   add('benefit-return','Retorno neto de '+fmtP(100*net/cost,1),
+    'Por cada RD$100 de costos pagados recibiste '+fmt(100*received/cost,2)+' en beneficios acreditados.',
+    [['Acreditados',signed(received)],['Costos pagados',signed(cost)],['Resultado',signed(net)]],
+    {engine:'opportunity',priority:net<0?'opportunity':net>0?'recognition':'info'});
+  }
+  if(data.wealth?.previous){
+   const {current,previous}=data.wealth;
+   const change=current.net-previous.net;
+   if(Math.abs(change)>=.01){
+    const estimated=current.estimatedLoan||previous.estimatedLoan;
+    add('wealth-change',(change>0?'El patrimonio subió ':'El patrimonio bajó ')+fmt(change,2),
+     'Compara el corte seleccionado con el cierre del mes anterior.',
+     [[previous.date,signed(previous.net)],[current.date,signed(current.net)],
+      ['Cambio en activos',signed(current.assets-previous.assets)],['Cambio en pasivos',signed(current.liabilities-previous.liabilities)]],
+     {kind:estimated?'interpretation':'fact',confidence:estimated?.75:1,priority:change>0?'recognition':'info'});
+   }
   }
   if(data.movements?.length){
    const rows=data.movements;
@@ -649,7 +756,7 @@
   if(data.series?.length){
    const series=data.series;
    const income=total(series,'income'),expense=total(series,'expense');
-   const spendOnly=data.seriesLabel==='Gasto del período';
+   const spendOnly=data.spendOnly||data.seriesLabel==='Gasto del período';
    if(income||expense)add('period-total',data.seriesLabel+': '+signed(spendOnly?expense:income-expense),
     spendOnly?'Egresos contabilizados en los meses visibles.':'Ingresos menos egresos contabilizados en los meses visibles.',
     spendOnly?[['Egresos',signed(expense)]]:[['Ingresos',signed(income)],['Egresos',signed(expense)]]);
@@ -665,12 +772,37 @@
      {engine:'pattern',kind:'interpretation',confidence:.75});
    }
   }
+  // Reutiliza el motor de lentes estratégico original para series cerradas, ordenadas y consecutivas.
+  // No se ejecutan lentes transversales ni de entidades que no pertenecen a la vista.
+  if(data.series?.length&&root.ViveStrategy&&root.ViveDiscovery){
+   const series=data.series.filter(x=>x.complete&&/^\d{4}-\d{2}$/.test(x.period)).sort((a,b)=>a.period.localeCompare(b.period));
+   const index=m=>Number(m.slice(0,4))*12+Number(m.slice(5,7));
+   if(series.length>=6&&series.every((x,i)=>Number.isFinite(x.income)&&Number.isFinite(x.expense)&&x.expense>0&&(!i||index(x.period)===index(series[i-1].period)+1))){
+    const months=series.map(x=>({ym:x.period,partial:false,txCount:1,income:x.income,expense:x.expense}));
+    const snap={today:scope.today,months};
+    const f={windows:{},weeks:[]};
+    const allowed=new Set(['expense-volatility','expense-stable']);
+    if(!data.spendOnly&&data.seriesLabel!=='Gasto del período'&&series.every(x=>x.income>0)){
+     for(const type of ['savings-rate','net-trend'])allowed.add(type);
+     if(series.some(x=>x.income>=x.expense))allowed.add('best-worst');
+    }
+    for(const h of root.ViveStrategy.lens(f,snap,root.ViveDiscovery.confidence)){
+     if(h.lens!=='analytics'||!allowed.has(h.type))continue;
+     add('legacy-'+h.type,h.title,h.summary+' Análisis limitado a los meses cerrados de la vista.',
+      h.evidence,{engine:'pattern',kind:'interpretation',confidence:h.confidence.score,priority:h.valence==='risk'?'attention':h.valence==='positive'?'recognition':'info',magnitude:h.impact});
+    }
+   }
+  }
   if(data.subscriptions?.length){
    const monthly=total(data.subscriptions,'monthly');
    if(monthly>0)add('subscription-cost',fmt(monthly,2)+' al mes en suscripciones',
     'Es el equivalente mensual de las tarifas y frecuencias registradas en esta vista.',
     [['Servicios activos',String(data.subscriptions.length)],['Equivalente mensual',fmt(monthly,2)]]);
-   if(data.subscriptions.length>=3&&monthly>0){
+   if(monthly>0)add('subscription-annual',fmt(monthly*12,2)+' de compromiso anual equivalente',
+    'Si las tarifas y frecuencias actuales se mantienen durante doce meses, ese sería el costo equivalente. No es un cobro ya realizado ni supone renovaciones garantizadas.',
+    [['Costo mensual equivalente',fmt(monthly,2)],['Escenario de 12 meses',fmt(monthly*12,2)]],
+    {engine:'prediction',kind:'projection',confidence:.85});
+   if(data.subscriptions.length>=2&&monthly>0){
     const top=data.subscriptions.reduce((a,b)=>a.monthly>b.monthly?a:b);
     if(top.monthly>=monthly*.5)add('subscription-share',top.name+' concentra '+fmtP(100*top.monthly/monthly)+' del costo',
      'Es el mayor costo recurrente de la selección. Revisar primero ese servicio permite evaluar el mayor ahorro potencial.',
@@ -681,17 +813,16 @@
    const ordered=[...data.charges].sort((a,b)=>b.date.localeCompare(a.date));
    const previous=new Map(),compared=new Set();
    for(const charge of ordered){
-    const key=JSON.stringify([charge.service,charge.currency]);
-    const latest=previous.get(key);
-    if(!latest){previous.set(key,charge);continue}
-    if(latest.date<=charge.date||compared.has(key))continue;
-    compared.add(key);
+    const service=JSON.stringify([charge.service,charge.currency]);
+    const latest=previous.get(service);
+    if(!latest){previous.set(service,charge);continue}
+    if(latest.date<=charge.date||compared.has(service))continue;
+    compared.add(service);
     if(charge.amount>0&&latest.amount-charge.amount>=.01){
      add('subscription-change',latest.name+' registró un cargo mayor',
       'El último cobro visible supera al anterior en la misma moneda. Si no esperabas el cambio, revisa la factura antes de ajustar el costo previsto.',
       [[latest.date,native(latest.amount,latest.currency)],[charge.date,native(charge.amount,charge.currency)]],
-      {engine:'pattern',priority:'attention',magnitude:latest.amount-charge.amount});
-     break;
+      {key:JSON.stringify([key,latest.service,latest.currency]),engine:'pattern',priority:'attention',magnitude:latest.amount-charge.amount,fingerprint:JSON.stringify([latest.date,latest.amount,charge.date,charge.amount])});
     }
    }
    if(data.compareCharges){
@@ -702,20 +833,38 @@
      'Total de cobros confirmados en el período visible, por moneda.',evidence);
    }
   }
-  return Priority.select(findings,Learning.normalize(state),scope.today,{max:4});
+  // La hoja contextual debe conservar todos los hallazgos válidos y distintos.
+  return Priority.select(Decision.reconcile(findings),Learning.normalize(state),scope.today,{exhaustive:true});
+ }
+
+ function contextualView(scope,data,state,memory){
+  const findings=contextual(scope,data,state);
+  const analysis=data.analysis,engine=root.ViveDiscovery;
+  if(!analysis||!engine)return present(findings);
+  const {snapshot,closed,fullFlow,lenses=['register']}=analysis;
+  const options={scopeKey:scope.identity||scope.key,feedbackToday:scope.today,
+   closedPeriod:closed,allowPayday:!!fullFlow,allowIncomeComparison:!!fullFlow,lenses};
+  if(analysis.engines)options.only=analysis.engines;
+  else if(!fullFlow)options.only=engine.engines.filter(e=>e!=='prediction'&&e!=='sequence');
+  return present(findings,engine.discover(snapshot,memory,options));
  }
 
  function present(findings,discovery=null){
-  const discoveries=[...(discovery?.discoveries||[]).filter(h=>!h.repeat),...(discovery?.digest||[])]
-   .filter((h,i,all)=>all.findIndex(x=>x.title===h.title)===i);
   const evidence=findings.filter(f=>!/^ctx\.(empty|thin-history)$/.test(f.rule));
+  const titles=new Set(evidence.map(f=>f.title));
+  const lenses=Object.values(discovery?.lens||{}).flat().filter(h=>h.scopeKey||!h.entity&&h.lens!=='score'&&
+   (h.valence==='risk'||h.valence==='positive'||h.urgency>=.15));
+  const discoveries=[...(discovery?.discoveries||[]),...lenses,...(discovery?.digest||[])]
+   .filter(h=>!h.repeat).sort((a,b)=>b.relevance-a.relevance).filter(h=>{
+    if(titles.has(h.title))return false;
+    titles.add(h.title);return true;
+   });
   const summaries=discoveries.map(h=>({title:h.title,priority:h.valence==='risk'?'attention':h.valence==='positive'?'recognition':'info'}));
-  const items=[...(summaries.length?[summaries[0]]:[]),...evidence,...summaries]
-   .filter((f,i,all)=>all.findIndex(x=>x.title===f.title)===i);
+  const items=[...evidence,...summaries].sort((a,b)=>PRIORITY[a.priority].rank-PRIORITY[b.priority].rank);
   return {findings:evidence,discoveries,items};
  }
 
- const api={VERSION,analyze,contextual,present,rules:RULES.map(r=>({id:r.id,engine:r.engine})),PRIORITY,KIND,
+ const api={VERSION,analyze,contextual,contextualView,present,rules:RULES.map(r=>({id:r.id,engine:r.engine})),PRIORITY,KIND,
   engines:{context:Context,decision:Decision,learning:Learning,priority:Priority,narrative:Narrative},
   _util:{median,stdev,avg,pct,fmt,diffDays,addDays}};
  if(typeof module==='object'&&module.exports)module.exports=api;else root.ViveIntelligence=api;

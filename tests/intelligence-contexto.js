@@ -27,6 +27,7 @@ async function verifySheet(p,titles){
    const fixture=await p.evaluate(()=>{
     const {dbg}=window.__T;
     const data=dbg(),[a,b]=data.banks,[first,second]=data.cards;
+    data.loans[0].bankId=a.id;
     first.name='Tarjeta Ámbar';second.name='Tarjeta Coral';first.bankId=a.id;second.bankId=b.id;
     const date=today(),account=data.accounts.find(x=>x.bankId===a.id)||data.accounts[0];
     const id='intel-movement-alpha';
@@ -41,7 +42,7 @@ async function verifySheet(p,titles){
      {id:'intel-charge-current',recurringId,date,type:'expense',accountId:account.id,currency:'DOP',amount:117,note:'Suscripción Ámbar'},
      {id:'intel-charge-prior',recurringId,date:'2024-01-15',type:'expense',accountId:account.id,currency:'DOP',amount:91,note:'Suscripción Ámbar'});
     window.__viveIntel.invalidate();
-    return {bank:a.id,card:first.id,movement:id,currentMonth};
+    return {bank:a.id,card:first.id,loan:data.loans[0].id,movement:id,currentMonth};
    });
    const go=page=>p.evaluate(page=>window.__viveIntel.go(page),page);
    await go('banks');
@@ -61,7 +62,21 @@ async function verifySheet(p,titles){
    const card=await current(p);
    assert.equal(card.entity,fixture.card);
    assert.ok(!JSON.stringify(card).includes('Coral'));
+   assert.ok(card.titles.some(title=>title.includes('estado del ciclo')));
    await verifySheet(p,card.titles);
+
+   await go('register');
+   await go('loans');
+   await p.locator(`[data-act="banksOpenProduct"][data-kind="loans"][data-id="${fixture.loan}"]`).first().evaluate(el=>el.click());
+   await p.locator('#loan-workspace .vbd-tabs [data-id="amort"]').evaluate(el=>el.click());
+   const plan=await p.evaluate(()=>{
+    const {scope,findings}=window.__viveIntel.active();
+    return {view:scope.view,entity:scope.entity,findings:findings.map(f=>({title:f.title,kind:f.kind}))};
+   });
+   assert.equal(plan.view,'amort');
+   assert.equal(plan.entity,fixture.loan);
+   assert.ok(plan.findings.length&&plan.findings.every(f=>f.kind==='projection'));
+   await verifySheet(p,plan.findings.map(f=>f.title));
 
    await p.locator('.vi-strip').click();
    await go('register');
