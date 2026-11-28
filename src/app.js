@@ -20515,7 +20515,7 @@ function vIntelContextData(scope){
   const values=rows.map(c=>v144CardStats(c));
   const received=values.reduce((sum,x)=>sum+x.realizedCashback+x.realizedOther,0);
   const paid=values.reduce((sum,x)=>sum+x.paidAmount,0);
-  return received||paid?{products:[product('benefits','Resultado de beneficios: '+money(received-paid),
+  return received||paid?{benefits:{received,paid},products:[product('benefits','Resultado de beneficios: '+money(received-paid),
    'Beneficios acreditados menos costos efectivamente pagados para la selección y el período visibles.',
    [['Acreditados',money(received)],['Pagados',money(paid)]])]}:{};
  }
@@ -20535,12 +20535,12 @@ function vIntelContextData(scope){
   }
   const values=cards.flatMap(c=>['DOP','USD'].map(currency=>{
    const st=cardStatus(c,currency);
-   return {name:c.name,currency,debt:num(st.debt),limit:num(st.limit),due:st.dueMap};
+   return {id:c.id,name:c.name,currency,debt:num(st.debt),limit:num(st.limit),due:st.dueMap};
   }));
   return {cards:values.every(v=>usable(v.currency,v.debt)&&usable(v.currency,v.limit))?
-   values.map(v=>({debt:fx(v.debt,v.currency),limit:fx(v.limit,v.currency)})):[],
+   values.map(v=>({id:v.id,name:v.name,currency:v.currency,debt:fx(v.debt,v.currency),limit:fx(v.limit,v.currency)})):[],
    due:page==='score'?[]:values.flatMap(c=>Object.entries(c.due||{}).filter(([date,amount])=>amount>0&&diffDays(date,t)<=7)
-    .map(([date,amount])=>({name:c.name,currency:c.currency,date,amount,days:diffDays(date,t),kind:'card'})))};
+    .map(([date,amount])=>({id:c.id,name:c.name,currency:c.currency,date,amount,days:diffDays(date,t),kind:'card'})))};
  }
  if(bankScope){
   const groups=bankScope.active;
@@ -20557,7 +20557,7 @@ function vIntelContextData(scope){
   if(kind==='all'&&V_BANKS_GROUPS.some(([k])=>groups[k].length)){
    const convertible=V_BANKS_GROUPS.every(([k])=>groups[k].every(p=>p.currency!=='USD'||hasFx))&&
     groups.cards.every(c=>hasFx||(!num(cardStatus(c,'USD').debt)&&!num(c.limitUSD)));
-   return convertible?{position:vBanksPosition(groups)}:{};
+   return convertible?{position:vBanksPosition(groups),accounts:groups.accounts.map(a=>({id:a.id,name:a.name,balanceDop:fx(getAccountBalance(a),a.currency),kind:a.kind}))}:{};
   }
   const rows=groups[kind]?.filter(p=>!p.archived&&(!entity||p.id===entity))||[];
   if(!rows.length)return {};
@@ -20571,7 +20571,9 @@ function vIntelContextData(scope){
    const evidence=[...totals].map(([c,v])=>[label+' · '+c,money(v,c,2)]);
    const title=name+' · '+evidence.map(([,v])=>v).join(' / ');
    return {products:[product(kind,title,'Saldos de los productos visibles, agrupados por moneda.',evidence)],
-    due:kind==='loans'?due(['loan'],new Set(rows.map(p=>p.id))):[]};
+    due:kind==='loans'?due(['loan'],new Set(rows.map(p=>p.id))):[],
+    accounts:kind==='accounts'&&amounts.every(({p,value})=>usable(p.currency,value))?amounts.map(({p,value})=>({id:p.id,name:p.name,balanceDop:fx(value,p.currency),kind:p.kind})):[],
+    loans:kind==='loans'&&amounts.every(({p,value})=>usable(p.currency,value))?amounts.map(({p,value})=>({id:p.id,name:p.name,balanceDop:fx(value,p.currency),installmentDop:fx(loanStatus(p).installment,p.currency),rate:num(p.rate??p.annualRate??p.interestRate),currency:p.currency,remaining:loanStatus(p).remaining})):[]};
   }
  }
  if(scope.movements){
@@ -20587,12 +20589,12 @@ function vIntelContextData(scope){
   const byId=new Map(services.map(r=>[r.id,r]));
   const visible=active.filter(r=>byId.has(r.id));
   const charges=(db.transactions||[]).filter(x=>x.recurringId&&confirmed(x)&&x.date&&x.date<=t&&
-   ['expense','card_charge'].includes(x.type)&&(scope.view==='historial'||byId.has(x.recurringId))&&
+   ['expense','card_charge'].includes(x.type)&&((scope.view==='historial'&&!entity&&!scope.query&&!scope.category)||byId.has(x.recurringId))&&
    (!scope.review||x.id===scope.review)&&(!scope.period||x.date.startsWith(scope.period)))
    .map(x=>({service:x.recurringId,name:name(byId.get(x.recurringId)||{name:x.note}),amount:num(x.amount),currency:x.currency||'DOP',date:x.date}));
   const history=scope.view==='historial'||!!scope.period;
   return {charges,compareCharges:history,subscriptions:!history&&visible.every(r=>usable(r.currency,r.amount))?
-   visible.map(r=>({name:name(r),monthly:v339MonthlyEquivalent(r.amount,r.currency,r.frequency)})):[],
+   visible.map(r=>({id:r.id,name:name(r),monthly:v339MonthlyEquivalent(r.amount,r.currency,r.frequency)})):[],
    due:!history&&visible.length?due(['recurring'],new Set(visible.map(r=>r.id))):[]};
  }
  if(['patrimony','payments','vision'].includes(page)){
@@ -20762,7 +20764,7 @@ function vIntelEnsure(){
  vIntelLoading=new Promise(done=>{
   try{const css=document.createElement('link');css.rel='stylesheet';css.href='./src/intelligence/intelligence.css?v=16';document.head.appendChild(css)}catch(_){}
   const load=src=>new Promise((ok,ko)=>{const el=document.createElement('script');el.src=src;el.onload=ok;el.onerror=ko;document.head.appendChild(el)});
-  load('./src/intelligence/engine.js?v=6').then(()=>load('./src/intelligence/stats.js?v=2')).then(()=>load('./src/intelligence/strategy.js?v=6')).then(()=>load('./src/intelligence/discovery.js?v=9')).then(()=>load('./src/intelligence/ui.js?v=34')).then(()=>done()).catch(()=>done());
+  load('./src/intelligence/engine.js?v=7').then(()=>load('./src/intelligence/stats.js?v=2')).then(()=>load('./src/intelligence/strategy.js?v=6')).then(()=>load('./src/intelligence/discovery.js?v=9')).then(()=>load('./src/intelligence/ui.js?v=34')).then(()=>done()).catch(()=>done());
  });
  return vIntelLoading;
 }
