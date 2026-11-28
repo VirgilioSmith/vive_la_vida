@@ -20690,7 +20690,7 @@ function vIntelActive(){
  const scope=vIntelContext(),prefs=db.settings?.intelligence;
  const engine=window.ViveIntelligence;
  if(privacyMode)return {scope,...engine.present([]),revision:'private'};
- if(scope.global)return {scope,...engine.present(vIntelRun().findings,vIntelDiscover()),global:true,
+ if(scope.global)return {scope,...engine.present(engine.engines.priority.select(vIntelRun().all,engine.engines.learning.normalize(prefs),scope.today,{exhaustive:true}),vIntelDiscover()),global:true,
   revision:JSON.stringify([scope.today,window.__viveIntelRev,prefs||null])};
  const key=JSON.stringify([scope.key,today(),window.__viveIntelRev,prefs||null]);
  if(db!==vIntelActiveCache.source||key!==vIntelActiveCache.key){
@@ -20764,7 +20764,7 @@ function vIntelEnsure(){
  vIntelLoading=new Promise(done=>{
   try{const css=document.createElement('link');css.rel='stylesheet';css.href='./src/intelligence/intelligence.css?v=16';document.head.appendChild(css)}catch(_){}
   const load=src=>new Promise((ok,ko)=>{const el=document.createElement('script');el.src=src;el.onload=ok;el.onerror=ko;document.head.appendChild(el)});
-  load('./src/intelligence/engine.js?v=7').then(()=>load('./src/intelligence/stats.js?v=2')).then(()=>load('./src/intelligence/strategy.js?v=6')).then(()=>load('./src/intelligence/discovery.js?v=9')).then(()=>load('./src/intelligence/ui.js?v=34')).then(()=>done()).catch(()=>done());
+  load('./src/intelligence/engine.js?v=8').then(()=>load('./src/intelligence/stats.js?v=2')).then(()=>load('./src/intelligence/strategy.js?v=6')).then(()=>load('./src/intelligence/discovery.js?v=9')).then(()=>load('./src/intelligence/ui.js?v=34')).then(()=>done()).catch(()=>done());
  });
  return vIntelLoading;
 }
