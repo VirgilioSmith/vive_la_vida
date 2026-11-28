@@ -89,3 +89,11 @@ Time Machine se abre desde Patrimonio o Notificaciones. Selecciona un día, un c
 La línea temporal muestra aperturas registradas, liquidaciones de capital verificables y extremos de los últimos 24 cierres mensuales consultables. Los extremos se omiten si faltan fechas de origen. En Wrapped, un acontecimiento lleva a su fecha y una escena de período lleva al cierre. Desde Time Machine se pueden abrir los Wrapped que ya se estrenaron y contienen el día seleccionado. El calendario y el archivo conservan la publicación a las 8:00 a. m. de Santo Domingo. Wrapped etiqueta como estimados los equivalentes que dependen de la tasa configurada. Los cálculos se hacen localmente con los registros ya cargados.
 
 Pruebas de calendario y narración con `node tests/wrapped-unit.js`. Los recorridos cruzados, las monedas y los cortes se prueban con `node tests/time-machine.js`. La matriz de CI ejecuta ambos recorridos de navegador en Chromium y WebKit.
+
+### VIVE Originals
+
+Wrapped conserva los cinco estrenos programados y añade una edición especial sin calendario. Intelligence la admite tras verificar una liquidación de capital con abonos registrados en al menos seis meses distintos y principal original de RD$50.000 o US$1.000 como mínimo. Tras abrirla, la edición pasa al archivo en ese navegador.
+
+Las escenas dependen de los registros del período. La evidencia mensual reutiliza los hallazgos de Intelligence. El contrapunto semanal simula una sola categoría contra la semana anterior, mantiene el resto constante y se omite cuando el equivalente depende de una tasa estimada. Los récords se limitan a los cierres comparables de Time Machine. El navegador guarda el capítulo y la fecha por sesión de usuario, con reanudación en el mismo dispositivo. Se reutilizan los cálculos y registros locales, sin consultas adicionales a Supabase.
+
+`tests/wrapped-originals.js` verifica la edición especial, reanudación, repetición y viaje al acontecimiento en móvil y escritorio dentro de la matriz de Chromium y WebKit.

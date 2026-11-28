@@ -73,3 +73,30 @@ dialog.vw-dialog .vw-frame footer [data-vw-prev]{background:transparent;border:1
 .vw-dialog .vw-travel {justify-self: start; margin-top: .8rem; min-height: 44px}
 .vw-milestones {margin: 0; padding: 0; list-style: none; display: grid; gap: 12px}
 .vw-milestones li {display: grid; gap: 3px; padding-inline-start: 12px; border-inline-start: 2px solid currentColor; overflow-wrap: anywhere}
+
+/* Originals · composición por género y capítulos de evidencia. */
+.vw-resume-slot:not(:empty),.vw-special-new:not(:empty){margin-bottom:8px}
+.vw-special-archive:empty{display:none}
+.vw-special-archive{display:grid;gap:7px}
+.vw-resume{font:inherit;font-size:12px;min-height:44px;width:100%;text-align:start;border:1px solid var(--vx-border,#8885);border-radius:12px;background:transparent;color:inherit;padding:8px 12px;cursor:pointer}
+.vw-entry.vw-special{background:radial-gradient(ellipse at 95% 55%,#705c35,transparent 70%),#242433;color:#fff1c1}
+dialog.vw-dialog[data-kind=special]{--vw-paper:#242433;--vw-accent:#ffe6a3;--vw-soft:#e0cfa1}
+dialog.vw-dialog[data-kind=special] .vw-frame{grid-template-rows:auto auto minmax(0,1fr) auto}
+dialog.vw-dialog[data-kind=special][data-scene=cover] .vw-value{font-size:clamp(29px,6vw,56px);line-height:1.08}
+dialog.vw-dialog[data-scene=plot]{--vw-accent:#ffcfad;--vw-paper:#3a2333}
+dialog.vw-dialog[data-scene=whatif]{--vw-accent:#c0e5ff;--vw-paper:#192f42}
+.vw-dialog[data-scene=whatif] .vw-scene{background:repeating-linear-gradient(135deg,#fff0 0 23px,#fff1 24px,#fff0 25px)}
+.vw-evidence{margin:0;padding:0}
+.vw-evidence > div{display:grid;gap:5px;padding:12px 0;border-bottom:1px solid #fff4}
+.vw-evidence dd{margin:0;color:var(--vw-accent);font-weight:700;font-variant-numeric:tabular-nums}
+dialog.vw-dialog[data-scene=director] .vw-value{font-size:clamp(29px,4vw,48px)}
+dialog.vw-dialog[data-scene=credits] .vw-scene{align-items:center;background:#0e1927}
+dialog.vw-dialog[data-kind=year] .vw-scene-head h2,dialog.vw-dialog[data-kind=special] .vw-scene-head h2{font-family:Georgia,serif;font-weight:500;letter-spacing:-.04em}
+@media (min-width:601px){
+ dialog.vw-dialog[data-kind=week][data-scene=cover] .vw-scene{grid-template-areas:"kicker kicker" "visual head" "visual metric"}
+ dialog.vw-dialog[data-kind=quarter][data-scene=arc] .vw-scene{grid-template-areas:"kicker kicker" "head metric" "visual visual"}
+ dialog.vw-dialog[data-kind=quarter][data-scene=arc] .vw-chart{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+.vw-evidence-note{padding:12px;border:1px solid #fff5;border-radius:14px}
+.vw-evidence-note summary{cursor:pointer;line-height:1.4}
+.vw-evidence-note summary:focus-visible{outline:2px solid currentColor;outline-offset:4px}

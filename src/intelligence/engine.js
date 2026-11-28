@@ -612,7 +612,25 @@
   return {findings:shown,all:reconciled,errors,meta:{version:VERSION,rules:RULES.length,evaluated:RULES.length,generated:raw.length,shown:shown.length,today:ctx.today,quality:ctx.q}};
  }
 
- const api={VERSION,analyze,rules:RULES.map(r=>({id:r.id,engine:r.engine})),PRIORITY,KIND,
+ /* Editorial: confirmed achievements and a hypothetical drawn from equivalent closed weeks. */
+ function originalEvents(events){
+  return events.filter(event=>event.kind==='payoff'&&typeof event.id==='string'&&event.id&&Number.isInteger(event.months)&&event.months>=6&&
+   (event.currency==='DOP'&&event.principal>=50000||event.currency==='USD'&&event.principal>=1000))
+   .sort((a,b)=>b.date.localeCompare(a.date)||a.id.localeCompare(b.id));
+ }
+ function originalScenario(period,current,previous){
+  if(period.kind!=='week'||!current?.count||!previous?.count||current.estimatedFx||previous.estimatedFx||current.unavailable||previous.unavailable)return null;
+  const changes=Object.entries(current.byCategory||{}).flatMap(([category,value])=>{
+   const prior=previous.byCategory?.[category];
+   return prior>0&&value>=prior*1.25&&value-prior>=1500?[{category,value,prior,difference:rnd(value-prior)}]:[];
+  }).sort((a,b)=>b.difference-a.difference);
+  if(!changes.length)return null;
+  const {category,value,prior,difference}=changes[0];
+  return {title:'¿Y si '+category+' hubiera vuelto a su nivel anterior?',result:rnd(current.net+difference),
+   baseline:current.net,explanation:'Simulación. Sustituye '+fmt(value,2)+' por '+fmt(prior,2)+' en esa categoría y mantiene iguales los demás ingresos y egresos.'};
+ }
+
+ const api={VERSION,analyze,originalEvents,originalScenario,rules:RULES.map(r=>({id:r.id,engine:r.engine})),PRIORITY,KIND,
   engines:{context:Context,decision:Decision,learning:Learning,priority:Priority,narrative:Narrative},
   _util:{median,stdev,avg,pct,fmt,diffDays,addDays}};
  if(typeof module==='object'&&module.exports)module.exports=api;else root.ViveIntelligence=api;

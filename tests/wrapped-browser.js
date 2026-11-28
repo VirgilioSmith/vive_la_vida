@@ -5,7 +5,7 @@ const open=require('./harness');
 (async()=>{const b=await (process.env.WRAPPED_BROWSER==='webkit'?webkit:chromium).launch();
  try{for(const [w,h] of [[320,700],[390,844],[1440,900]]){const {ctx,p}=await open(b,w,h);try{
  await p.evaluate(()=>window.__T.go('overview'));
- await p.evaluate(()=>{window.ViveWrappedHost.events=()=>[];window.ViveWrappedHost.amounts=()=>({count:14,income:12000,expense:8200,net:3800,byCategory:{Comida:4200,Transporte:2600,Otros:1400}})});
+ await p.evaluate(()=>{window.ViveWrappedHost.events=()=>[];window.ViveWrappedHost.editorial=()=>({});window.ViveWrappedHost.special=()=>[];window.ViveWrappedHost.amounts=()=>({count:14,income:12000,expense:8200,net:3800,byCategory:{Comida:4200,Transporte:2600,Otros:1400}})});
  const bell=p.locator('.v36-notifications:visible').first();await bell.locator('summary').first().click();
  assert.equal(await bell.locator('.vw-archive [data-vwrapped]').count(),5);
  assert.equal(await bell.locator('[data-v216="report"]').count(),0);

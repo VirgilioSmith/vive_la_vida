@@ -48,8 +48,16 @@
     label:(length===3?'Trimestre ':'Mes ')+(i+1)};
   });
  }
- function story(p,a,b,events=[],series=[]){
-  const fmt=n=>new Intl.NumberFormat('es-DO',{style:'currency',currency:'DOP',currencyDisplay:'narrowSymbol',maximumFractionDigits:0}).format(n);
+ const money=(n,currency='DOP')=>new Intl.NumberFormat('es-DO',{style:'currency',currency,currencyDisplay:'narrowSymbol',maximumFractionDigits:0}).format(n);
+ function specialStory(event){
+  return [
+   {scene:'cover',theme:'hero',title:'El día que cerraste una deuda',value:event.productName||event.title,detail:'El último abono registrado dejó el capital en cero.',date:event.date},
+   {scene:'milestone',theme:'growth',title:'La trayectoria detrás del último abono',value:money(event.principal,event.currency),detail:'Principal original, con abonos de capital registrados en '+event.months+' meses distintos.',date:event.date,data:{events:[event]}},
+   {scene:'final',theme:'calm',title:'El siguiente capítulo',value:'Un compromiso menos',detail:'Puedes volver a ese día y comparar tu posición financiera con otro corte.',date:event.date}
+  ];
+ }
+ function story(p,a,b,events=[],series=[],editorial=null){
+  const fmt=money;
   const s=(title,value,detail,theme='calm',scene='empty',data=null)=>({title,value,detail,theme,scene,data});
   if(!a||a.unavailable)return [s('Todavía no hay cifras confiables','Datos pendientes','Falta información de moneda para calcular este período sin distorsiones.')];
   if(!a.count&&!events.length)return [s('Aún no hay una historia registrada','Sin movimientos','Este período no tiene operaciones registradas. No significa que no hayas tenido gastos o ingresos.')];
@@ -67,18 +75,41 @@
   if(!a.count)return [chapter];
   const discovery=top&&b?.count&&b.byCategory?.[top[0]]>0&&p.kind!=='day'&&Math.abs(top[1]/b.byCategory[top[0]]-1)>=.25
    ?s(top[1]>b.byCategory[top[0]]?'Subió el gasto de tu categoría principal':'El gasto de tu categoría principal bajó',top[0],
-    'Cambio en el importe registrado frente al período anterior. Revisa los movimientos para entender qué cambió.','calm','comparison',
+    'Cambio en el importe registrado frente al período anterior. Revisa los movimientos para entender qué cambió.','calm',editorial?'plot':'comparison',
     {previous:b.byCategory[top[0]],current:top[1]}):null;
   const arc=series.length>=3&&series.every(x=>x.count>0&&!x.unavailable)&&series.some(x=>Math.abs(x.net-series[0].net)>=.01)
    ?s(p.kind==='year'?'Tu año en cuatro actos':'Cómo cambió el trimestre',fmt(series.at(-1).net-series[0].net),
     'El cambio corresponde al flujo registrado del primer al último tramo. Cada barra representa ingresos menos egresos.','hero','arc',
     {items:series.map(x=>[x.label,x.net])}):null;
+  const scenario=editorial?.scenario;
+  const whatIf=scenario?s(scenario.title,fmt(scenario.result),scenario.explanation,'calm','whatif',{previous:scenario.baseline,current:scenario.result}):null;
+  const detail=editorial?.detail;
+  const director=detail?s(detail.title,'La evidencia',detail.explanation,'calm','director',{evidence:detail.evidence}):null;
+  const record=editorial?.record;
+  const credits=record?s(record.title,'Un cierre destacado','Récord entre los cierres mensuales comparables consultados por Time Machine.','growth','credits',{events:[record]}):null;
+  if(credits)credits.date=record.date;
   const order={day:[hero,income,expense,balance,category,comparison],week:[hero,category,balance,comparison,income,expense],month:[hero,balance,income,expense,category,comparison],quarter:[hero,comparison,balance,category,income,expense],year:[hero,balance,comparison,category,income,expense]}[p.kind];
-  return [...order.slice(0,2),chapter,discovery,arc,...order.slice(2),s('Tu siguiente capítulo','vive el hoy',a.net<0?'Revisa las categorías con mayor gasto y organiza tus próximos compromisos.':'Revisa tus prioridades y decide qué quieres mantener para el próximo período.','hero','final')].filter(Boolean).map(scene=>{
-   const estimated=a.estimatedFx||scene.scene==='comparison'&&b?.estimatedFx;
-   return estimated&&['income','expense','balance','category','comparison','arc'].includes(scene.scene)
+  if(editorial){
+   if(chapter){hero.title=events[0].kind==='payoff'?'El período en que cerraste una deuda':'Un nuevo comienzo en tu historia';hero.theme='growth'}
+   else if(discovery){hero.title='El cambio detrás de '+top[0];hero.theme='warm'}
+   else if(arc)hero.title=p.kind==='year'?'Tu año, acto por acto':'Tres meses que cuentan una historia';
+   else if(comparison&&Math.sign(a.net)!==Math.sign(b.net)&&a.net&&b.net){hero.title='El flujo cambió de signo';hero.theme=a.net>0?'growth':'warm'}
+  }
+  const ordered=editorial&&(chapter||arc||discovery)
+   ?[hero,chapter,arc,discovery,...order.slice(1)]:[...order.slice(0,2),chapter,discovery,arc,...order.slice(2)];
+  const chapters=editorial?ordered.filter(x=>x!==income||a.income!==0).filter(x=>x!==expense||a.expense!==0):ordered;
+  const next=a.net<0&&top
+   ?'Para el próximo período, revisa '+top[0]+'. Fue la categoría con mayor gasto neto en este cierre.'
+   :events[0]?.kind==='payoff'
+    ?'Compara el corte de la liquidación con otro momento para ver qué cambió en tus compromisos registrados.'
+    :comparison&&a.net>b.net
+     ?'El flujo subió frente al período anterior. Compara ambos cierres antes de tomar ese cambio como una tendencia.'
+     :'El próximo cierre te dará un nuevo punto de comparación.';
+  return [...chapters,whatIf,director,s('Tu siguiente capítulo','vive el hoy',next,'hero','final'),credits].filter(Boolean).map(scene=>{
+   const estimated=a.estimatedFx||['comparison','plot'].includes(scene.scene)&&b?.estimatedFx;
+   return estimated&&['income','expense','balance','category','comparison','plot','arc'].includes(scene.scene)
     ?{...scene,detail:scene.detail+' Parte del equivalente en RD$ se estimó con la tasa configurada.'}:scene;
   });
  }
- return {kinds,titles,period,story,schedule,validDate,containing,chapters};
+ return {kinds,titles,period,story,specialStory,schedule,validDate,containing,chapters};
 })();if(typeof module==='object'&&module.exports)module.exports=api;else root.ViveWrappedEngine=api;})(typeof window==='undefined'?globalThis:window);

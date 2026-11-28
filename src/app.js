@@ -15230,12 +15230,12 @@ function v216Period(kind,closed=v216ClosedDay()){
  return {title:'Acumulado mensual',start:first,end:closed};
 }
 
-function v216Amounts(start,end,currency=null){
+function v216Amounts(start,end,currency=null,confirmedOnly=!!currency){
  let income=0,expense=0,count=0,appleCount=0;const byCategory=Object.create(null);
  const convert=(v,c,rate)=>currency?(c===currency?num(v):0):num(v)*(c==='USD'?num(rate)||num(db.settings.fx):1);
  const addExpense=(v,cat)=>{expense+=v;byCategory[cat]=(byCategory[cat]||0)+v;};
  for(const t of db.transactions||[]){
-  if(typeof t.date!=='string'||t.date<start||t.date>end||currency&&!vTimeConfirmed(t))continue;
+  if(typeof t.date!=='string'||t.date<start||t.date>end||confirmedOnly&&!vTimeConfirmed(t))continue;
   count++;
   if(t.applePayEventId||t.applePaySource==='wallet-shortcuts'||String(t.tags||'').split(',').includes('apple-pay'))appleCount++;
   const rate=t.fxRateSnapshot||db.settings.fx,ccy=t.currency||'DOP',value=convert(t.amount,ccy,rate);
@@ -15305,7 +15305,7 @@ function vTimeSnapshot(date,currency){
    banks:groups.accounts.filter(a=>a.opened<=date&&(a.currency||'DOP')===currency&&a.kind!=='cash').map(a=>({id:a.id,name:a.name,kind:a.kind,balance:vTimeAccountBalance(a,date)}))};
  });
 }
-function vTimePayoffs(start,end){
+function vTimePayoffs(start,end,includeEvidence=false){
  const {groups}=vTimeHistory();
  const rows=v99Memo('history:confirmed',()=>db.transactions.filter(vTimeConfirmed));
  const dates=new Map();
@@ -15318,7 +15318,14 @@ function vTimePayoffs(start,end){
  return groups.loans.flatMap(loan=>{
   for(const date of [...dates.get(loan.id)||[]].sort().reverse()){
    const before=v134WealthLoanAsOf(loan,v216Shift(date,-1),rows),after=v134WealthLoanAsOf(loan,date,rows);
-   if(!before.estimated&&!after.estimated&&before.balance>0&&after.balance===0)return [{date,title:'Capital liquidado · '+loan.name,kind:'payoff'}];
+   if(!before.estimated&&!after.estimated&&before.balance>0&&after.balance===0){
+    const event={date,title:'Capital liquidado · '+loan.name,kind:'payoff'};
+    if(includeEvidence){
+     const months=new Set(rows.filter(t=>t.type==='loan_payment'&&t.loanId===loan.id&&t.date<=date&&num(t.principal)>0).map(t=>t.date.slice(0,7))).size;
+     Object.assign(event,{id:loan.id,productName:loan.name,currency:loan.currency||'DOP',principal:num(loan.principal),months});
+    }
+    return [event];
+   }
   }
   return [];
  });
@@ -15337,7 +15344,7 @@ function vTimeMilestones(currency){
   const extrema=[['net','Mayor patrimonio entre los cierres consultados',1],['liquid','Mayor saldo disponible entre los cierres consultados',1],['liabilities','Menor deuda entre los cierres consultados',-1]];
   const records=unknown||closed.length<2?[]:extrema.flatMap(([key,title,direction])=>{
    const best=closed.reduce((a,b)=>a[key]*direction>=b[key]*direction?a:b);
-   return closed.some(x=>Math.abs(x[key]-best[key])>=.01)?[{title,date:best.date}]:[];
+   return closed.some(x=>Math.abs(x[key]-best[key])>=.01)?[{title,date:best.date,kind:'record',metric:key}]:[];
   });
   return [...records,...openings,...vTimePayoffs(first,now)].sort((a,b)=>b.date.localeCompare(a.date)||a.title.localeCompare(b.title));
  });
@@ -15352,15 +15359,43 @@ window.ViveTimeHost=Object.freeze({asOf:()=>v216NowParts().date,available:()=>!p
   return window.ViveIntelligence?.analyze({today:point.date,accounts,position:{assets:point.assets,debt:point.liabilities,net:point.net}},null).all.filter(f=>rules.includes(f.rule))||[];
  }});
 /* Wrapped reutiliza las reglas contables de los informes, sin almacenar cortes ni datos adicionales. */
-window.ViveWrappedHost={asOf:()=>v216NowParts().date,available:()=>!privacyMode&&!!f33User,events(start,end,kind){
+window.ViveWrappedHost={
+ reader:()=>!privacyMode&&f33User?.id||null,
+ ready:vIntelEnsure,
+ special(){
+  if(!this.available()||!window.ViveIntelligence)return [];
+  const end=v216NowParts().date;
+  return v99Memo('wrapped:special:'+end,()=>{
+   const {first}=vTimeHistory();
+   return first?window.ViveIntelligence.originalEvents(vTimePayoffs(first,end,true)):[];
+  });
+ },
+ editorial(p,a,b){
+  if(!this.available()||!window.ViveIntelligence||a?.unavailable||a?.estimatedFx)return {};
+  const engine=window.ViveIntelligence,scenario=engine.originalScenario(p,a,b);
+  if(p.kind==='year'&&a?.count){
+   const record=vTimeMilestones('DOP').find(e=>e.kind==='record'&&e.metric==='net'&&e.date>=p.start&&e.date<=p.end);
+   return {scenario,record};
+  }
+  if(p.kind!=='month'||!a?.count||b?.estimatedFx||b?.unavailable)return {scenario};
+  const prior=v216Shift(p.start,-1).slice(0,7);
+  const make=(ym,v)=>({ym,income:v?.income,expense:v?.expense,txCount:v?.count,expenseBy:v?.byCategory});
+  const {all}=engine.analyze({today:p.end,months:[make(prior,b),make(p.start.slice(0,7),a)],txCount:a.count},null);
+  const detail=all.find(x=>['fin.income-change','fin.expense-change','fin.concentration'].includes(x.rule));
+  return {scenario,detail};
+ },
+ asOf:()=>v216NowParts().date,available:()=>!privacyMode&&!!f33User,events(start,end,kind){
  if(privacyMode||!f33User)return [];
  const {openings}=vTimeHistory();
  return [...vTimePayoffs(start,end),...openings.filter(event=>event.date>=start&&event.date<=end)]
   .sort((a,b)=>Number(b.kind==='payoff')-Number(a.kind==='payoff')||(kind==='year'?a.date.localeCompare(b.date):b.date.localeCompare(a.date)));
 },amounts(start,end){
- const requiresRate=(db.transactions||[]).some(t=>typeof t.date==='string'&&t.date>=start&&t.date<=end&&
-  (t.currency==='USD'||t.paymentFeeCurrency==='USD'||account(t.accountId)?.currency==='USD')&&!(num(t.fxRateSnapshot)>0));
- return requiresRate&&!(num(db.settings.fx)>0)?{unavailable:true}:{...v216Amounts(start,end),estimatedFx:requiresRate};
+ if(!this.available())return {unavailable:true};
+ return v99Memo('wrapped:amounts:'+start+':'+end,()=>{
+  const requiresRate=(db.transactions||[]).some(t=>vTimeConfirmed(t)&&typeof t.date==='string'&&t.date>=start&&t.date<=end&&
+   (t.currency==='USD'||t.paymentFeeCurrency==='USD'||account(t.accountId)?.currency==='USD')&&!(num(t.fxRateSnapshot)>0));
+  return requiresRate&&!(num(db.settings.fx)>0)?{unavailable:true}:{...v216Amounts(start,end,null,true),estimatedFx:requiresRate};
+ });
 }};
 function v216Previous(p){
  const length=Math.max(1,Math.round((Date.parse(p.end+'T12:00:00Z')-Date.parse(p.start+'T12:00:00Z'))/86400000)+1);
@@ -20526,7 +20561,7 @@ function vIntelEnsure(){
  vIntelLoading=new Promise(done=>{
   try{const css=document.createElement('link');css.rel='stylesheet';css.href='./src/intelligence/intelligence.css?v=18';document.head.appendChild(css)}catch(_){}
   const load=src=>new Promise((ok,ko)=>{const el=document.createElement('script');el.src=src;el.onload=ok;el.onerror=ko;document.head.appendChild(el)});
-  load('./src/intelligence/engine.js?v=11').then(()=>load('./src/intelligence/stats.js?v=2')).then(()=>load('./src/intelligence/strategy.js?v=6')).then(()=>load('./src/intelligence/discovery.js?v=11')).then(()=>load('./src/intelligence/ui.js?v=34')).then(()=>done()).catch(()=>done());
+  load('./src/intelligence/engine.js?v=12').then(()=>load('./src/intelligence/stats.js?v=2')).then(()=>load('./src/intelligence/strategy.js?v=6')).then(()=>load('./src/intelligence/discovery.js?v=11')).then(()=>load('./src/intelligence/ui.js?v=34')).then(()=>done()).catch(()=>done());
  });
  return vIntelLoading;
 }
