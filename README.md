@@ -97,3 +97,9 @@ Wrapped conserva los cinco estrenos programados y añade una edición especial s
 Las escenas dependen de los registros del período. La evidencia mensual reutiliza los hallazgos de Intelligence. El contrapunto semanal simula una sola categoría contra la semana anterior, mantiene el resto constante y se omite cuando el equivalente depende de una tasa estimada. Los récords se limitan a los cierres comparables de Time Machine. El navegador guarda el capítulo y la fecha por sesión de usuario, con reanudación en el mismo dispositivo. Se reutilizan los cálculos y registros locales, sin consultas adicionales a Supabase.
 
 `tests/wrapped-originals.js` verifica la edición especial, reanudación, repetición y viaje al acontecimiento en móvil y escritorio dentro de la matriz de Chromium y WebKit.
+
+### Centro de Notificaciones
+
+La campana abre a pantalla completa con los filtros Todo, Alertas y Wrapped. La lista operativa usa los mismos vencimientos, avisos de gasto y acciones de pago. «Limpiar todo» conserva el comportamiento local. Wrapped y Time Machine se abren encima del centro para conservar el filtro, el desplazamiento y el foco al volver. Las fechas, portadas y estrenos reutilizan el calendario de Wrapped.
+
+`tests/notifications-center.js` recorre el centro en Claro, Black y oscuro, desde 320 px hasta 1920 px, incluyendo orientación horizontal. Se ejecuta en la matriz de Chromium y WebKit.

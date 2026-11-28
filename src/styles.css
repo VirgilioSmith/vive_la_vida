@@ -2982,7 +2982,7 @@ height:19px}
  .vive-mobile-top .v36-notifications{position:relative;
 margin:0;
 flex-shrink:0}
- .vive-mobile-top .v36-notifications summary{width:38px;
+ .vive-mobile-top .v36-notifications>[data-vn-open]{width:38px;
 height:38px;
 display:grid;
 place-items:center;
@@ -6016,9 +6016,9 @@ body.theme-dark #page .v27-budget-last strong{color:#8fe0c6!important}
 /* ==== v36-mobile-compromisos ==== */
 /* V36 · mobile first. Global design, desktop calculations and Supabase persistence unchanged. */
 .v36-notifications{position:relative;flex:none}
-.v36-notifications>summary{list-style:none;cursor:pointer;position:relative;display:grid;place-items:center;width:39px;height:39px;border-radius:15px;border:1px solid rgba(145,164,202,.2);background:rgba(255,255,255,.47);color:inherit}
-.v36-notifications>summary::-webkit-details-marker{display:none}
-.v36-notifications>summary svg{width:19px;height:19px}
+.v36-notifications>[data-vn-open]{list-style:none;cursor:pointer;position:relative;display:grid;place-items:center;width:39px;height:39px;border-radius:15px;border:1px solid rgba(145,164,202,.2);background:rgba(255,255,255,.47);color:inherit}
+.v36-notifications>[data-vn-open]::-webkit-details-marker{display:none}
+.v36-notifications>[data-vn-open] svg{width:19px;height:19px}
 .v36-notification-count{position:absolute;right:-5px;top:-6px;min-width:17px;height:17px;padding:0 4px;border-radius:12px;border:2px solid #f5f8ff;font-size:9px;font-weight:700;display:grid;place-items:center}
 .v36-notice-pop{position:absolute;right:0;top:calc(100% + 12px);width:min(365px,calc(100vw - 28px));max-height:min(66vh,540px);overflow-y:auto;overscroll-behavior:contain;border-radius:23px;background:rgba(250,252,255,.99);border:1px solid #e4eaf5;box-shadow:0 21px 60px rgba(30,51,90,.24);padding:17px;color:#243851;z-index:99}
 .v36-notice-head{display:grid;gap:5px;padding:1px 3px 12px}.v36-notice-head strong{font-size:17px}.v36-notice-head small,.v36-notice-disclaimer{font-size:12px;color:#8b99ad}
@@ -6699,7 +6699,7 @@ body.theme-dark .v58-drill-modal{background:#1b2b42}body.theme-dark .v58-drill-r
     height:38px!important;
     margin:0!important;
   }
-  .vive-mobile-top>.v65-header-tools>.v36-notifications>summary{
+  .vive-mobile-top>.v65-header-tools>.v36-notifications>[data-vn-open]{
     width:38px!important;
     height:38px!important;
     margin:0!important;
@@ -6711,7 +6711,7 @@ body.theme-dark .v58-drill-modal{background:#1b2b42}body.theme-dark .v58-drill-r
   .vive-mobile-top>.v65-header-tools{gap:5px!important}
   .vive-mobile-top>.v65-header-tools>.v36-notifications,
   .vive-mobile-top>.v65-header-tools>.v65-settings-button,
-  .vive-mobile-top>.v65-header-tools>.v36-notifications>summary{width:35px!important;height:35px!important;flex-basis:35px!important}
+  .vive-mobile-top>.v65-header-tools>.v36-notifications>[data-vn-open]{width:35px!important;height:35px!important;flex-basis:35px!important}
 }
 /* ==== v80-purchase-advisor-style ==== */
 /* V80 · Radar de compra, adaptación móvil y escritorio, mantiene el diseño Liquid Glass */
@@ -7475,7 +7475,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
  .vive-mobile-top>.vive-mobile-brand>span{font-size:12px;white-space:nowrap;letter-spacing:-.25px}
  .vive-mobile-top>.v146-mobile-actions{margin-left:auto!important;display:flex!important;align-items:center!important;justify-content:flex-end!important;flex-wrap:nowrap!important;min-width:0!important;gap:5px!important}
  .vive-mobile-top>.v146-mobile-actions>.v36-notifications{flex:0 0 34px!important;width:34px!important;height:34px!important;margin:0!important}
- .vive-mobile-top>.v146-mobile-actions>.v36-notifications>summary{width:34px!important;height:34px!important}
+ .vive-mobile-top>.v146-mobile-actions>.v36-notifications>[data-vn-open]{width:34px!important;height:34px!important}
 }
 @media(max-width:400px){
  .vive-mobile-top>.vive-mobile-brand{max-width:68px!important}
@@ -7805,15 +7805,15 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
  .main .topbar{position:relative;overflow:visible}
  .main .topbar .top-actions{align-items:center;flex-wrap:nowrap!important;gap:9px!important;min-width:0}
  .main .topbar .top-actions .v36-notifications{position:relative;flex:0 0 auto;z-index:15}
- .main .topbar .top-actions .v36-notifications>summary,
+ .main .topbar .top-actions .v36-notifications>[data-vn-open],
  .main .topbar .top-actions .v165-search-icon{box-sizing:border-box;flex:0 0 42px!important;width:42px!important;height:42px!important;min-width:42px!important;min-height:42px!important;border:1px solid rgba(255,255,255,.88)!important;border-radius:14px!important;background:linear-gradient(150deg,rgba(255,255,255,.62),rgba(234,241,254,.53))!important;color:color-mix(in srgb,var(--vx-accent-ink) 16%,#3b4556)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 6px 18px rgba(46,77,125,.05)!important;display:grid!important;place-items:center!important;padding:0!important;transition:transform .19s ease,background .19s ease,box-shadow .19s ease}
- .main .topbar .top-actions .v36-notifications>summary{cursor:pointer;list-style:none}
- .main .topbar .top-actions .v36-notifications>summary::-webkit-details-marker{display:none}
- .main .topbar .top-actions .v36-notifications>summary svg,
+ .main .topbar .top-actions .v36-notifications>[data-vn-open]{cursor:pointer;list-style:none}
+ .main .topbar .top-actions .v36-notifications>[data-vn-open]::-webkit-details-marker{display:none}
+ .main .topbar .top-actions .v36-notifications>[data-vn-open] svg,
  .main .topbar .top-actions .v165-search-icon svg{width:19px!important;height:19px!important;stroke-width:1.85}
- .main .topbar .top-actions .v36-notifications>summary:hover,
+ .main .topbar .top-actions .v36-notifications>[data-vn-open]:hover,
  .main .topbar .top-actions .v165-search-icon:hover{transform:translateY(-1px);background:rgba(255,255,255,.88)!important;box-shadow:0 9px 23px rgba(46,77,125,.1)!important}
- .main .topbar .top-actions .v36-notifications>summary:focus-visible,
+ .main .topbar .top-actions .v36-notifications>[data-vn-open]:focus-visible,
  .main .topbar .top-actions .v165-search-icon:focus-visible{outline:2px solid #5387ed;outline-offset:3px}
  .main .topbar .top-actions .v36-notifications .v36-notification-count{right:0;top:0}
 }
@@ -7824,12 +7824,12 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 @media (min-width:791px) and (max-width:1130px){
  .world-overview .topbar{display:flex!important;flex-wrap:wrap;justify-content:space-between;align-items:center}
  .world-overview .topbar .topbar-intro{flex:1 1 170px}
- .world-overview .topbar .top-actions .v36-notifications>summary,
+ .world-overview .topbar .top-actions .v36-notifications>[data-vn-open],
  .world-overview .topbar .top-actions .v165-search-icon{width:38px!important;height:38px!important;min-width:38px!important;min-height:38px!important;flex-basis:38px!important}
 }
-body.theme-dark .main .topbar .top-actions .v36-notifications>summary,
+body.theme-dark .main .topbar .top-actions .v36-notifications>[data-vn-open],
 body.theme-dark .main .topbar .top-actions .v165-search-icon{background:linear-gradient(160deg,rgba(57,75,109,.75),rgba(37,53,87,.72))!important;color:#e9f0ff!important;border-color:rgba(188,205,243,.2)!important}
-@media (prefers-reduced-motion:reduce){.main .topbar .top-actions .v36-notifications>summary,.main .topbar .top-actions .v165-search-icon{transition:none!important}}
+@media (prefers-reduced-motion:reduce){.main .topbar .top-actions .v36-notifications>[data-vn-open],.main .topbar .top-actions .v165-search-icon{transition:none!important}}
 /* ==== vive-v167-strategy ==== */
 /* V167 · Simulador integral: liquidez, pasivos, calendario y posición neta */
 /* ==== vive-v169-automatic-cycles-simulator ==== */
@@ -12309,7 +12309,7 @@ body.theme-dark #page .inner-category strong {
 .v36-notifications {
   z-index: 110 !important;
 }
-.v36-notifications>summary {
+.v36-notifications>[data-vn-open] {
   z-index: 111;
 }
 .v36-notifications[open] .v36-notice-pop {
@@ -32802,7 +32802,7 @@ body.theme-black :is(input,select,textarea,button,a,[role="tab"]):focus-visible{
 body.theme-black :is(.negative,.is-negative,.v318-danger,.pill.red,.notification.danger){color:#ff8c98!important;}
 body.theme-black :is(.positive,.is-positive,.v318-good,.pill.green,.notification.success){color:#85ddac!important;}
 @media(max-width:790px){
- body.theme-black :is(.vive-mobile-top,.vive-mobile-dock,.v36-notifications>summary){
+ body.theme-black :is(.vive-mobile-top,.vive-mobile-dock,.v36-notifications>[data-vn-open]){
   box-shadow:none!important;
  }
  body.theme-black .v36-notifications .v36-notice-pop{
@@ -46387,8 +46387,8 @@ html body:not(.theme-black):not(.theme-dark) #app#app :is(.v41-service-mark,.v41
 html body:not(.theme-black):not(.theme-dark) #app#app :is(.v41-service-mark,.v410-category-icon) :is(svg,path,circle,rect,line,polyline){stroke:currentColor!important}
 
 /* V1026 · Iconos de la cabecera (buscar, ajustes, notificaciones, salud) con el acento */
-html body:not(.theme-black):not(.theme-dark) #app#app :is(.v165-search-icon,.v936-web-settings,.v65-settings-button,.v271-settings-access,.topbar-actions summary,.v36-notifications>summary,.vive-mobile-top .vive-mobile-actions summary){color:var(--vx-accent-ink)!important}
-html body:not(.theme-black):not(.theme-dark) #app#app :is(.v165-search-icon,.v936-web-settings,.v65-settings-button,.v271-settings-access,.topbar-actions summary,.v36-notifications>summary,.vive-mobile-top .vive-mobile-actions summary) :is(svg,path,circle,line,polyline,rect){stroke:currentColor!important;color:inherit!important}
+html body:not(.theme-black):not(.theme-dark) #app#app :is(.v165-search-icon,.v936-web-settings,.v65-settings-button,.v271-settings-access,.topbar-actions summary,.v36-notifications>[data-vn-open],.vive-mobile-top .vive-mobile-actions summary){color:var(--vx-accent-ink)!important}
+html body:not(.theme-black):not(.theme-dark) #app#app :is(.v165-search-icon,.v936-web-settings,.v65-settings-button,.v271-settings-access,.topbar-actions summary,.v36-notifications>[data-vn-open],.vive-mobile-top .vive-mobile-actions summary) :is(svg,path,circle,line,polyline,rect){stroke:currentColor!important;color:inherit!important}
 
 /* V1027 · Flechas de año sobre cabeceras oscuras: blancas (antes acento morado) */
 html body:not(.theme-black):not(.theme-dark) #app#app :is(.analytic-hero,.v58-exec,.v187-hero,[class*="hero"]) :is(.year-btn,[data-act="prevYear"],[data-act="nextYear"]){color:#fff!important;-webkit-text-fill-color:#fff!important}

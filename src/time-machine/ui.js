@@ -66,7 +66,7 @@
   const baseline=selected===now&&first&&previous>=first?previous:now;
   const state={dialog,now,first,timeline:false,date:selected,baseline,currency:'DOP'};
   document.body.append(dialog);active=state;
-  dialog.addEventListener('close',()=>{dialog.remove();if(active===state){active=null;opener?.focus?.()}});
+  dialog.addEventListener('close',()=>{dialog.remove();if(active===state){active=null;if(!document.querySelector('.vw-dialog[open]'))opener?.focus?.({preventScroll:true})}});
   dialog.addEventListener('change',ev=>{
    const el=ev.target,field=el.dataset.vtField;
    if(!field)return;
@@ -86,9 +86,7 @@
  document.addEventListener('click',ev=>{
   const b=ev.target.closest?.('[data-vtime-open]');
   if(!b)return;
-  const bell=b.closest('.v36-notifications');
-  if(bell)bell.open=false;
-  open(b.dataset.vtimeOpen,bell?.querySelector('summary')||b);
+  open(b.dataset.vtimeOpen,b);
  });
  window.ViveTimeMachine=Object.freeze({open});
 })();

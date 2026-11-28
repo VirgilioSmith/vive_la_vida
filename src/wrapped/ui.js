@@ -49,8 +49,19 @@
   return '<button type="button" class="vw-resume" data-vwrapped="'+kind+'" data-vw-date="'+item.date+'">Continuar · '+frequency[kind]+' · '+esc(date(item.date))+'</button>';
  }
  function countdown(at){const minutes=Math.max(0,Math.ceil((Date.parse(at)-Date.now())/60000));return minutes>=1440?Math.floor(minutes/1440)+' d '+Math.floor(minutes%1440/60)+' h':Math.floor(minutes/60)+' h '+String(minutes%60).padStart(2,'0')+' min'}
- function entry(x,cover,premiere=cover){return '<button type="button" data-vwrapped="'+x.kind+'" class="vw-entry vw-'+x.kind+(cover?' vw-cover':' vw-past')+'"><span class="vw-entry-copy"><small>'+frequency[x.kind]+' · '+(premiere?'ESTRENO':cover?'ÚLTIMA HISTORIA':'HISTORIA')+'</small><strong>'+esc(x.title||tag[x.kind])+'</strong><small>'+esc(range(x.p))+'</small></span>'+illustration(x.kind)+'<span class="vw-arrow" aria-hidden="true">↗</span></button>'}
- function inbox(){const s=E.schedule(),n=s.next;return '<section class="vw-inbox" aria-label="VIVE Wrapped" data-vw-signature="'+s.today+'-'+s.released+'"><div class="vw-inbox-brand"><span>VIVE ORIGINALS</span><b>Wrapped</b></div><p>Powered by VIVE Intelligence</p><div class="vw-special-new"></div><div class="vw-resume-slot">'+continueEntry(s)+'</div><div class="vw-list vw-regular-premieres">'+(s.fresh.length?s.fresh.map(x=>entry(x,true,true)): [entry(s.items[0],true,false)]).join('')+'</div><div class="vw-upcoming vw-upcoming-'+n.kind+'"><small>PRÓXIMO ESTRENO · '+esc(date(n.nextDate))+' · 8:00 a. m.</small><strong>'+esc(E.titles[n.kind])+'</strong><span data-vw-countdown="'+n.nextAt+'">'+countdown(n.nextAt)+'</span></div><details class="vw-archive"><summary>Historial de historias</summary><div class="vw-list">' +s.items.map(x=>entry(x,false)).join('')+'<div class="vw-special-archive"></div></div></details></section>'}
+ const mark='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 18v-6m5 6V6m5 12V9m5 9V4"/></svg>';
+ const calendar='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 11h18"/></svg>';
+ function entry(x,cover,premiere=cover){
+  const label=cover?'<small class="vw-cover-line">'+mark+'<span>Wrapped</span>'+(premiere?'<span class="vw-premiere">Estreno</span>':'')+'</small>':'<small>'+frequency[x.kind]+'</small>';
+  return '<button type="button" data-vwrapped="'+x.kind+'" class="vw-entry vw-'+x.kind+(cover?' vw-cover':' vw-past')+'"><span class="vw-entry-copy">'+label+'<strong>'+esc(x.title||tag[x.kind])+'</strong><small>'+esc(range(x.p))+'</small></span>'+illustration(x.kind)+'<span class="vw-arrow" aria-hidden="true">›</span></button>';
+ }
+ function inbox(){
+  const s=E.schedule(),n=s.next;
+  return '<section class="vw-inbox" aria-label="VIVE Wrapped" data-vw-signature="'+s.today+'-'+s.released+'"><div class="vw-special-new"></div><div class="vw-resume-slot">'+continueEntry(s)+'</div><div class="vw-list vw-regular-premieres">'
+   +(s.fresh.length?s.fresh.map(x=>entry(x,true,true)):[entry(s.items[0],true,false)]).join('')+'</div>'
+   +'<button type="button" class="vw-upcoming" data-vw-upcoming aria-label="Próximo estreno: '+esc(E.titles[n.kind])+' · '+esc(date(n.nextDate))+' · 8:00 a. m."><span class="vw-upcoming-icon">'+calendar+'</span><span class="vw-upcoming-copy"><small>Próximo estreno</small><strong>'+esc(E.titles[n.kind])+'</strong></span><span class="vw-countdown" data-vw-countdown="'+n.nextAt+'">'+countdown(n.nextAt)+'</span><span class="vw-upcoming-arrow" aria-hidden="true">›</span></button>'
+   +'<details class="vw-archive"><summary>Archivo de Wrapped</summary><div class="vw-list">'+s.items.map(x=>entry(x,false)).join('')+'<div class="vw-special-archive"></div></div></details></section>';
+ }
  function refresh(){const s=E.schedule();document.querySelectorAll('.vw-inbox').forEach(el=>{if(!el.getClientRects().length)return;if(el.dataset.vwSignature!==s.today+'-'+s.released&&!el.contains(document.activeElement)){const old=el.querySelector('.vw-archive').open,parent=el.parentElement;el.outerHTML=inbox();const current=parent?.querySelector('.vw-inbox');if(old&&current)current.querySelector('.vw-archive').open=true;return}el.querySelectorAll('[data-vw-countdown]').forEach(x=>{x.textContent=countdown(x.dataset.vwCountdown)})});}
  function refreshEditorial(){
   const panels=[...document.querySelectorAll('.vw-inbox')].filter(el=>el.getClientRects().length);
@@ -76,7 +87,7 @@
    }
   }
  }
- function manageTimer(){const visible=[...document.querySelectorAll('.vw-inbox')].some(x=>x.getClientRects().length);if(visible&&!document.hidden){refresh();host()?.ready?.().then(refreshEditorial).catch(()=>{});if(!timer)timer=setInterval(()=>{if(document.hidden||![...document.querySelectorAll('.vw-inbox')].some(x=>x.getClientRects().length)){clearInterval(timer);timer=null;return}refresh()},30000)}else if(timer){clearInterval(timer);timer=null}}
+ function manageTimer(){const visible=[...document.querySelectorAll('.vw-inbox')].some(x=>x.getClientRects().length);if(visible&&!document.hidden){refresh();host()?.ready?.().then(refreshEditorial).catch(()=>{});if(!timer)timer=setInterval(()=>{if(document.hidden||![...document.querySelectorAll('.vw-inbox')].some(x=>x.getClientRects().length)){clearInterval(timer);timer=null;return}refresh();refreshEditorial()},30000)}else if(timer){clearInterval(timer);timer=null}}
  document.addEventListener('toggle',manageTimer,true);document.addEventListener('visibilitychange',manageTimer);
 
  const money=n=>new Intl.NumberFormat('es-DO',{style:'currency',currency:'DOP',maximumFractionDigits:0}).format(n);
@@ -131,7 +142,15 @@
   };
   d.addEventListener('close',()=>{
    d.remove();
-   if(active===state){active=null;if(!document.querySelector('dialog[open]'))opener?.focus?.()}
+   if(active===state){
+    active=null;
+    const center=opener?.closest?.('.vn-dialog');
+    if(!document.querySelector('.vt-dialog[open]')){
+     const focus=event&&opener?.closest('.vw-special-new')?center?.querySelector('[aria-pressed="true"]'):opener;
+     focus?.focus?.({preventScroll:true});
+    }
+    manageTimer();
+   }
   });
   d.addEventListener('click',ev=>{
    const b=ev.target.closest('button');
@@ -182,8 +201,6 @@
   if(!b)return;
   ev.preventDefault();
   ev.stopPropagation();
-  const bell=b.closest('details.v36-notifications');
-  open(b.dataset.vwrapped,bell?.querySelector('summary')||b,b.dataset.vwDate,b.dataset.vwEvent);
-  if(bell)bell.open=false;
+  open(b.dataset.vwrapped,b,b.dataset.vwDate,b.dataset.vwEvent);
  },true);
- window.ViveWrapped={inbox,open};})();
+ window.ViveWrapped={inbox,open,sync:manageTimer};})();

@@ -698,6 +698,7 @@ function moduleSwitch(page){
 }
 
 /* MOBILE FIRST EXPERIENCE: Same underlying finances, new responsive screens. */
+ICONS.history='<path d="M3 12a9 9 0 1 1 2.4 6.1M3 5v7h7M12 7v5l3 2"/>';
 ICONS.grid='<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>';
 ICONS.apple='<path d="M12.4 6.2C10.1 4.9 7.8 5.5 6.3 7.5c-2.9 4-.5 11.7 2.2 12.9 1.4.6 2.3-.5 3.7-.5 1.6 0 2.5 1.1 3.9.5 1.4-.6 2.9-3.5 3.5-5.9-2.2-.5-3.3-2.2-3.1-4.3.1-1.8 1.3-3.2 2.5-4.1-1.7-1.7-3.2-2.1-5.6-1.1Z" fill="currentColor" stroke="none"/><path d="M12.2 5.9c.1-2.7 1.8-4.4 4.1-4.9-.1 2.1-1.2 4-4.1 4.9Z" fill="currentColor" stroke="none"/>';
 /* V36 · Notificaciones internas, basadas exclusivamente en vencimientos registrados. */
@@ -708,7 +709,6 @@ function v36DueItems(){
 /* V988 · Los avisos de pago de la campanita y del informe abren directamente el pago correspondiente */
 document.addEventListener('click',e=>{
  const b=e.target.closest?.('.v988-notice[data-act],[data-v988-pay]');if(!b)return;
- const det=b.closest('details.v36-notifications');if(det)det.open=false;
  if(b.matches('[data-v988-pay]')){document.getElementById('v216-layer')?.remove();document.body.classList.remove('v216-modal-open');}
 });
 /* V994 · «Limpiar todo»: oculta (en este dispositivo) los avisos presentes; los nuevos reaparecen. */
@@ -722,30 +722,105 @@ function v994ClearAll(){
  try{for(const a of v123CategoryAlerts())c.s.add(v994SpendKey(a));}catch(_){}
  try{localStorage.setItem(V994_KEY,JSON.stringify({d:[...c.d].slice(-400),s:[...c.s].slice(-100),r:[...c.r].slice(-200)}))}catch(_){}
 }
-document.addEventListener('click',e=>{const b=e.target.closest?.('[data-v994-clear]');if(!b)return;e.preventDefault();e.stopPropagation();v994ClearAll();render();toast('Notificaciones eliminadas.')},true);
-function v36Bell(){
- const todayISO=today();
- const all=v36DueItems().sort((a,b)=>a.date.localeCompare(b.date));
- const v994=v994Cleared();
- const visibleAll=all.filter(o=>!v994.d.has(v994DueKey(o)));
- const notices=visibleAll.filter(o=>diffDays(o.date,todayISO)<=14);
- const urgent=visibleAll.filter(o=>diffDays(o.date,todayISO)<=7).length;
- const spendAlerts=v123CategoryAlerts().filter(a=>!v994.s.has(v994SpendKey(a)));
- const svg=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg>`;
- const NI={card:'<rect x="3" y="5.5" width="18" height="13" rx="3"/><path d="M3 10h18M7 15h4"/>',loan:'<path d="M4 20h16M6 20V9l6-4 6 4v11M10 20v-5h4v5"/>',personal:'<circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 11a3 3 0 1 0 0-6M18 14c2 .6 3 2.4 3 5"/>',recurring:'<path d="M20 12a8 8 0 1 1-2.3-5.7M20 4v4h-4"/>',spend:'<path d="M3 17l6-6 4 4 8-8M15 7h6v6"/>',report:'<path d="M6 3h9l4 4v14H6zM14 3v5h5M9 13h6M9 17h6"/>'};
- const nsvg=k=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${NI[k]||NI.recurring}</svg>`;
- const nbank=o=>{try{const it=o.kind==='card'?card(o.ref||o.id):o.kind==='loan'?loan(o.ref||o.id):null;const bk=it&&bank(it.bankId);return bk&&bankLogoSafe(bk.logo)?bankLogoMark(bk,'v1280-bank'):(bk?`<span class="v1280-initials">${sanitize((bk.name||'B').trim().slice(0,2).toUpperCase())}</span>`:'')}catch(_){return ''}};
- const items=notices.slice(0,9).map(o=>{
-   const d=diffDays(o.date,todayISO),kind=o.kind==='card'?'Tarjeta':o.kind==='loan'?'Préstamo':o.kind==='personal'?'Entre personas':'Suscripción';
-   const state=d<0?'Vencido · revisar':d===0?'Vence hoy':d===1?'Mañana':`En ${d} días`;
-   const act=o.action?`data-act="${sanitize(o.action)}" data-id="${sanitize(String(o.ref||o.id))}" data-ccy="${sanitize(String(o.ccy||o.currency||''))}"`:'';
-   return `<button type="button" class="v36-notice v988-notice ${d<0?'v36-expired':d<=3?'v36-urgent':''} v988-${o.kind}" ${act} aria-label="Pagar ${sanitize(o.name)}, ${kind}, ${state}"><span class="v988-nico v1280-ico ${nbank(o)?'has-logo':''}" aria-hidden="true">${nbank(o)||nsvg(o.kind)}</span><div><strong>${sanitize(o.name)}</strong><small>${d<0?(-d>=60?'Vencido · '+Math.floor(-d/30)+' meses':'Vencido · '+(-d)+(-d===1?' día':' días')):d===0?'Vence hoy':d===1?'Vence mañana':'En '+d+' días'}</small></div><span class="v988-amt"><b>${money(o.amount,o.currency,2)}</b><em>Pagar</em></span></button>`;
- }).join('');
- const spendingItems=spendAlerts.map(a=>`<article class="v36-notice v123-bell-alert"><span class="v1280-ico v1280-spend" aria-hidden="true">${nsvg('spend')}</span><div><strong>${sanitize(a.category)} · ${a.kind==='trend'?'Tendencia al alza':'Gasto elevado'}</strong><small>${sanitize(v123AlertText(a))}</small></div></article>`).join('');
- const totalAlerts=urgent+spendAlerts.length;
- const v994HasAny=items||spendingItems;
- return `<details class="v36-notifications"><summary aria-label="Notificaciones: ${totalAlerts} avisos">${svg}${totalAlerts?`<span class="v36-notification-count">${totalAlerts>99?'99+':totalAlerts}</span>`:''}</summary><div class="v36-notice-pop"><div class="v36-notice-head"><div><strong>Notificaciones</strong><small>Tus alertas importantes y tus historias</small></div>${v994HasAny?'<button type="button" class="v994-clear" data-v994-clear="1">Limpiar todo</button>':''}</div>${window.ViveWrapped?.inbox(v216NowParts().date)||''}<button type="button" class="v36-notice vt-link" data-vtime-open>VIVE Time Machine</button>${spendingItems?'<div class="v1280-sec">Alertas de gasto</div>'+spendingItems:''}${items?'<div class="v1280-sec">Próximos vencimientos</div>'+items:''}${v994HasAny?'':'<p class="v994-empty">No tienes notificaciones pendientes.</p>'}<p class="v36-notice-disclaimer">Wrapped se calcula al consultar tus historias. Los recordatorios de vencimientos se configuran por separado.</p></div></details>`;
+function v36NoticeModel(){
+ const now=today(),cleared=v994Cleared();
+ const notices=v36DueItems().filter(o=>!cleared.d.has(v994DueKey(o))).sort((a,b)=>a.date.localeCompare(b.date));
+ const spending=v123CategoryAlerts().filter(a=>!cleared.s.has(v994SpendKey(a)));
+ return {now,notices,spending,count:notices.filter(o=>diffDays(o.date,now)<=7).length+spending.length};
 }
+const v36Badge=count=>count?'<span class="v36-notification-count">'+(count>99?'99+':count)+'</span>':'';
+function v36Bell(){
+ const {count}=v36NoticeModel();
+ const svg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg>';
+ return '<div class="v36-notifications"><button type="button" data-vn-open aria-haspopup="dialog" aria-label="Notificaciones: '+count+' avisos">'+svg+v36Badge(count)+'</button></div>';
+}
+function v36NoticeRows({now,notices,spending}){
+ const rows=notices.map(o=>{
+  const days=diffDays(o.date,now),kind={card:'Tarjeta',loan:'Préstamo',personal:'Entre personas',recurring:'Suscripción'}[o.kind]||'Compromiso';
+  const when=days===0?'Hoy':days===1?'Mañana':prettyDate(o.date);
+  const overdue=days<0?' · Vencido':'';
+  const attrs=o.action?'type="button" data-act="'+sanitize(o.action)+'" data-id="'+sanitize(String(o.ref||o.id))+'" data-ccy="'+sanitize(String(o.ccy||o.currency||''))+'"':'';
+  const tag=o.action?'button':'article';
+  return '<'+tag+' class="vn-row'+(days<=0?' vn-urgent':o.kind==='recurring'?' vn-recurring':'')+'" '+attrs+'>'
+   +'<span class="vn-row-icon" aria-hidden="true">'+icon(o.kind==='recurring'?'calendar':o.kind==='card'?'card':'receipt')+'</span>'
+   +'<span class="vn-row-copy"><strong>'+sanitize(o.name)+'</strong><small>'+kind+overdue+' · '+money(o.amount,o.currency,2)+'</small></span>'
+   +'<time datetime="'+o.date+'">'+sanitize(when)+'</time>'+(o.action?'<span class="vn-chevron" aria-hidden="true">›</span>':'')+'</'+tag+'>';
+ });
+ for(const a of spending)rows.push('<article class="vn-row vn-spending"><span class="vn-row-icon" aria-hidden="true">'+icon('chart')+'</span><span class="vn-row-copy"><strong>'+sanitize(a.category)+' · '+(a.kind==='trend'?'Tendencia al alza':'Gasto elevado')+'</strong><small>'+sanitize(v123AlertText(a))+'</small></span><time datetime="'+now+'">Hoy</time></article>');
+ return rows.join('')||'<p class="vn-empty">No tienes notificaciones pendientes.</p>';
+}
+function v36OpenCenter(opener){
+ if(document.querySelector('.vn-dialog[open]'))return;
+ const dialog=document.createElement('dialog');
+ dialog.className='vn-dialog';
+ dialog.setAttribute('aria-labelledby','vn-title');
+ dialog.innerHTML='<div class="vn-inner"><header class="vn-header"><div class="vn-grabber" aria-hidden="true"></div><div class="vn-heading"><div><h1 id="vn-title">Notificaciones</h1><p>Alertas, Wrapped y accesos rápidos</p></div><button type="button" class="vn-close" data-vn-close aria-label="Cerrar Notificaciones">×</button></div>'
+  +'<div class="vn-filter" role="group" aria-label="Filtrar notificaciones"><button type="button" data-vn-filter="all" aria-pressed="true">Todo</button><button type="button" data-vn-filter="alerts" aria-pressed="false">Alertas</button><button type="button" data-vn-filter="wrapped" aria-pressed="false">Wrapped</button></div></header>'
+  +'<div class="vn-scroll"><div class="vn-grid" data-filter="all"><section class="vn-editorial" aria-label="Wrapped y accesos rápidos">'+(window.ViveWrapped?.inbox()||'')
+  +'<nav class="vn-quick" aria-label="Accesos rápidos"><button type="button" data-vtime-open>'+icon('history')+'<span>Time Machine</span></button><button type="button" data-vn-jump="wrapped">'+icon('chart')+'<span>Ver Wrapped</span></button><button type="button" data-vn-jump="alerts">'+icon('grid')+'<span>Ver todo</span></button></nav></section>'
+  +'<section class="vn-alerts" aria-labelledby="vn-alerts-title"><header><h2 id="vn-alerts-title" tabindex="-1">Alertas</h2><button type="button" class="vn-clear" data-v994-clear>Limpiar todo</button></header><div class="vn-rows"></div><p class="vn-status" role="status"></p></section></div></div></div>';
+ const grid=dialog.querySelector('.vn-grid'),scroll=dialog.querySelector('.vn-scroll');
+ function updateRows(updateBadge=false){
+  const model=v36NoticeModel();
+  dialog.querySelector('.vn-rows').innerHTML=v36NoticeRows(model);
+  dialog.querySelector('.vn-clear').hidden=!model.notices.length&&!model.spending.length;
+  if(updateBadge)for(const bell of document.querySelectorAll('[data-vn-open]')){
+   bell.setAttribute('aria-label','Notificaciones: '+model.count+' avisos');
+   bell.querySelector('.v36-notification-count')?.remove();
+   bell.insertAdjacentHTML('beforeend',v36Badge(model.count));
+  }
+ }
+ function select(filter,showArchive=false){
+  grid.dataset.filter=filter;
+  for(const b of dialog.querySelectorAll('[data-vn-filter]'))b.setAttribute('aria-pressed',String(b.dataset.vnFilter===filter));
+  scroll.scrollTop=0;
+  const archive=dialog.querySelector('.vw-archive');
+  if(archive&&showArchive)archive.open=true;
+  window.ViveWrapped?.sync();
+ }
+ dialog.addEventListener('click',e=>{
+  const b=e.target.closest('button');
+  if(!b)return;
+  if(b.hasAttribute('data-vn-close'))dialog.close();
+  else if(b.dataset.vnFilter)select(b.dataset.vnFilter);
+  else if(b.dataset.vnJump==='wrapped'||b.hasAttribute('data-vw-upcoming')){
+   select('wrapped',true);
+   const summary=dialog.querySelector('.vw-archive summary');
+   summary?.scrollIntoView({block:'nearest'});summary?.focus({preventScroll:true});
+  }else if(b.dataset.vnJump==='alerts'){
+   select('alerts');
+   dialog.querySelector('#vn-alerts-title').focus({preventScroll:true});
+  }else if(b.hasAttribute('data-v994-clear')){
+   v994ClearAll();updateRows(true);
+   dialog.querySelector('#vn-alerts-title').focus({preventScroll:true});
+   dialog.querySelector('.vn-status').textContent='Notificaciones eliminadas.';
+  }else if(b.matches('.vn-row[data-act]')){
+   dialog.close();
+   // The existing document action handler opens the payment form.
+  }
+ });
+ const header=dialog.querySelector('.vn-header');
+ let touch=null;
+ header.addEventListener('pointerdown',e=>{if(e.pointerType==='touch'&&!e.target.closest('button'))touch={x:e.clientX,y:e.clientY}});
+ header.addEventListener('pointercancel',()=>{touch=null});
+ header.addEventListener('pointerup',e=>{
+  if(touch&&e.clientY-touch.y>75&&Math.abs(e.clientX-touch.x)<55)dialog.close();
+  touch=null;
+ });
+ dialog.addEventListener('close',()=>{
+  dialog.remove();window.ViveWrapped?.sync();
+  if(!document.querySelector('dialog[open],.modal-layer'))opener?.focus({preventScroll:true});
+ });
+ updateRows();
+ document.body.append(dialog);
+ dialog.showModal();
+ dialog.querySelector('.vn-close').focus({preventScroll:true});
+ window.ViveWrapped?.sync();
+}
+document.addEventListener('click',e=>{
+ const button=e.target.closest?.('[data-vn-open]');
+ if(button)v36OpenCenter(button);
+});
 function mobileHeader(){
  if(ui.page!=='overview')return '';
  const pageName={pressure:'Presión financiera',overview:'Inicio',cards:'Tarjetas',mobilehub:'Explorar',mobilesearch:'Buscar',settings:'Ajustes',banks:'Instituciones',accounts:'Cuentas',register:'Movimientos',payments:'Compromisos',income:'Ingresos',budget:'Presupuestos',recurring:'Suscripciones',personal:'Entre personas',loans:'Préstamos',certificates:'Certificados',benefits:'Beneficios',advanced:'Analítica',kpis:'Indicadores',patrimony:'Patrimonio',categories:'Categorías'};
@@ -1337,7 +1412,7 @@ function v6WalletTransactionDetail(id){
  ${t.type==='card_advance'?item('Efectivo recibido',money(t.advanceNet,t.currency,2))+item('Comisión · '+num(t.advanceFeePct).toFixed(2)+'%',money(t.advanceFee,t.currency,2))+item('Deuda adicional',money(t.amount,t.currency,2))+item('Destino',sanitize(account(t.toAccountId)?.name||'Cuenta no encontrada')):''}
  ${t.paymentChannel?item('Canal',sanitize(String(t.paymentChannel))):''}
  </div><p class="v6-wallet-detail-hint">La consulta no cambia importes ni saldos. Al editar se utilizará el formulario de Movimientos.</p>`;
- document.querySelectorAll('.v36-notifications[open]').forEach(n=>n.open=false);
+
  const root=document.getElementById('modal-root');
  if(!root)return;
  root.innerHTML=`<div class="modal-layer v6-wallet-detail-layer" data-backdrop="true"><section class="modal v6-wallet-detail-modal" role="dialog" aria-modal="true" aria-label="Detalle del movimiento"><header class="modal-head"><h2>Detalle del movimiento</h2><button type="button" class="close" data-act="closeModal" aria-label="Cerrar">×</button></header><div class="v6-wallet-detail-content">${content}</div><footer class="v6-wallet-detail-actions"><button type="button" class="btn ghost" data-act="closeModal">Cerrar</button>${v5NeedsAppleCategory(t)?`<button type="button" class="btn v9-apple-classify" data-v7-apple-id="${sanitize(String(t.id))}">${icon('check')} Categorizar compra</button>`:''}${editable?`<button type="button" class="btn soft" data-act="v6WalletEditTransaction" data-id="${sanitize(String(t.id))}">${icon('edit')} Editar movimiento</button>`:''}</footer></section></div>`;
@@ -5064,7 +5139,7 @@ const pages={score:()=>vwmHead('Vive Score')+(window.ViveScoreHost?window.ViveSc
 const formItem=(name,label,value='',type='text',attrs='')=>`<label><span class="filter-label">${label}</span><input class="field" type="${type}" name="${name}" value="${sanitize(value)}" ${attrs}/></label>`;
 const formSelect=(name,label,opts,val='',attrs='')=>`<label><span class="filter-label">${label}</span><select class="field" name="${name}" ${attrs}>${opts.map(o=>{let [v,l]=Array.isArray(o)?o:[o,o];return `<option value="${sanitize(v)}" ${String(v)===String(val)?'selected':''}>${sanitize(l)}</option>`}).join('')}</select></label>`;
 const para=(s)=>`<p class="form-note form-full">${s}</p>`;
-function modal(title,body,formid,wide=false){document.querySelectorAll('.v36-notifications[open]').forEach(n=>n.open=false);const support=['transactionForm','annualFeeForm','rewardReceivedForm','benefitLedgerForm','recurringPaymentConfirmForm'].includes(formid);const mobileNative=['transactionForm','accountForm','cardForm','loanForm','certificateForm','personalLoanForm','personalPaymentForm','manualBenefitForm','benefitLedgerForm','benefitRuleForm','annualFeeForm','rewardReceivedForm','perkUsageForm','cashWalletForm'].includes(formid);const submitLabel=mobileNative&&isMobileViewport()?'Completar':'Guardar registro';const statusBlock=support?`<div class="form-full confirm-status"><label for="postingStatus">ESTADO DEL REGISTRO</label><select class="field" id="postingStatus" name="postingStatus"><option value="confirmed">Confirmado · contabilizar ahora</option><option value="pending">Pendiente de confirmar · no afectar saldos</option></select><small>Los pendientes permanecerán en Movimientos / Por confirmar. No reducen cuentas ni deudas hasta su confirmación.</small></div>`:'';document.getElementById('modal-root').innerHTML=`<div class="modal-layer" data-backdrop="true"><div class="modal v204-form-dialog ${wide?'wide':''} ${mobileNative?'mobile-native-modal':''}" data-v204-form="${sanitize(formid)}" role="dialog" aria-modal="true" aria-label="${sanitize(title)}"><div class="modal-head"><h2>${sanitize(title)}</h2><button class="close" data-act="closeModal" type="button" aria-label="Cerrar">×</button></div><form id="${formid}"><div class="form-grid">${body}${statusBlock}</div><div id="formError" class="input-error"></div><div class="form-foot"><button class="btn ghost" type="button" data-act="closeModal">Cancelar</button><button class="btn" type="submit">${icon('check')} ${submitLabel}</button></div></form></div></div>`}
+function modal(title,body,formid,wide=false){const support=['transactionForm','annualFeeForm','rewardReceivedForm','benefitLedgerForm','recurringPaymentConfirmForm'].includes(formid);const mobileNative=['transactionForm','accountForm','cardForm','loanForm','certificateForm','personalLoanForm','personalPaymentForm','manualBenefitForm','benefitLedgerForm','benefitRuleForm','annualFeeForm','rewardReceivedForm','perkUsageForm','cashWalletForm'].includes(formid);const submitLabel=mobileNative&&isMobileViewport()?'Completar':'Guardar registro';const statusBlock=support?`<div class="form-full confirm-status"><label for="postingStatus">ESTADO DEL REGISTRO</label><select class="field" id="postingStatus" name="postingStatus"><option value="confirmed">Confirmado · contabilizar ahora</option><option value="pending">Pendiente de confirmar · no afectar saldos</option></select><small>Los pendientes permanecerán en Movimientos / Por confirmar. No reducen cuentas ni deudas hasta su confirmación.</small></div>`:'';document.getElementById('modal-root').innerHTML=`<div class="modal-layer" data-backdrop="true"><div class="modal v204-form-dialog ${wide?'wide':''} ${mobileNative?'mobile-native-modal':''}" data-v204-form="${sanitize(formid)}" role="dialog" aria-modal="true" aria-label="${sanitize(title)}"><div class="modal-head"><h2>${sanitize(title)}</h2><button class="close" data-act="closeModal" type="button" aria-label="Cerrar">×</button></div><form id="${formid}"><div class="form-grid">${body}${statusBlock}</div><div id="formError" class="input-error"></div><div class="form-foot"><button class="btn ghost" type="button" data-act="closeModal">Cancelar</button><button class="btn" type="submit">${icon('check')} ${submitLabel}</button></div></form></div></div>`}
 /* F04 · Importes: todo elemento hoja con una cifra RD$/US$ recibe .vx-money (nunca se encoge ni se recorta; cifras tabulares). Una pasada por render, sin observadores. */
 const F04_MONEY=/^\s*[-−+]?\s?(RD\$|US\$|\$)\s?[-−+]?\s?\d[\d.,]*\s?[KMB]?\s*(%|↗|↘)?(\s*(·|de|\/)\s*[-−+]?\s?(RD\$|US\$|\$)\s?\d[\d.,]*\s?[KMB]?)?\s*(%|↗|↘)?\s*$/;
 function f04MarkMoney(root){if(!root)return;root.querySelectorAll('strong,b,span,small,em,p,td,dd,i,h3,h4').forEach(e=>{if(e.childElementCount===0&&e.textContent.length<40&&F04_MONEY.test(e.textContent))e.classList.add('vx-money')})}
@@ -5924,7 +5999,7 @@ function renderMobileQuickRegister(){
  const chosenExtra=state.preset&&extra.includes(state.preset);
  const presetsHtml=presets.length?`<div class="mqr-presets">${presets.map(([k,t])=>`<button type="button" class="mqr-chip ${state.preset===k?'active':''}" data-mqr-act="preset" data-id="${sanitize(k)}">${t}</button>`).join('')}${chosenExtra?`<button type="button" class="mqr-chip active" data-mqr-act="moreCategories" aria-label="Elegir otra categoría">${sanitize(state.preset)}</button>`:`<button type="button" class="mqr-chip mqr-plus" data-mqr-act="moreCategories" aria-label="Más categorías">+</button>`}</div>`:'';
  const extraPanel=state.showCategories&&extra.length?`<div class="mqr-extra-categories" role="group" aria-label="Más categorías">${extra.map(k=>`<button type="button" class="mqr-extra-category ${state.preset===k?'active':''}" data-mqr-act="preset" data-id="${sanitize(k)}">${sanitize(k)}</button>`).join('')}</div>`:'';
- document.querySelectorAll('.v36-notifications[open]').forEach(el=>el.open=false);
+
  document.getElementById('modal-root').innerHTML=`<div class="modal-layer mqr-layer" data-backdrop="true"><section class="modal mqr-modal" role="dialog" aria-modal="true" aria-label="Registrar un movimiento"><header class="modal-head mqr-header"><h2>Nuevo movimiento</h2><button type="button" class="close" data-act="closeModal" aria-label="Cerrar">×</button></header><div class="mqr-scroll"><div class="mqr-shell"><div class="v141-quick-heading"><div class="mqr-step-caption">PASO 1 DE 3 · IMPORTE</div><details class="v141-quick-operations"><summary aria-label="Abrir más operaciones">Más operaciones <span aria-hidden="true">⌄</span></summary><div class="v141-quick-operations-menu" role="group" aria-label="Otros tipos de registro"><button type="button" data-act="guidedFlow" data-mode="service">${icon('receipt')}<span><strong>Pagar servicio</strong><small>Facturas y servicios</small></span>${icon('arrow')}</button><button type="button" data-act="guidedFlow" data-mode="cardpay">${icon('card')}<span><strong>Pagar tarjeta</strong><small>Corte, total o abono</small></span>${icon('arrow')}</button><button type="button" data-v354-act="open" data-v355="fast">${icon('users')}<span><strong>Movimiento rápido</strong><small>Compré para alguien · cuánto me dio</small></span>${icon('arrow')}</button></div></details></div><nav class="mqr-segment" aria-label="Qué deseas registrar">${kinds}</nav>${sub}<div class="mqr-display"><small>¿Cuánto ${state.mode==='income'?'recibiste':state.mode==='spend'?'gastaste':'vas a transferir'}?</small><div class="mqr-amount-native"><span aria-hidden="true">RD$</span><input id="mqrAmountInput" aria-label="Importe del movimiento" type="text" inputmode="decimal" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="0.00" value="${sanitize(state.amount)}"></div><span>Toca el importe para usar el teclado del teléfono</span></div>${state.mode==='spend'?'<div id="v80QuickAssessment" aria-live="polite"></div>':''}${presetsHtml}${extraPanel}</div></div><footer class="mqr-bottom"><button class="mqr-primary" type="button" data-mqr-act="continue">Siguiente ${icon('arrow')}</button></footer></section></div>`;
  v80RefreshQuickAdvisor();
 }
@@ -12685,7 +12760,7 @@ function v82ForecastMarkup(compact=false){
 
 
 function v82OpenForecast(){
- document.querySelectorAll('.v36-notifications[open]').forEach(n=>n.open=false);
+
  document.getElementById('modal-root').innerHTML=`<div class="modal-layer" data-backdrop="true"><section class="modal wide v82-forecast-modal" role="dialog" aria-modal="true" aria-label="Proyección del cierre del mes"><div class="modal-head"><h2>Proyección de cierre</h2><button type="button" class="close" data-act="closeModal" aria-label="Cerrar">×</button></div><div class="v82-forecast-modal-body">${v82ForecastMarkup()}</div></section></div>`;
 }
 document.addEventListener('click',event=>{
@@ -12707,7 +12782,7 @@ function v85OpenCapacity(kind='capacity',id=''){
  const d=v89DebtCapacity();let selected='';
  if(kind==='card'&&id){const c=card(id);if(c){const util=v85CreditUtilization(c);selected=`<div class="v85-card-context"><small>${sanitize(c.name)} · Utilización del límite</small><strong>${v85Pct(util)}</strong><span>El crédito utilizado no equivale al porcentaje mensual de endeudamiento.</span></div>`;}}
  const status=d.ratio===null?'Faltan ingresos proyectados':d.ratio>100?'Tus compromisos superan tus ingresos':d.ratio===100?'El 100% de tus ingresos está comprometido':d.ratio>=80?'Capacidad de pago muy ajustada':'Compromisos dentro de los ingresos previstos';
- document.querySelectorAll('.v36-notifications[open]').forEach(n=>n.open=false);
+
  document.getElementById('modal-root').innerHTML=`<div class="modal-layer" data-backdrop="true"><section class="modal wide v85-capacity-modal" role="dialog" aria-modal="true" aria-label="Detalle de endeudamiento"><div class="modal-head"><div class="v175-capacity-heading"><small>CONTROL DE OBLIGACIONES · ${sanitize(d.f.period)}</small><h2>Capacidad de endeudamiento</h2><p>¿Qué parte de mis ingresos debo pagar?</p></div><button type="button" class="close" data-act="closeModal" aria-label="Cerrar">×</button></div><div class="v85-capacity-body"><p class="v85-lead">${sanitize(status)} · Compromisos del mes frente a ingresos proyectados.</p>${selected}<div class="v89-capacity-feature v85-risk-${d.risk}"><span>INGRESOS COMPROMETIDOS</span><strong>${v85Pct(d.ratio)}</strong><p>${status}</p></div><div class="v85-capacity-metrics"><div><span>Ingresos proyectados</span><strong>${money(d.income)}</strong><small>Registrados + cobros previstos</small></div><div><span>Compromisos del mes</span><strong>${money(d.monthly)}</strong><small>Cuotas, tarjetas, suscripciones y personas</small></div></div><div class="v85-capacity-metrics v85-mini"><div><span>${d.balance!==null&&d.balance<0?'Déficit del mes':'Disponible luego de pagar'}</span><strong class="${d.balance!==null&&d.balance<0?'v85-over':''}">${d.balance===null?'—':money(Math.abs(d.balance))}</strong></div><div><span>Utilización de ingresos</span><strong class="${d.ratio!==null&&d.ratio>100?'v85-over':''}">${v85Pct(d.ratio)}</strong></div></div>${v89CapacityExplanation(d)}</div></section></div>`;
 }
 document.addEventListener('click',ev=>{const b=ev.target.closest?.('[data-v85-action]');if(!b)return;const kind=b.dataset.v85Action;if(kind==='capacity'||kind==='card'){ev.preventDefault();ev.stopPropagation();v85OpenCapacity(kind,b.dataset.id||'');}},true);
@@ -14002,7 +14077,7 @@ function v71SearchView(query){
 }
 function v71SearchOpen(){
  const existing=document.getElementById('v71-search-overlay');if(existing){existing.querySelector('input')?.focus();return}
- document.querySelectorAll('.v36-notifications[open]').forEach(x=>x.open=false);
+
  // Se calcula una vez por apertura; no se normaliza todo el libro en cada tecla.
  v149SearchIndex=v71SearchEntries().map(x=>({...x,_v150Hay:v71SearchNormalize([x.title,x.sub,x.meta].join(' ')),_v150Title:v71SearchNormalize(x.title)}));
  v150SearchReturnFocus=document.activeElement;
@@ -14576,7 +14651,7 @@ document.addEventListener('focusout',e=>{
  function renderRows(items){return items.length?`<div class="v186-deep-rows">${items.map(x=>`<button type="button" class="v186-deep-row" data-act="v186Go" data-next="${sanitize(x.action||'navigate')}" data-id="${sanitize(String(x.id||''))}"><span><strong>${sanitize(x.title)}</strong><small>${sanitize(x.subtitle||'')}</small></span><b class="${Number(x.amount)<0?'is-negative':''}">${fmt(x.amount,x.cur)}</b>${icon('arrow')}</button>`).join('')}</div>`:'<p class="v186-deep-note">No hay productos o movimientos registrados en esta categoría.</p>'}
  function open(kind){
   const data=view(kind),holder=document.getElementById('modal-root');if(!holder)return;
-  document.querySelectorAll('.v36-notifications[open]').forEach(x=>x.open=false);
+
   holder.innerHTML=`<div class="v186-deep-layer" role="presentation"><section class="v186-deep-dialog" role="dialog" aria-modal="true" aria-labelledby="v186-deep-title"><header class="v186-deep-head"><div><small>EXPLORADOR FINANCIERO · ${sanitize(ui.page||'Resumen')}</small><h2 id="v186-deep-title">${sanitize(data.title)}</h2><p>${sanitize(data.hint)}</p></div><button type="button" data-act="closeModal" class="v186-deep-close" aria-label="Cerrar desglose">×</button></header><div class="v186-deep-summary">${data.sums.map(([key,n])=>metric(key,n)).join('')}</div>${data.groups.map(g=>`<section class="v186-deep-section"><h3>${sanitize(g.name)} · ${g.items.length}</h3>${renderRows(g.items)}</section>`).join('')}<footer class="v186-deep-actions">${data.actions.map(([label,route])=>`<button type="button" data-act="v186Go" data-next="navigate" data-id="${sanitize(route)}" class="btn sm soft">${sanitize(label)} ${icon('arrow')}</button>`).join('')}</footer><p class="v186-deep-note">${sanitize(data.memo)}</p></section></div>`;
   holder.querySelector('.v186-deep-close')?.focus({preventScroll:true});
  }
@@ -15455,7 +15530,7 @@ document.addEventListener('click',e=>{
    const kind=action.dataset.kind||'corte',end=action.dataset.end||'';
    if(end && !v246EligibleEvent(kind,end))return;
    if(action.dataset.reportId)v246MarkReportRead(action.dataset.reportId);
-   document.querySelector('.v36-notifications[open]')?.removeAttribute('open');
+
    v216Modal(kind,end);
   }
   if(command==='close')v216Close();
@@ -16625,9 +16700,7 @@ document.addEventListener('click',function(event){
  if(target.hasAttribute('data-v726-profile-cancel')){v726ProfileEditing=false;render();return}
  if(target.hasAttribute('data-v726-open-apple-pay')){v242SettingsPane='integrations';ui.page='settings';render();window.scrollTo(0,0);return}
  if(target.hasAttribute('data-v726-open-bell')){
-   const bell=document.querySelector('.v36-notifications');
-   if(bell&&bell.tagName.toLowerCase()==='details'){bell.open=true;bell.querySelector('summary')?.focus()}
-   else toast('Consulta tus avisos desde la campanita del encabezado.');
+   v36OpenCenter(target);
    return;
  }
  const kind=target.dataset.v726LinkedOpen||target.dataset.v726LinkedToggle;
@@ -16824,16 +16897,6 @@ function v246MarkReportRead(id){
  if(!id||v246ReadIds().includes(id))return;
  db.settings.v246ReadReportIds=[id,...v246ReadIds()].slice(0,160);
  persist();
- const urgent=v36DueItems().filter(o=>diffDays(o.date,today())<=7).length;
- const total=urgent+v123CategoryAlerts().length+v246UnreadReportCount();
- document.querySelectorAll('.v36-notifications>summary').forEach(notif=>{
-  notif.setAttribute('aria-label',`Notificaciones: ${total} avisos`);
-  let badge=notif.querySelector('.v36-notification-count');
-  if(total){
-   if(!badge){badge=document.createElement('span');badge.className='v36-notification-count';notif.append(badge);}
-   badge.textContent=total>99?'99+':String(total);
-  }else badge?.remove();
- });
  document.querySelectorAll(`[data-report-id="${id}"]`).forEach(b=>{b.classList.remove('v246-unread');b.querySelector('.v246-new')?.remove();});
 }
 /* Retención: los informes y cortes de la campanita solo se conservan 6 días (la última semana); lo anterior se elimina de la lista y de los marcados como leídos. */
@@ -20654,20 +20717,6 @@ window.addEventListener('submit',e=>{const f=e.target;if(f?.id!=='transactionFor
 })();
 
 
-/* V64 · El panel de notificaciones solo permanece abierto durante interacción explícita. */
-document.addEventListener('pointerdown',function(ev){
- const bell=document.querySelector('.v36-notifications[open]');
- if(bell&&!bell.contains(ev.target))bell.open=false;
-},true);
-document.addEventListener('keydown',function(ev){
- if(ev.key==='Escape'){const bell=document.querySelector('.v36-notifications[open]');if(bell){bell.open=false;bell.querySelector('summary')?.focus();}}
-},true);
-
-
-/* El panel de avisos se repliega al iniciar un movimiento o desplazarse. */
-window.addEventListener('scroll',()=>{document.querySelectorAll('.v36-notifications[open]').forEach(n=>n.open=false)},{passive:true});
-document.addEventListener('click',event=>{if(!event.target.closest('.v36-notifications'))document.querySelectorAll('.v36-notifications[open]').forEach(n=>n.open=false)},true);
-;
 /* ==== script: vive-v135-progressive-secondary ==== */
 /* Progressive enhancement for SIMPLE secondary forms only.
    Moves optional original controls; keeps IDs, values, listeners, validation and existing saves. */
@@ -23777,7 +23826,7 @@ window.__v866Runners.v865=run;
   /* Al cambiar de tema se muestra enseguida un instante nuevo de ese tema. */
   state.history=state.history.slice(0,state.pos+1);state.pos=state.history.length-1;next();}
  document.addEventListener('click',e=>{
-   const a=e.target.closest('[data-vive-open]');if(a){e.preventDefault();const details=a.closest('details.v36-notifications');if(details)details.open=false;open(a);return;}
+   const a=e.target.closest('[data-vive-open]');if(a){e.preventDefault();open(a);return;}
    if(e.target.closest('[data-vive-close]'))close();
    else if(e.target.closest('[data-vive-next]'))next();
    else if(e.target.closest('[data-vive-prev]'))prev();

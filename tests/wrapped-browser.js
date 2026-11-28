@@ -6,16 +6,16 @@ const open=require('./harness');
  try{for(const [w,h] of [[320,700],[390,844],[1440,900]]){const {ctx,p}=await open(b,w,h);try{
  await p.evaluate(()=>window.__T.go('overview'));
  await p.evaluate(()=>{window.ViveWrappedHost.events=()=>[];window.ViveWrappedHost.editorial=()=>({});window.ViveWrappedHost.special=()=>[];window.ViveWrappedHost.amounts=()=>({count:14,income:12000,expense:8200,net:3800,byCategory:{Comida:4200,Transporte:2600,Otros:1400}})});
- const bell=p.locator('.v36-notifications:visible').first();await bell.locator('summary').first().click();
+ await p.locator('[data-vn-open]:visible').first().click();
+ const bell=p.locator('.vn-dialog');await bell.locator('[data-vn-filter="wrapped"]').click();
  assert.equal(await bell.locator('.vw-archive [data-vwrapped]').count(),5);
  assert.equal(await bell.locator('[data-v216="report"]').count(),0);
  const fresh=await p.evaluate(()=>window.ViveWrappedEngine.schedule().fresh.length);
  assert.equal(await bell.locator('.vw-cover').count(),Math.max(1,fresh));
  const between=await p.evaluate(()=>{const E=window.ViveWrappedEngine,original=E.schedule;try{E.schedule=()=>original(new Date('2026-11-28T11:59:59Z'));const el=document.createElement('div');el.innerHTML=window.ViveWrapped.inbox();return {count:el.querySelectorAll('.vw-cover').length,label:el.querySelector('.vw-cover')?.textContent,archive:el.querySelectorAll('.vw-archive [data-vwrapped]').length}}finally{E.schedule=original}});
- assert.equal(between.count,1);assert.match(between.label,/ÚLTIMA HISTORIA/);assert.equal(between.archive,5);
+ assert.equal(between.count,1);assert.match(between.label,/Wrapped/);assert.doesNotMatch(between.label,/Estreno/);assert.equal(between.archive,5);
  await bell.locator('.vw-cover').first().click();await p.locator('dialog.vw-dialog').waitFor({state:'visible'});await p.locator('[data-vw-close]').click();await p.locator('dialog.vw-dialog').waitFor({state:'detached'});
  for(const kind of ['day','week','month','quarter','year']){
- if(!await bell.locator('summary').first().evaluate(x=>x.parentElement.open))await bell.locator('summary').first().click();
  const archive=bell.locator('.vw-archive');if(!await archive.evaluate(x=>x.open))await archive.locator('summary').click();
  await archive.locator('[data-vwrapped="'+kind+'"]').click();const d=p.locator('dialog.vw-dialog');
  await d.waitFor({state:'visible'});assert.equal(await d.getAttribute('data-kind'),kind);assert.ok(await d.locator('#vw-title').innerText());
