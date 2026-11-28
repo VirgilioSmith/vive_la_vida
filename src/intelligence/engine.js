@@ -79,7 +79,7 @@
    confidence:Math.max(.1,Math.min(1,o.confidence==null?.8:o.confidence)),
    title:o.title,explanation:o.explanation,
    action:o.action||null,modules:o.modules||['overview'],
-   essential:!!o.essential,urgency:num(o.urgency),magnitude:num(o.magnitude),
+   entity:o.entity||null,essential:!!o.essential,urgency:num(o.urgency),magnitude:num(o.magnitude),
    fingerprint:o.fingerprint||String(Math.round(num(o.magnitude)))
   };
  }
@@ -453,6 +453,44 @@
  });
 
  /* Total de reglas (verificable) */
+ /* Escenarios verificables sobre los datos ya cargados; nunca instrucciones de pago. */
+ rule('crd.util-target','credit',c=>{
+  if(!c.q.hasFx)return null;
+  return hot(c).filter(x=>x.limitDop>0&&x.debtDop>.3*x.limitDop).map(x=>{
+   const reduction=x.debtDop-.3*x.limitDop;
+   return make(c,{rule:'crd.util-target',key:x.id,entity:{kind:'cards',id:x.productId||x.id},engine:'credit',priority:'opportunity',kind:'projection',confidence:.9,
+    title:x.name+' · escenario de utilización al 30 %',
+    explanation:'Una reducción hipotética de '+fmt(reduction,2)+' dejaría esta línea en 30 % si no cambian deuda ni límite. Es una referencia de planificación, no una garantía de score ni una instrucción de pago.',
+    evidence:[['Deuda registrada',fmt(x.debtDop,2),'tarjetas'],['Límite registrado',fmt(x.limitDop,2),'tarjetas'],['Reducción hipotética',fmt(reduction,2),'cálculo de escenario']],
+    modules:['cards','wallet','overview'],magnitude:reduction,ttl:3,action:go('Ver tarjetas','wallet')});
+  });
+ });
+ rule('crd.portfolio-concentration','credit',c=>{
+  if(!c.q.hasFx)return null;
+  const groups=new Map();
+  for(const x of c.snap.cards||[]){const id=x.productId||x.id;if(!id||!(x.debtDop>0))continue;const g=groups.get(id)||{name:x.name,debt:0};g.debt+=x.debtDop;groups.set(id,g)}
+  if(groups.size<2)return null;
+  const total=[...groups.values()].reduce((s,x)=>s+x.debt,0),top=[...groups.values()].sort((a,b)=>b.debt-a.debt)[0];
+  if(!(total>0)||top.debt/total<.75)return null;
+  return make(c,{rule:'crd.portfolio-concentration',engine:'credit',priority:'info',kind:'interpretation',confidence:.9,
+   title:top.name+' concentra '+fmtP(100*top.debt/total,1)+' de la deuda de tarjetas',
+   explanation:'Identifica la exposición principal. La prioridad de pago requiere además tasas, vencimientos y liquidez.',
+   evidence:[['Deuda concentrada',fmt(top.debt,2),'tarjetas'],['Deuda total',fmt(total,2),'tarjetas']],modules:['cards','wallet','overview'],ttl:3});
+ });
+ rule('pat.subscription-annual','prediction',c=>{
+  if(!c.q.hasFx)return null;
+  const rows=(c.snap.recurring||[]).filter(x=>x.monthlyDop>0),monthly=rows.reduce((s,x)=>s+x.monthlyDop,0);
+  if(!(monthly>0))return null;
+  const result=[make(c,{rule:'pat.subscription-annual',engine:'prediction',priority:'info',kind:'projection',confidence:.85,
+   title:fmt(monthly*12,2)+' de costo recurrente anual equivalente',
+   explanation:'Escenario de doce meses si permanecen las tarifas y frecuencias actuales. No equivale a cargos realizados ni presupone renovaciones garantizadas.',
+   evidence:[['Equivalente mensual',fmt(monthly,2),'recurrentes'],['Escenario anual',fmt(monthly*12,2),'cálculo de escenario']],modules:['recurring'],ttl:7})];
+  if(rows.length>=2){const top=[...rows].sort((a,b)=>b.monthlyDop-a.monthlyDop)[0];result.push(make(c,{rule:'pat.subscription-annual',key:top.id,entity:{kind:'recurring',id:top.id},engine:'opportunity',priority:'opportunity',kind:'projection',confidence:.8,
+   title:'Escenario: reducir a la mitad el costo de '+top.name,
+   explanation:'Si existe un plan compatible y se mantiene el resto de los compromisos, reducir esta tarifa a la mitad liberaría '+fmt(top.monthlyDop*6,2)+' en doce meses.',
+   evidence:[['Costo mensual',fmt(top.monthlyDop,2),'recurrentes'],['Ahorro anual hipotético',fmt(top.monthlyDop*6,2),'cálculo de escenario']],modules:['recurring'],magnitude:top.monthlyDop*6,ttl:7}));}
+  return result;
+ });
  const RULES=R;
 
  /* ==========================================================================
@@ -534,9 +572,9 @@
    vis.sort((a,b)=>PRIORITY[a.priority].rank-PRIORITY[b.priority].rank||b.score-a.score);
    const out=[];let rec=0;const perEngineInfo={};
    for(const f of vis){
-    if(f.priority==='recognition'){if(rec>=1)continue;rec++}
-    if(f.priority==='info'){perEngineInfo[f.engine]=(perEngineInfo[f.engine]||0)+1;if(perEngineInfo[f.engine]>2)continue}
-    out.push(f);if(out.length>=o.max)break;
+    if(!o.exhaustive&&f.priority==='recognition'){if(rec>=1)continue;rec++}
+    if(!o.exhaustive&&f.priority==='info'){perEngineInfo[f.engine]=(perEngineInfo[f.engine]||0)+1;if(perEngineInfo[f.engine]>2)continue}
+    out.push(f);if(!o.exhaustive&&out.length>=o.max)break;
    }
    return out;
   }

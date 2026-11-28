@@ -20422,7 +20422,7 @@ function vIntelForMomentos(){
   return d.discoveries.filter(h=>!h.repeat&&!(crit&&h.valence==='positive')).slice(0,2).map(h=>({id:h.key,kicker:h.kicker,text:h.summary,valence:h.valence,go:(h.action&&h.action.target)||'overview',label:(h.action&&h.action.label)||'Ver más'}));
  }catch(_){return []}
 }
-window.__viveIntel=Object.freeze({run:vIntelRun,discover:vIntelDiscover,discFeedback:vIntelDiscFeedback,memOp:vIntelMemOp,simulate:vIntelSimulate,strategic:vIntelStrategic,audit:()=>{const d=vIntelDiscover();return d&&{audit:d.audit,strategy:d.strategy&&d.strategy.benchmark,governance:d.strategy&&d.strategy.governance}},answer:vIntelAnswer,forMomentos:vIntelForMomentos,memory:vIntelMem,invalidate:()=>v99Invalidate(),feedback:vIntelFeedback,setPref:vIntelSetPref,snapshot:vIntelSnapshot,prefs:()=>window.ViveIntelligence.engines.learning.normalize(db.settings.intelligence).prefs,
+window.__viveIntel=Object.freeze({state:()=>db.settings?.intelligence,run:vIntelRun,discover:vIntelDiscover,discFeedback:vIntelDiscFeedback,memOp:vIntelMemOp,simulate:vIntelSimulate,strategic:vIntelStrategic,audit:()=>{const d=vIntelDiscover();return d&&{audit:d.audit,strategy:d.strategy&&d.strategy.benchmark,governance:d.strategy&&d.strategy.governance}},answer:vIntelAnswer,forMomentos:vIntelForMomentos,memory:vIntelMem,invalidate:()=>v99Invalidate(),feedback:vIntelFeedback,setPref:vIntelSetPref,snapshot:vIntelSnapshot,prefs:()=>window.ViveIntelligence.engines.learning.normalize(db.settings.intelligence).prefs,
  go:id=>{const b=document.createElement('button');b.type='button';b.dataset.act='navigate';b.dataset.id=id;b.hidden=true;document.body.append(b);b.click();b.remove()},
  render:()=>render(),entity:()=>{try{const d=ui.vBanksProductDetail;if(ui.page==='banks'&&d&&d.id)return {kind:d.kind,id:d.id};if((ui.page==='cards'||ui.page==='wallet'&&ui.walletCardDetail)&&ui.cardId)return {kind:'cards',id:ui.cardId};if(ui.page==='wallet'&&ui.vWalletPcCard&&ui.vWalletPcCard!=='all'&&ui.vWalletPcOpenedCard)return {kind:'cards',id:ui.vWalletPcCard};if(ui.page==='personal'&&(ui.v56LoanId||ui.v56ContactId))return {kind:'personal',id:ui.v56LoanId||ui.v56ContactId,contact:!!ui.v56ContactId&&!ui.v56LoanId}}catch(_){}return null},page:()=>{if(ui.page==='banks'){const t=ui.vBanksPcProduct;if(t==='accounts'||t==='loans'||t==='certificates'||t==='cards')return t}return ui.page},toast:m=>toast(m)});
 /* Carga bajo demanda: motor, interfaz y estilos se descargan una sola vez, en reposo, la primera vez que se muestra una página con Intelligence. */
@@ -20434,7 +20434,7 @@ function vIntelEnsure(){
  vIntelLoading=new Promise(done=>{
   try{const css=document.createElement('link');css.rel='stylesheet';css.href='./src/intelligence/intelligence.css?v=18';document.head.appendChild(css)}catch(_){}
   const load=src=>new Promise((ok,ko)=>{const el=document.createElement('script');el.src=src;el.onload=ok;el.onerror=ko;document.head.appendChild(el)});
-  load('./src/intelligence/engine.js?v=10').then(()=>load('./src/intelligence/stats.js?v=2')).then(()=>load('./src/intelligence/strategy.js?v=6')).then(()=>load('./src/intelligence/discovery.js?v=11')).then(()=>load('./src/intelligence/ui.js?v=33')).then(()=>done()).catch(()=>done());
+  load('./src/intelligence/engine.js?v=11').then(()=>load('./src/intelligence/stats.js?v=2')).then(()=>load('./src/intelligence/strategy.js?v=6')).then(()=>load('./src/intelligence/discovery.js?v=11')).then(()=>load('./src/intelligence/ui.js?v=34')).then(()=>done()).catch(()=>done());
  });
  return vIntelLoading;
 }

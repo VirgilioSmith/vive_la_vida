@@ -14,7 +14,14 @@
  const spark='<svg class="vi-spark" viewBox="0 0 24 24" aria-hidden="true"><path class="vi-spark-a" d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><circle class="vi-spark-b" cx="19" cy="17" r="1.6"/><circle class="vi-spark-c" cx="5.5" cy="18" r="1.1"/></svg>';
  let open=null;
 
- function forModule(res,mods){return res.findings.filter(f=>f.modules.some(m=>mods.includes(m)))}
+ function activeEntity(){try{return B().entity?.()||null}catch(_){return null}}
+ function belongs(f,ent){return !!f.entity&&f.entity.kind===ent.kind&&String(f.entity.id)===String(ent.id)}
+ function forModule(res,mods){
+  const ent=activeEntity(),strat=STRATEGIC.has(B().page()),engine=window.ViveIntelligence.engines;
+  const all=engine.priority.select(res.all||res.findings,engine.learning.normalize(B().state?.()),res.meta.today,{exhaustive:true});
+  if(strat)return all;
+  return all.filter(f=>f.modules.some(m=>mods.includes(m))&&(!ent||belongs(f,ent))&&(f.modules.length<5||['payments','pressure'].includes(B().page())));
+ }
 
  const CHEV='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>';
  /* Línea de inteligencia: UN solo componente para todas las vistas. items = hallazgos reales ya ordenados por relevancia; total = cuántos hay disponibles. */
@@ -87,17 +94,17 @@
   let ent=null;try{ent=B().entity&&B().entity()}catch(_){}
   const sorted=l=>[...l].sort((a,b)=>lensScore(b)-lensScore(a));
   const micro=ent?list.filter(h=>h.entity&&h.entity.kind===ent.kind&&String(h.entity.id)===String(ent.id)):[];
-  return [...sorted(micro).map(h=>({...h,__micro:true})),...sorted(list.filter(h=>!h.entity))]};
+  return ent?sorted(micro).map(h=>({...h,__micro:true})):sorted(list.filter(h=>!h.entity))};
  function rankAll(page,list,d,mods){
   const strat=STRATEGIC.has(page);const c=[];
   for(const h of lensFor(page,d)){const fake={...h,priority:h.valence==='risk'?'attention':h.valence==='positive'?'recognition':'info',title:h.title,modules:h.modules};c.push({item:fake,disc:h,s:lensScore(h)+.4+(h.__micro?3:0)})}
-  for(const f of scoped(page,d))c.push({item:f,s:(PRI[f.priority]||1)+.5});
+  if(!activeEntity())for(const f of scoped(page,d))c.push({item:f,s:(PRI[f.priority]||1)+.5});
   for(const f of list){let s=PRI[f.priority]||1;const broad=f.modules.length>=5;
    if(!strat&&broad&&!['pressure','payments'].includes(page))continue;
    if(strat){if(/^risk\.(overdue|due-soon)$/.test(f.rule||''))s-=2.6;if(f.kind==='projection'||f.kind==='interpretation')s+=1.4;else if(f.kind==='fact')s-=.3;if(f.priority==='recognition')s+=.8}
    else{if(broad)s-=2.3;if((AFF[page]||[]).includes(f.engine))s+=1.2;if(f.modules[0]&&mods.includes(f.modules[0]))s+=.8}
    c.push({item:f,s})}
-  if(d)for(const h of d.discoveries){if(h.repeat)continue;const m=h.modules||['overview'];if(!m.some(x=>mods.includes(x)))continue;
+  if(d)for(const h of d.discoveries){if(h.repeat)continue;const m=h.modules||['overview'],ent=activeEntity();if(!strat&&(!m.some(x=>mods.includes(x))||(ent&&!belongs(h,ent))))continue;
    const fake={...h,priority:h.valence==='risk'?'attention':h.valence==='positive'?'recognition':'info',title:h.title,modules:m};
    c.push({item:fake,disc:h,s:(h.valence==='risk'?2.6:2.3)+(strat?1.8:.6)+(m[0]&&mods.includes(m[0])?.6:0)})}
   c.sort((a,b)=>b.s-a.s);return c}
@@ -115,11 +122,11 @@
    const res=b.run();const list=forModule(res,mods);
    let d=null;try{d=B().discover()}catch(_){}
    let all=rankAll(b.page(),list,d,mods);
-   if(!all.length&&!STRATEGIC.has(b.page()))all=rankAll('overview',forModule(res,['overview']),d,['overview']);   /* sin nada propio, el módulo hereda lo macro (lo más relevante de todo Vive) */
+   /* No importar hallazgos globales a una vista local sin evidencia propia. */
    const seen=new Set(),items=[];
    for(const c of all){const t=c.item.title;if(!t||seen.has(t))continue;seen.add(t);items.push({title:t,priority:c.item.priority||'info'})}
    if(!items.length)return;
-   const el=strip(items.slice(0,4),items.length,mods);
+   const el=strip(items,items.length,mods);
    const placed=el&&place(el,stage>=4);
    if(placed)rotate(el);
    /* Páginas que pintan su encabezado de forma diferida: reintentos breves hasta que exista el título (la línea nunca aparece antes que él) */
@@ -203,11 +210,11 @@ const plainLabel=l=>String(l).replace(/^z robustos?$/i,'Distancia a lo habitual'
    <div class="vi-know-actions"><button type="button" class="vi-chip" data-vi="dexport">Exportar mi conocimiento</button><button type="button" class="vi-chip vi-danger" data-vi="dforgetall">Borrar todo lo aprendido</button></div></div></details>`;
  }
  function sheetHTML(res,mods){
-  const all=res.findings;const mine=mods?forModule(res,mods):[];const ordered=mine.length?[...mine,...all.filter(f=>!mine.includes(f))]:[...all];
+  const activeMods=mods||MAP[B().page()]||[];const mine=forModule(res,activeMods);const ordered=[...mine];
   let disc=null;try{disc=B().discover()}catch(e){console.warn('[Intelligence] discover',e)}
   try{const pk=mods?rank(B().page(),mine,disc,mods):null;if(pk&&!pk.disc){const i=ordered.indexOf(pk.item);if(i>0){ordered.splice(i,1);ordered.unshift(pk.item)}}}catch(_){}
   const by=p=>ordered.filter(f=>f.priority===p);
-  const lensList=lensFor(B().page(),disc);const gl=(disc?disc.discoveries:[]).filter(h=>!lensList.some(l=>l.key===h.key));const dlist=STRATEGIC.has(B().page())?[...gl,...lensList]:[...lensList,...gl];
+  const lensList=lensFor(B().page(),disc),global=STRATEGIC.has(B().page()),ent=activeEntity();const gl=(disc?disc.discoveries:[]).filter(h=>!h.repeat&&!lensList.some(l=>l.key===h.key)&&(global||((h.modules||[]).some(m=>activeMods.includes(m))&&(!ent||belongs(h,ent)))));const dlist=global?[...gl,...lensList]:[...lensList,...gl];
   const dsec=dlist.length?`<section class="vi-group"><h3>Descubrimientos<span>${dlist.length}</span></h3>${dlist.map(discCard).join('')}</section>`:'';
   const body=GROUPS.map(([p,l])=>{const a=by(p);const g=a.length?`<section class="vi-group"><h3>${l}<span>${a.length}</span></h3>${a.map(card).join('')}</section>`:'';return (p==='attention'&&(!lensList.length||STRATEGIC.has(B().page()))?g+dsec:g)}).join('').replace(/^$/,'')||(dsec||'<p class="vi-empty">Por ahora no hay nada que destacar. VIVE Intelligence sigue aprendiendo en silencio y vuelve a evaluar cuando registres o cambies información.</p>');
   const bodyFinal=((lensList.length&&!STRATEGIC.has(B().page()))||!/Descubrimientos<span>/.test(body))&&dsec?dsec+body:body;   /* en Inicio lo urgente va primero; en cada módulo, lo propio del módulo */
