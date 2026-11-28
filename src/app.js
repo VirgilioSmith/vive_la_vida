@@ -5063,11 +5063,11 @@ function v134WealthWorld(){
  return `<div class="v134-patrimony v142-wealth-complete v187-patrimony" id="v134Patrimony">
   ${window.matchMedia&&window.matchMedia('(max-width:790px)').matches
    ?`<header class="vwm-head"><h1>Patrimonio</h1><button type="button" class="btn ghost sm" data-vtime-open>Time Machine</button><label class="vwm-month">${icon('calendar')}<span>${MONTHS_FULL[Number(p.slice(5,7))-1]} de ${p.slice(0,4)}</span><input type="month" data-v137-wealth-month="1" aria-label="Seleccionar mes de patrimonio" value="${p}" max="${today().slice(0,7)}"></label></header>`
-   :`<header class="v134-top v187-wealth-top v1133-compact"><div class="v137-wealth-top-tools"><button type="button" class="btn ghost sm" data-vtime-open>Time Machine</button><label class="v137-wealth-month-control"><span>Consultar cierre</span><input type="month" data-v137-wealth-month="1" aria-label="Seleccionar mes de patrimonio" value="${p}" max="${today().slice(0,7)}"></label></div></header>`}
+   :`<header class="v134-top v187-wealth-top v1133-compact"><div class="v137-wealth-top-tools"><label class="v137-wealth-month-control"><span>Consultar cierre</span><input type="month" data-v137-wealth-month="1" aria-label="Seleccionar mes de patrimonio" value="${p}" max="${today().slice(0,7)}"></label></div></header>`}
   ${vPatrimonyPositionHero(s,previous,cut)}
  
   <section class="v187-charts" aria-label="Tres gráficos del patrimonio">
-   <article class="v134-panel v187-chart-card v187-timeline"><header><div><span>01 / EVOLUCIÓN</span><h3>Tu patrimonio en el tiempo</h3><p>${year} frente a ${year-1} · cierres registrados</p></div><button type="button" class="v187-history-launch" data-act="v187History">${icon('chart')} Histórico ${icon('arrow')}</button></header><div class="v187-mini-chart">${v134WealthHistory(p)}</div><p class="v187-graph-foot">Sin valores futuros simulados</p></article>
+   <article class="v134-panel v187-chart-card v187-timeline"><header><div><span>01 / EVOLUCIÓN</span><h3>Tu patrimonio en el tiempo</h3><p>${year} frente a ${year-1} · cierres registrados</p></div><div class="vt-launch-actions">${isMobileViewport()?'':'<button type="button" class="btn ghost sm" data-vtime-open>Time Machine</button>'}<button type="button" class="v187-history-launch" data-act="v187History">${icon('chart')} Histórico ${icon('arrow')}</button></div></header><div class="v187-mini-chart">${v134WealthHistory(p)}</div><p class="v187-graph-foot">Sin valores futuros simulados</p></article>
    <article class="v134-panel v187-chart-card v187-assets"><header><div><span>02 / ACTIVOS</span><h3>De dónde viene</h3><p>Composición al cierre elegido</p></div></header><div class="v187-chart-total">${val(s?.assets)}</div>${v187CompositionChart(assets,s?.assets||0,'assets')}</article>
    <article class="v134-panel v187-chart-card v187-liabilities"><header><div><span>03 / PASIVOS</span><h3>Dónde están las deudas</h3><p>Distribución de obligaciones</p></div></header><div class="v187-chart-total">${val(s?.liabilities)}</div>${v187CompositionChart(debts,s?.liabilities||0,'liabilities')}</article>
   </section>
@@ -15356,7 +15356,7 @@ function vTimeHistory(){
    groups[key]=(db[key]||[]).filter(x=>{
     const d=date(x);
     if(!window.ViveWrappedEngine.validDate(d)){unknown++;return false}
-    if(d<=now&&key!=='personalLoans')openings.push({date:d,title:label+' · '+x.name});
+    if(d<=now&&key!=='personalLoans')openings.push({date:d,title:label+' · '+x.name,kind:key,bankId:x.bankId});
     return true;
    });
   }
@@ -15394,7 +15394,7 @@ function vTimePayoffs(start,end,includeEvidence=false){
   for(const date of [...dates.get(loan.id)||[]].sort().reverse()){
    const before=v134WealthLoanAsOf(loan,v216Shift(date,-1),rows),after=v134WealthLoanAsOf(loan,date,rows);
    if(!before.estimated&&!after.estimated&&before.balance>0&&after.balance===0){
-    const event={date,title:'Capital liquidado · '+loan.name,kind:'payoff'};
+    const event={date,title:'Capital liquidado · '+loan.name,kind:'payoff',bankId:loan.bankId};
     if(includeEvidence){
      const months=new Set(rows.filter(t=>t.type==='loan_payment'&&t.loanId===loan.id&&t.date<=date&&num(t.principal)>0).map(t=>t.date.slice(0,7))).size;
      Object.assign(event,{id:loan.id,productName:loan.name,currency:loan.currency||'DOP',principal:num(loan.principal),months});
@@ -15424,14 +15424,48 @@ function vTimeMilestones(currency){
   return [...records,...openings,...vTimePayoffs(first,now)].sort((a,b)=>b.date.localeCompare(a.date)||a.title.localeCompare(b.title));
  });
 }
-window.ViveTimeHost=Object.freeze({asOf:()=>v216NowParts().date,available:()=>!privacyMode&&!!f33User,
- history:()=>({first:!privacyMode&&f33User?vTimeHistory().first:null}),milestones:currency=>!privacyMode&&f33User?vTimeMilestones(currency):[],snapshot:vTimeSnapshot,
- async insights(point,currency){
+function vTimeActivity(start,end,currency){
+ if(privacyMode||!f33User)return [];
+ return v99Memo('history:activity:'+start+':'+end+':'+currency,()=>{
+  const byDate=new Map();
+  for(const row of db.transactions){
+   if(!vTimeConfirmed(row)||!window.ViveWrappedEngine.validDate(row.date)||row.date<start||row.date>end||(row.currency||'DOP')!==currency)continue;
+   if(!byDate.has(row.date))byDate.set(row.date,{movements:0,benefits:0});
+   const entry=byDate.get(row.date);
+   if(['card_reward','bank_reward'].includes(row.type))entry.benefits+=num(row.amount);
+   else entry.movements++;
+  }
+  return [...byDate].flatMap(([date,entry])=>[
+   ...(entry.movements?[{date,kind:'movements',title:entry.movements===1?'1 movimiento confirmado':entry.movements+' movimientos confirmados'}]:[]),
+   ...(entry.benefits>0?[{date,kind:'benefits',title:'Beneficios acreditados · '+money(entry.benefits,currency,2)}]:[])
+  ]);
+ });
+}
+window.ViveTimeHost=Object.freeze({
+ asOf:()=>v216NowParts().date,
+ available:()=>!privacyMode&&!!f33User,
+ history(includeEvents=false){
+  if(!this.available())return {first:null,events:[]};
+  const {first,openings}=vTimeHistory();
+  return {first,events:includeEvents?openings:[]};
+ },
+ milestones:currency=>!privacyMode&&f33User?vTimeMilestones(currency):[],
+ activity:vTimeActivity,
+ glyph:icon,
+ bankMark(id){
+  const institution=id&&this.available()?bank(id):null;
+  return institution&&bankLogoSafe(institution.logo)?bankLogoMark(institution,'vt-bank-mark'):'';
+ },
+ snapshot:vTimeSnapshot,
+ async insights(point,currency,closed=[]){
   if(currency!=='DOP'||point.unknown||point.estimatedLoan)return [];
   await vIntelEnsure();
   const rules=['risk.net-worth-negative','risk.debt-to-assets','risk.negative-account'];
+  const valid=closed.length===3&&closed.every(p=>!p.unknown&&!p.estimatedLoan&&p.net>0);
+  const series=valid?closed.map(p=>({ym:p.date.slice(0,7),net:p.net})):[];
+  if(valid)rules.push('risk.net-worth-trend');
   const accounts=point.banks.map(a=>({...a,balanceDop:a.balance}));
-  return window.ViveIntelligence?.analyze({today:point.date,accounts,position:{assets:point.assets,debt:point.liabilities,net:point.net}},null).all.filter(f=>rules.includes(f.rule))||[];
+  return window.ViveIntelligence?.analyze({today:point.date,accounts,position:{assets:point.assets,debt:point.liabilities,net:point.net,series}},null).all.filter(f=>rules.includes(f.rule))||[];
  }});
 /* Wrapped reutiliza las reglas contables de los informes, sin almacenar cortes ni datos adicionales. */
 window.ViveWrappedHost={

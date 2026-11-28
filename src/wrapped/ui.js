@@ -158,8 +158,8 @@
    if(b.hasAttribute('data-vw-close'))d.close();
    else if(b.hasAttribute('data-vw-travel')){
     const target=state.slides[state.i].date||state.p.end;
-    d.close();
-    window.ViveTimeMachine?.open(target,opener);
+    if(window.ViveTimeMachine?.travel(target))d.close();
+    else window.ViveTimeMachine?.open(target,b);
    }else if(b.hasAttribute('data-vw-prev'))shift(-1);
    else if(b.hasAttribute('data-vw-next')){
     if(state.i===state.slides.length-1){remember(true);d.close()}else shift(1);

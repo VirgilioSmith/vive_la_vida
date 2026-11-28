@@ -103,3 +103,9 @@ Las escenas dependen de los registros del período. La evidencia mensual reutili
 La campana abre a pantalla completa con los filtros Todo, Alertas y Wrapped. La lista operativa usa los mismos vencimientos, avisos de gasto y acciones de pago. «Limpiar todo» conserva el comportamiento local. Wrapped y Time Machine se abren encima del centro para conservar el filtro, el desplazamiento y el foco al volver. Las fechas, portadas y estrenos reutilizan el calendario de Wrapped.
 
 `tests/notifications-center.js` recorre el centro en Claro, Black y oscuro, desde 320 px hasta 1920 px, incluyendo orientación horizontal. Se ejecuta en la matriz de Chromium y WebKit.
+
+### Exploración temporal
+
+Time Machine presenta el corte con una cinta de días, meses o años, comparación sobre eje cero y puntos navegables en hasta doce cortes. La comparación porcentual exige una referencia positiva y un corte seleccionado no negativo. Las variaciones de flujo se reservan para cierres mensuales o acumulados hasta el mismo día, con cobertura desde el comienzo del mes. Los cortes estimados o de cobertura parcial se distinguen de los datos ausentes.
+
+La línea vertical agrupa eventos por fecha. Los acontecimientos de producto reutilizan las fechas registradas, y los movimientos del mes seleccionado se agrupan en su moneda original. Wrapped y Time Machine conservan la pantalla anterior al abrirse uno desde el otro. `tests/time-machine.js` verifica cortes, signos, eje cero, fechas navegables y retorno en móvil, tablet, horizontal y escritorio.

@@ -6,9 +6,10 @@ process.env.FREEZE='2026-11-28T13:00:00Z';
 (async()=>{
  const browser=await (process.env.WRAPPED_BROWSER==='webkit'?webkit:chromium).launch();
  try{
-  for(const width of [320,390,1440]){
+  for(const [width,height,theme] of [[320,780,'light'],[390,844,'black'],[844,390,'light'],[1100,800,'black'],[1920,1080,'light']]){
+   process.env.THEME=theme;
    if(width<800)process.env.TOUCH='1';else delete process.env.TOUCH;
-   const {p,ctx}=await open(browser,width,844);
+   const {p,ctx}=await open(browser,width,height);
    const errors=[];p.on('pageerror',e=>errors.push(e.message));
    await p.evaluate(()=>{
     const db=window.__T.dbg();
@@ -27,7 +28,18 @@ process.env.FREEZE='2026-11-28T13:00:00Z';
    });
    await p.locator('[data-vtime-open]:visible').last().click();
    const d=p.locator('.vt-dialog[open]');
+   await p.emulateMedia({reducedMotion:'reduce'});
+   assert.equal(await d.evaluate(el=>el.getBoundingClientRect().width),width);
+   await d.locator('[data-vt-controls]').click();
    await d.locator('[data-vt-field="date"]').fill('2025-02-15');
+   await d.locator('[data-vt-field="baseline"]').fill('2026-11-28');
+   assert.match(await d.locator('.vt-hero .vt-delta').innerText(),/−|-/);
+   assert.doesNotMatch(await d.locator('.vt-hero .vt-delta').innerText(),/%/);
+   assert.equal(await d.locator('.vt-compare .vt-zero').count(),1);
+   await d.locator('[data-vt-step="1"]').click();
+   assert.equal(await d.locator('[data-vt-field="date"]').inputValue(),'2025-02-16');
+   await p.keyboard.press('ArrowLeft');
+   assert.equal(await d.locator('[data-vt-field="date"]').inputValue(),'2025-02-15');
    await d.locator('[data-vt-field="currency"]').selectOption('USD');
    const snap=await p.evaluate(()=>ViveTimeHost.snapshot('2025-02-15','USD'));
    assert.equal(snap.net,500);
@@ -39,6 +51,16 @@ process.env.FREEZE='2026-11-28T13:00:00Z';
    assert.equal(await p.evaluate(()=>ViveTimeHost.snapshot('2025-01-31','USD')),null);
    assert.match(await d.locator('.vt-hero h2').innerText(),/500/);
    assert.ok(await d.evaluate(e=>e.scrollWidth<=e.clientWidth+1));
+   assert.ok(await d.locator('.vt-compare svg').isVisible());
+   await d.locator('[data-vt-field="metric"]').selectOption('utilization');
+   assert.match(await d.locator('.vt-evolution').innerText(),/No hay datos verificables/);
+   await d.locator('[data-vt-field="metric"]').selectOption('net');
+   await d.locator('[data-vt-field="date"]').fill('2025-03-17');
+   await d.locator('.vt-chart-frame button[data-vt-date="2025-02-28"]').click();
+   assert.equal(await d.locator('[data-vt-field="date"]').inputValue(),'2025-02-28');
+   await d.locator('[data-vt-field="date"]').fill('2025-02-15');
+   assert.match(await d.locator('.vt-position').innerText(),/Períodos distintos/);
+   if(process.env.VIVE_TIME_CAPTURE)await d.screenshot({path:process.env.VIVE_TIME_CAPTURE+'/'+width+'-'+theme+'.png'});
    await d.locator('.vt-timeline summary').click();
    await d.locator('.vt-timeline button').filter({hasText:'Histórica USD'}).waitFor({state:'visible'});
    await d.locator('.vt-timeline button').filter({hasText:'Capital liquidado · Préstamo histórico'}).waitFor({state:'visible'});
