@@ -7,7 +7,7 @@ const engine=process.env.HOME_BROWSER==='webkit'?webkit:chromium;
 (async()=>{
  const browser=await engine.launch({headless:true});
  try{
-  for(const theme of ['light','black'])for(const width of [320,390,430]){
+  for(const theme of ['light','black'])for(const width of [320,375,390,430,480]){
    process.env.TOUCH='1';process.env.THEME=theme;process.env.PALHEX='#087b72';
    const {ctx,p}=await open(browser,width,844);
    try{
@@ -15,6 +15,10 @@ const engine=process.env.HOME_BROWSER==='webkit'?webkit:chromium;
     await p.evaluate(()=>{const t=window.__T;t.dbg().settings.mobilePositionStyle='matrix';t.go('overview')});
     const row=p.locator('.v1302-home-controls'),personalize=row.locator('.v273-personalize-link'),period=row.locator('.v732-period'),matrix=p.locator('.v985-matrix');
     await matrix.waitFor({state:'visible'});
+    const cards=await matrix.locator('.v985-grid > .v985-card').evaluateAll(es=>es.map(e=>{const r=e.getBoundingClientRect();return {x:r.x,y:r.y,w:r.width}}));
+    assert.equal(cards.length,4,'Cuatro tarjetas de Matriz Jobs');
+    assert.ok(Math.abs(cards[0].y-cards[1].y)<2&&Math.abs(cards[2].y-cards[3].y)<2&&cards[2].y>cards[0].y,'Matriz en dos filas de dos tarjetas');
+    assert.ok(Math.abs(cards[0].x-cards[2].x)<2&&Math.abs(cards[1].x-cards[3].x)<2&&cards[1].x>cards[0].x,'Dos columnas alineadas');
     assert.equal(await p.locator('.vive-mobile-top .v146-mobile-date').count(),0);
     assert.equal(await p.locator('.vive-mobile-greeting h1').count(),0);
     assert.equal(await p.locator('.vive-mobile-greeting p').count(),0);

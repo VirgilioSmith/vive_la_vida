@@ -9,7 +9,10 @@ const open=require('./harness');
  assert.equal(await bell.locator('.vw-archive [data-vwrapped]').count(),5);
  assert.equal(await bell.locator('[data-v216="report"]').count(),0);
  const fresh=await p.evaluate(()=>window.ViveWrappedEngine.schedule().fresh.length);
- assert.equal(await bell.locator('.vw-cover').count(),fresh);
+ assert.equal(await bell.locator('.vw-cover').count(),Math.max(1,fresh));
+ const between=await p.evaluate(()=>{const E=window.ViveWrappedEngine,original=E.schedule;try{E.schedule=()=>original(new Date('2026-11-28T11:59:59Z'));const el=document.createElement('div');el.innerHTML=window.ViveWrapped.inbox();return {count:el.querySelectorAll('.vw-cover').length,label:el.querySelector('.vw-cover')?.textContent,archive:el.querySelectorAll('.vw-archive [data-vwrapped]').length}}finally{E.schedule=original}});
+ assert.equal(between.count,1);assert.match(between.label,/ÚLTIMA HISTORIA/);assert.equal(between.archive,5);
+ await bell.locator('.vw-cover').first().click();await p.locator('dialog.vw-dialog').waitFor({state:'visible'});await p.locator('[data-vw-close]').click();await p.locator('dialog.vw-dialog').waitFor({state:'detached'});
  for(const kind of ['day','week','month','quarter','year']){
  if(!await bell.locator('summary').first().evaluate(x=>x.parentElement.open))await bell.locator('summary').first().click();
  const archive=bell.locator('.vw-archive');if(!await archive.evaluate(x=>x.open))await archive.locator('summary').click();

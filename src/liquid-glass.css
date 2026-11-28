@@ -228,14 +228,15 @@ html body #app#app#app#app :is(.v360-pressure-calendar .v942-next30-summary,.v88
 /* Las ondas de los KPI se recortan dentro de su superficie. */
 #app #page .vinc-kpi .vinc-wave{inset-inline-end:0;inset-block-end:0}
 
-@media(max-width:430px){
- /* Matriz Jobs: dos columnas, sin hueco entre Anticipar y Decidir. */
+@media(max-width:790px){
+ /* Matriz Jobs: dos columnas en todo el rango móvil, sin huecos entre tarjetas. */
  html body #app#app#app#app .v985-grid{
   grid-template-columns:repeat(2,minmax(0,1fr))!important;
-  align-items:stretch;
+  display:grid!important;grid-auto-flow:row!important;align-items:stretch;
+  min-inline-size:0;
  }
  html body #app#app#app#app .v985-grid > .v985-card{
-  grid-column:auto!important;min-inline-size:0;
+  grid-column:auto!important;grid-row:auto!important;min-inline-size:0;max-inline-size:100%;
  }
  html body #app#app#app#app .v985-purple .v985-mini{
   grid-template-columns:16px minmax(0,1fr) auto;
