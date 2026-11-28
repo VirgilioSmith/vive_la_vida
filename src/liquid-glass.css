@@ -229,7 +229,28 @@ html body #app#app#app#app :is(.v360-pressure-calendar .v942-next30-summary,.v88
 #app #page .vinc-kpi .vinc-wave{inset-inline-end:0;inset-block-end:0}
 
 @media(max-width:430px){
- html body #app#app#app#app .v985-grid > .v985-purple{grid-column:1/-1}
+ /* Matriz Jobs: dos columnas, sin hueco entre Anticipar y Decidir. */
+ html body #app#app#app#app .v985-grid{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  align-items:stretch;
+ }
+ html body #app#app#app#app .v985-grid > .v985-card{
+  grid-column:auto!important;min-inline-size:0;
+ }
+ html body #app#app#app#app .v985-purple .v985-mini{
+  grid-template-columns:16px minmax(0,1fr) auto;
+  gap:3px 5px;padding:6px 7px!important;
+  block-size:auto!important;min-height:var(--vx-h-control)!important;
+ }
+ html body #app#app#app#app .v985-purple .v985-mini svg{
+  width:16px;height:16px;
+ }
+ html body #app#app#app#app .v985-purple .v985-mini:has(small){
+  grid-template-columns:16px minmax(0,1fr);
+ }
+ html body #app#app#app#app .v985-purple .v985-mini small{
+  grid-column:2;white-space:normal;overflow-wrap:anywhere;
+ }
 }
 
 html body #app#app#app#app .v708-legend-row{grid-template-columns:auto minmax(0,1fr) auto}
