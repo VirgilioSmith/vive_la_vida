@@ -30,19 +30,19 @@
  }
  function story(p,a,b){
   const fmt=n=>new Intl.NumberFormat('es-DO',{style:'currency',currency:'DOP',currencyDisplay:'narrowSymbol',maximumFractionDigits:0}).format(n);
-  const s=(title,value,detail,theme='calm')=>({title,value,detail,theme});
+  const s=(title,value,detail,theme='calm',scene='empty',data=null)=>({title,value,detail,theme,scene,data});
   if(!a||a.unavailable)return [s('Todavía no hay cifras confiables','Datos pendientes','Falta información de moneda para calcular este período sin distorsiones.')];
   if(!a.count)return [s('Aún no hay una historia registrada','Sin movimientos','Este período no tiene operaciones registradas. No significa que no hayas tenido gastos o ingresos.')];
-  const labels={day:['Cada día cuenta','Lo que llegó hoy','Lo que salió hoy','Tu balance del día','El gasto protagonista','Frente al día anterior'],week:['Siete días, una historia','Ingresos de la semana','Egresos de la semana','Tu ritmo financiero','La categoría de la semana','Frente a la semana anterior'],month:['Un mes que dejó huella','Ingresos del mes','Egresos del mes','El balance de tu mes','Tu categoría protagonista','Frente al mes anterior'],quarter:['Perspectiva que transforma','Ingresos del trimestre','Egresos del trimestre','Tu posición de flujo','Tu categoría del trimestre','Frente al trimestre anterior'],year:['Un año de decisiones','Ingresos del año','Egresos del año','Tu balance anual','Tu categoría del año','Frente al año anterior']}[p.kind];
-  const hero=s(labels[0],String(a.count),a.count===1?'Movimiento registrado en este período.':'Movimientos registrados en este período.','hero');
-  const income=s(labels[1],fmt(a.income),'Ingresos reconocidos en tus registros.','growth');
-  const expense=s(labels[2],fmt(a.expense),'Egresos netos, incluidos cargos financieros reconocidos.','warm');
-  const balance=s(labels[3],fmt(a.net),'Ingresos menos egresos; no equivale al saldo de tus cuentas.',a.net>=0?'growth':'warm');
+  const labels={day:['Cada día cuenta','Lo que llegó ese día','Lo que salió ese día','Tu balance del día','El gasto protagonista','Frente al día anterior'],week:['Siete días, una historia','Ingresos de la semana','Egresos de la semana','Tu ritmo financiero','La categoría de la semana','Frente a la semana anterior'],month:['Un mes que dejó huella','Ingresos del mes','Egresos del mes','El balance de tu mes','Tu categoría protagonista','Frente al mes anterior'],quarter:['Perspectiva que transforma','Ingresos del trimestre','Egresos del trimestre','Tu posición de flujo','Tu categoría del trimestre','Frente al trimestre anterior'],year:['Un año de decisiones','Ingresos del año','Egresos del año','Tu balance anual','Tu categoría del año','Frente al año anterior']}[p.kind];
+  const hero=s(labels[0],String(a.count),a.count===1?'Movimiento registrado en este período.':'Movimientos registrados en este período.','hero','cover',{count:a.count});
+  const income=s(labels[1],fmt(a.income),'Ingresos reconocidos en tus registros.','growth','income',{income:a.income,expense:a.expense});
+  const expense=s(labels[2],fmt(a.expense),'Egresos netos, incluidos cargos financieros reconocidos.','warm','expense',{income:a.income,expense:a.expense});
+  const balance=s(labels[3],fmt(a.net),'Ingresos menos egresos; no equivale al saldo de tus cuentas.',a.net>=0?'growth':'warm','balance',{income:a.income,expense:a.expense});
   const top=Object.entries(a.byCategory||{}).filter(([,v])=>v>0).sort((x,y)=>y[1]-x[1])[0];
-  const category=top?s(labels[4],top[0],fmt(top[1])+' en egresos netos registrados.','hero'):null;
-  const comparison=b&&!b.unavailable&&b.count?s(labels[5],fmt(a.net-b.net),a.net>b.net?'Tu balance registrado mejoró.':a.net<b.net?'Tu balance registrado disminuyó.':'Tu balance registrado se mantuvo.','calm'):null;
+  const category=top?s(labels[4],top[0],fmt(top[1])+' en egresos netos registrados.','hero','category',{items:Object.entries(a.byCategory||{}).filter(([,v])=>Number.isFinite(v)&&v>0).sort((x,y)=>y[1]-x[1]).slice(0,3)}):null;
+  const comparison=b&&!b.unavailable&&b.count?s(labels[5],fmt(a.net-b.net),a.net>b.net?'Tu balance registrado mejoró.':a.net<b.net?'Tu balance registrado disminuyó.':'Tu balance registrado se mantuvo.','calm','comparison',{previous:b.net,current:a.net}):null;
   const order={day:[hero,income,expense,balance,category,comparison],week:[hero,category,balance,comparison,income,expense],month:[hero,balance,income,expense,category,comparison],quarter:[hero,comparison,balance,category,income,expense],year:[hero,balance,comparison,category,income,expense]}[p.kind];
-  return [...order.filter(Boolean),s('Tu siguiente capítulo','vive el hoy',a.net<0?'Revisa las categorías con mayor gasto y organiza tus próximos compromisos.':'Revisa tus prioridades y decide qué quieres mantener para el próximo período.','hero')];
+  return [...order.filter(Boolean),s('Tu siguiente capítulo','vive el hoy',a.net<0?'Revisa las categorías con mayor gasto y organiza tus próximos compromisos.':'Revisa tus prioridades y decide qué quieres mantener para el próximo período.','hero','final')];
  }
  return {kinds,titles,period,story,schedule};
 })();if(typeof module==='object'&&module.exports)module.exports=api;else root.ViveWrappedEngine=api;})(typeof window==='undefined'?globalThis:window);

@@ -10,3 +10,62 @@
 .vw-dialog[data-scene=cover] .vw-story-art .vw-art{width:min(70%,260px);max-height:230px}.vw-dialog[data-scene=chapter] .vw-story-art .vw-art{width:90px;max-height:80px}.vw-dialog[data-scene=chapter] .vw-story-art{justify-content:flex-start}.vw-dialog[data-kind=day][data-scene=chapter] .vw-story-art,.vw-dialog[data-kind=year][data-scene=chapter] .vw-story-art{justify-content:center}.vw-dialog[data-scene=chapter] .vw-value{padding:10px 0;border-block:1px solid #ffffff35}.vw-chapter-label{font-size:10px!important;letter-spacing:.14em;font-weight:650}.vw-dialog[data-scene=final] .vw-story-art .vw-art{width:min(65%,220px)}.vw-dialog[data-kind=month] .vw-story-text{border-top:1px solid #ffe7bd80;padding-top:14px}.vw-dialog[data-kind=quarter] .vw-story-text{border-bottom:1px solid #e7c58d65;padding-bottom:14px}
 @media(max-width:360px){.vw-entry.vw-cover,.vw-entry.vw-past{padding:10px;grid-template-columns:minmax(0,1fr) 66px}.vw-cover strong{font-size:17px}.vw-entry-copy small:first-child{letter-spacing:.06em}.vw-entry.vw-quarter .vw-entry-copy{padding-left:6px}.vw-upcoming{grid-template-columns:1fr}.vw-upcoming span{justify-self:start}}
 @media(prefers-reduced-motion:reduce){.vw-inbox *,.vw-dialog *{animation:none!important;transition:none!important}}
+
+
+/* Wrapped Studio — composiciones editoriales por escena, gráficos de datos reales. */
+dialog.vw-dialog{--vw-ink:#f5f2e9;--vw-accent:#dded9d;--vw-paper:#172c2b;--vw-soft:#afc6ba;color:var(--vw-ink);background:var(--vw-paper);font-family:inherit;isolation:isolate;width:min(1020px,calc(100% - 48px));height:min(820px,calc(100% - 48px));border:1px solid #ffffff24}
+dialog.vw-dialog[data-kind=day]{--vw-paper:#142e2b;--vw-accent:#d7f49d;--vw-soft:#b5d9c8}
+dialog.vw-dialog[data-kind=week]{--vw-paper:#25203d;--vw-accent:#dfcaff;--vw-soft:#c6bada}
+dialog.vw-dialog[data-kind=month]{--vw-paper:#421f35;--vw-accent:#ffcaac;--vw-soft:#edb9bf}
+dialog.vw-dialog[data-kind=quarter]{--vw-paper:#352b20;--vw-accent:#ffe4a0;--vw-soft:#d6c1a4}
+dialog.vw-dialog[data-kind=year]{--vw-paper:#14223c;--vw-accent:#e9da9e;--vw-soft:#b2c4e7}
+dialog.vw-dialog[data-scene=income]{--vw-paper:#102e2b;--vw-accent:#bcf1ba}
+dialog.vw-dialog[data-scene=expense]{--vw-paper:#442820;--vw-accent:#ffbb91}
+dialog.vw-dialog[data-scene=balance][data-theme=warm]{--vw-paper:#412333;--vw-accent:#ffb9bb}
+dialog.vw-dialog .vw-frame{padding:clamp(20px,3vw,40px);gap:12px;overflow:hidden;display:grid;grid-template-rows:auto auto auto minmax(0,1fr) auto}
+dialog.vw-dialog .vw-wordmark{font-size:10px;letter-spacing:.08em;line-height:1}dialog.vw-dialog .vw-wordmark b{font-size:25px;letter-spacing:-.07em;line-height:1.05}
+.vw-edition{margin-inline-start:auto;font-size:10px;letter-spacing:.16em;font-weight:650;color:var(--vw-soft)}
+dialog.vw-dialog [data-vw-close]{padding:0;width:42px;height:42px;font-size:27px;line-height:1}
+dialog.vw-dialog .vw-progress i{height:3px}dialog.vw-dialog .vw-progress i.done{background:var(--vw-accent)}
+dialog.vw-dialog .vw-period-nav button{background:transparent;border:0;padding:6px 2px;min-height:32px;color:var(--vw-soft)}
+dialog.vw-dialog .vw-story-copy{display:block;min-height:0;overflow:auto;overscroll-behavior:contain;touch-action:pan-y;padding:0;text-align:start;border:0;scrollbar-width:thin}
+.vw-scene{box-sizing:border-box;position:relative;isolation:isolate;min-height:100%;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.85fr);grid-template-areas:"kicker kicker" "head visual" "metric visual";grid-template-rows:auto 1fr auto;align-items:end;gap:20px 30px;padding:clamp(18px,3vw,36px);overflow:hidden;border-radius:25px;background:radial-gradient(ellipse at 98% 6%,#ffffff14,transparent 60%),#ffffff06;animation:vw-scene-in .35s cubic-bezier(.2,.7,.2,1) both}
+.vw-scene-kicker{grid-area:kicker;display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:10px;font-weight:650;letter-spacing:.14em;color:var(--vw-accent)}
+.vw-scene-head{grid-area:head;min-width:0}.vw-scene-head small{display:block;margin-bottom:8px;color:var(--vw-soft);letter-spacing:.03em}
+dialog.vw-dialog .vw-scene-head h2{font-size:clamp(27px,4.3vw,52px);line-height:.99;font-weight:650;letter-spacing:-.065em;max-width:16ch;margin:0;overflow-wrap:anywhere}
+.vw-scene-metric{grid-area:metric;min-width:0}
+dialog.vw-dialog .vw-value{font-family:inherit;font-size:clamp(32px,5.6vw,78px);font-weight:730;color:var(--vw-accent);line-height:.98;letter-spacing:-.065em;font-variant-numeric:tabular-nums;overflow-wrap:anywhere;border:0;padding:0}
+dialog.vw-dialog .vw-scene-metric p{font-size:clamp(13px,1.6vw,17px);line-height:1.45;max-width:42ch;margin:12px 0 0;color:var(--vw-ink)}
+.vw-scene-visual{grid-area:visual;min-width:0;align-self:center;display:grid;gap:18px}
+.vw-cover-art .vw-art{display:block;width:100%;max-height:310px;overflow:visible}
+dialog.vw-dialog[data-scene=cover] .vw-scene{background:radial-gradient(ellipse at 75% 20%,#ffffff1c,transparent 60%);grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+dialog.vw-dialog[data-scene=cover] .vw-value{font-size:clamp(75px,13vw,170px);line-height:.84}
+.vw-chart{display:grid;gap:20px}.vw-bar-row{display:grid;gap:8px;min-width:0}.vw-bar-row>div{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap;font-size:12px}.vw-bar-row b{font-variant-numeric:tabular-nums;font-size:14px}.vw-bar-row svg{width:100%;height:16px;display:block;overflow:visible;color:var(--vw-ink)}.vw-fill{fill:var(--vw-accent);animation:vw-scene-in .5s ease-out both}.vw-tone-in{fill:#b9ecaa}.vw-tone-out{fill:#ffb58d}.vw-tone-muted{fill:var(--vw-soft);opacity:.65}
+.vw-flow-symbol{font-size:clamp(70px,11vw,145px);font-weight:300;color:var(--vw-accent);line-height:1;justify-self:end}
+dialog.vw-dialog[data-scene=balance] .vw-scene,dialog.vw-dialog[data-scene=category] .vw-scene{grid-template-areas:"kicker kicker" "head metric" "visual visual";grid-template-rows:auto 1fr auto}
+dialog.vw-dialog[data-scene=balance] .vw-scene-metric{text-align:end}
+dialog.vw-dialog[data-scene=balance] .vw-chart{grid-template-columns:1fr 1fr}
+dialog.vw-dialog[data-scene=category] .vw-value{font-size:clamp(28px,4.7vw,62px)}
+dialog.vw-dialog[data-scene=comparison] .vw-scene{background:linear-gradient(155deg,#ffffff06,#ffffff16)}
+dialog.vw-dialog[data-scene=final] .vw-scene,dialog.vw-dialog[data-scene=empty] .vw-scene{grid-template-columns:1fr;grid-template-areas:"kicker" "visual" "head" "metric";grid-template-rows:auto 1fr auto auto;text-align:center;justify-items:center;align-items:center}
+dialog.vw-dialog[data-scene=final] .vw-scene-kicker,dialog.vw-dialog[data-scene=empty] .vw-scene-kicker{width:100%}
+dialog.vw-dialog[data-scene=final] .vw-scene-head h2,dialog.vw-dialog[data-scene=empty] .vw-scene-head h2{max-width:24ch}
+dialog.vw-dialog[data-scene=final] .vw-scene-metric p,dialog.vw-dialog[data-scene=empty] .vw-scene-metric p{margin-inline:auto}
+.vw-finale-art,.vw-empty-art{font-size:clamp(65px,12vw,150px);line-height:1;color:var(--vw-accent);animation:vw-scene-in .6s ease-out both}
+dialog.vw-dialog .vw-frame footer [data-vw-next]{background:var(--vw-accent);color:#182522;border:0;font-weight:700;padding-inline:20px}
+dialog.vw-dialog .vw-frame footer [data-vw-prev]{background:transparent;border:1px solid #ffffff30}
+@keyframes vw-scene-in{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
+@media(max-width:600px){
+ dialog.vw-dialog{width:100%;height:100%;max-height:100%;margin:0;border:0;border-radius:0}
+ dialog.vw-dialog .vw-frame{padding:calc(14px + env(safe-area-inset-top,0px)) 16px calc(14px + env(safe-area-inset-bottom,0px));gap:8px}
+ dialog.vw-dialog .vw-scene{grid-template-columns:1fr;grid-template-areas:"kicker" "head" "metric" "visual";grid-template-rows:auto auto auto 1fr;align-items:start;gap:15px;padding:20px 17px;border-radius:20px}
+ dialog.vw-dialog[data-scene=cover] .vw-scene{grid-template-columns:1fr;grid-template-areas:"kicker" "visual" "head" "metric";grid-template-rows:auto 1fr auto auto}
+ .vw-cover-art .vw-art{max-height:210px}dialog.vw-dialog .vw-scene-head h2{font-size:clamp(25px,8.6vw,41px)}dialog.vw-dialog .vw-value{font-size:clamp(30px,10vw,52px)}
+ dialog.vw-dialog[data-scene=cover] .vw-value{font-size:clamp(60px,22vw,100px)}
+ dialog.vw-dialog[data-scene=balance] .vw-scene,dialog.vw-dialog[data-scene=category] .vw-scene{grid-template-areas:"kicker" "head" "metric" "visual";grid-template-rows:auto auto auto 1fr}
+ dialog.vw-dialog[data-scene=balance] .vw-scene-metric{text-align:start}dialog.vw-dialog[data-scene=balance] .vw-chart{grid-template-columns:1fr}
+ .vw-flow-symbol{font-size:60px;justify-self:start}.vw-chart{gap:14px}.vw-bar-row{gap:5px}.vw-bar-row svg{height:12px}
+ dialog.vw-dialog .vw-scene-metric p{margin-top:8px}dialog.vw-dialog .vw-frame footer [data-vw-next]{padding-inline:14px}
+}
+@media(max-height:550px){.vw-scene{min-height:400px}.vw-cover-art .vw-art{max-height:160px}}
+@media(prefers-reduced-motion:reduce){dialog.vw-dialog *{animation:none!important;transition:none!important}}

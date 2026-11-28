@@ -23,3 +23,8 @@ assert.deepEqual(s('2027-01-01T12:00:00Z').fresh.map(x=>x.kind),['year','quarter
 assert.equal(s('2027-01-01T11:59:59Z').items.find(x=>x.kind==='year').p.end,'2025-12-31');
 assert.equal(s('2027-01-01T11:59:59Z').next.kind,'year');
 console.log('OK Wrapped: horarios, historias, períodos cerrados y datos insuficientes.');
+
+assert.deepEqual(E.story(p('day'),a,b).map(x=>x.scene),['cover','income','expense','balance','category','comparison','final']);
+assert.deepEqual(E.story(p('day'),a,b).find(x=>x.scene==='comparison').data,{previous:50,current:60});
+assert.equal(E.story(p('day'),{count:0})[0].scene,'empty');
+assert.equal(E.story(p('day'),a,b).find(x=>x.scene==='category').data.items[0][1],40);
