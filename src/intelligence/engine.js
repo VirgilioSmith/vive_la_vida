@@ -719,6 +719,26 @@
      {engine:'pattern',kind:'interpretation',confidence:.75});
    }
   }
+  // Reutiliza el motor de lentes estratégico original para series cerradas, ordenadas y consecutivas.
+  // No se ejecutan lentes transversales ni de entidades que no pertenecen a la vista.
+  if(data.series?.length&&root.ViveStrategy&&root.ViveDiscovery){
+   const series=data.series.filter(x=>x.complete&&/^\d{4}-\d{2}$/.test(x.period)).sort((a,b)=>a.period.localeCompare(b.period));
+   const index=m=>Number(m.slice(0,4))*12+Number(m.slice(5,7));
+   if(series.length>=6&&series.every((x,i)=>Number.isFinite(x.income)&&Number.isFinite(x.expense)&&x.expense>0&&(!i||index(x.period)===index(series[i-1].period)+1))){
+    const months=series.map(x=>({ym:x.period,partial:false,txCount:1,income:x.income,expense:x.expense}));
+    const snap={today:scope.today,months};
+    const f={windows:{},weeks:[]};
+    const allowed=new Set(['expense-volatility','expense-stable']);
+    if(data.seriesLabel!=='Gasto del período'&&series.every(x=>x.income>0)){
+     for(const type of ['savings-rate','best-worst','net-trend'])allowed.add(type);
+    }
+    for(const h of root.ViveStrategy.lens(f,snap,root.ViveDiscovery.confidence)){
+     if(h.lens!=='analytics'||!allowed.has(h.type))continue;
+     add('legacy-'+h.type,h.title,h.summary+' Análisis limitado a los meses cerrados de la vista.',
+      h.evidence,{engine:'pattern',kind:'interpretation',confidence:h.confidence.score,priority:h.valence==='risk'?'attention':h.valence==='positive'?'recognition':'info',magnitude:h.impact});
+    }
+   }
+  }
   if(data.subscriptions?.length){
    const monthly=total(data.subscriptions,'monthly');
    if(monthly>0)add('subscription-cost',fmt(monthly,2)+' al mes en suscripciones',
