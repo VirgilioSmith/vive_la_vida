@@ -459,3 +459,21 @@
  html body #app#app #page #ledger-world.movement-desktop table,html body #app#app #page #ledger-world.movement-desktop tbody td{font-size:16px}
  html body #app#app #page #ledger-world.movement-desktop tbody td{padding:17px 12px}
 }
+
+@media(min-width:791px){
+ html body #app#app #page #ledger-world.movement-desktop .ledger-controls,
+ html body #app#app #page #ledger-world.movement-desktop .ledger-controls:has(#ledgerMonth){
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr))!important;
+ }
+ #ledger-world.movement-desktop .movement-metrics{grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr))}
+}
+.movement-distribution{padding-block:6px;color:var(--vx-text-2)}
+.movement-distribution summary{cursor:pointer}
+.movement-distribution dl{margin-block:8px}
+.movement-distribution dl > div{display:flex;justify-content:space-between;gap:var(--vx-pad-sm);padding-block:4px}
+.movement-distribution dd{margin:0;font-variant-numeric:tabular-nums}
+
+@media(min-width:791px){
+ html body #app#app#app #page#page .movement-metric-transfer .movement-metric-icon{color:var(--vx-accent-text)!important}
+ html body #app#app#app #page#page .movement-metric-variation{flex-wrap:wrap;gap:4px}
+}

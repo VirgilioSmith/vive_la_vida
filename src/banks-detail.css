@@ -126,3 +126,34 @@ html body #app#app#app .vbd-face :is(.vbd-ring b,.vbd-ring small,.vbd-loan-bal s
 #app#app .vbd-face-actions .btn.light,#app#app .vbd-face-actions summary{background:#fff;color:var(--vbd-acc);border:0}
 #app#app .vbd-face-actions .btn.outline-light{background:rgba(255,255,255,.16);color:#fff;border:1px solid rgba(255,255,255,.5)}
 @media(min-width:900px){#app#app .vbd-benefits .vbd-statgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* El detalle adopta el ancho de su columna, incluso dentro de Bancos PC. */
+#app#app #loan-workspace{container-type:inline-size;min-width:0;grid-template-columns:minmax(0,1fr)}
+#app#app #loan-workspace :is(.vbd-loan-hero,.vbd-statgrid,.vbd-loan-body,.glass-loan,.loan-simulator,.loan-sim-fields,.loan-vision-v2,.condition-grid,.vbd-top-actions){min-width:0;max-width:100%}
+#app#app #loan-workspace .vbd-loan-hero{grid-template-columns:minmax(0,1fr)}
+#app#app #loan-workspace .vbd-statgrid{grid-template-columns:repeat(auto-fit,minmax(min(100%, 130px),1fr))}
+#app#app #loan-workspace :is(.vbd-top,.vbd-top-actions,.vbd-loan-bal,.loan-sim-actions,.loan-with-actions){flex-wrap:wrap}
+#app#app #loan-workspace .vbd-tabs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%, 130px),1fr))}
+#app#app #loan-workspace :is(.vbd-btn,.vbd-tab,.vbd-stat strong,.vbd-amt strong){white-space:normal;overflow-wrap:anywhere}
+#app#app #loan-workspace .vbd-btn span{overflow:visible;text-overflow:clip}
+#app#app #loan-workspace .loan-table-scroll{max-width:100%;overflow:auto!important}
+#app#app #loan-workspace :is(input,select){min-width:0;max-width:100%}
+@container (min-width:720px){
+ #app#app #loan-workspace .vbd-loan-hero{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr)}
+}
+@container (max-width:540px){
+ #app#app #loan-workspace :is(.loan-simulator,.loan-sim-fields,.loan-vision-v2,.condition-grid){grid-template-columns:minmax(0,1fr)!important}
+}
+#app#app #loan-workspace :is(.loan-control-line,.loan-segment){flex-wrap:wrap;min-width:0;max-width:100%}
+#app#app #loan-workspace .loan-segment button{white-space:normal}
+#app#app #loan-workspace .v1248-strip b{white-space:normal;overflow-wrap:anywhere}
+@media(max-width:790px){
+ #app#app #loan-workspace .loan-data-table{min-width:0!important;max-width:100%}
+ #app#app #loan-workspace .loan-data-table tr{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #app#app #loan-workspace .loan-data-table td{white-space:normal;overflow-wrap:anywhere}
+}
+#app#app #loan-workspace .vbd-face .vi-strip{color:var(--vx-on-accent);--vi-tone-on:var(--vx-on-accent)}
+@container (max-width:420px){
+ #app#app #loan-workspace .v1248-strip{grid-template-columns:repeat(auto-fit,minmax(min(100%,94px),1fr))}
+ #app#app #loan-workspace .v1248-strip small{overflow-wrap:anywhere}
+}

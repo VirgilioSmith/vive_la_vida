@@ -156,3 +156,87 @@ html body #app#app#app#app main.vBanksPc-world #page#page .vBanksPc-overview-til
  html body #app#app#app#app main.vBanksPc-world #page#page .vBanksPc-overview-tile .vBanksPc-overview-metric{grid-column:1!important;grid-row:2!important;width:auto!important;flex:none!important;padding-left:56px!important;border-left:0!important;margin:0!important}
  html body #app#app#app#app main.vBanksPc-world #page#page .vBanksPc-overview-tile::after{grid-column:2!important;grid-row:1 / span 2!important;align-self:center!important}
 }
+
+/* Ejes compartidos de lectura financiera. El material queda en el panel exterior. */
+html body #app#app#app#app :is(.vexp-cat > summary,.v708-legend-row,.v187-composition-top,.v371-return-heading,.vBanks-return-main){
+ display:grid!important;align-items:center!important;
+ gap:var(--vx-pad-sm);min-inline-size:0;text-align:start!important;
+}
+html body #app#app#app#app :is(.vexp-cat > summary,.v708-legend-row,.v187-composition-top) > b{
+ justify-self:end;text-align:end;font-variant-numeric:tabular-nums;
+}
+html body #app#app#app#app :is(.vexp-cat,.v187-composition-item,.v371-return-tile){
+ box-shadow:none!important;min-inline-size:0;
+}
+html body #app#app#app#app .vexp-cat > summary > strong{min-inline-size:0;overflow-wrap:anywhere;text-align:start!important}
+html body #app#app#app#app .v187-composition-item{
+ display:grid;gap:8px;padding:var(--vx-pad-sm);border-radius:var(--vx-r-sm);
+ text-align:start!important;text-decoration:none!important;min-inline-size:0;border:0!important;
+}
+html body #app#app#app#app :is(.v187-composition-top,.v371-return-heading,.vBanks-return-main){grid-template-columns:minmax(0,1fr) max-content!important}
+html body #app#app#app#app .v187-composition-foot{display:flex;justify-content:space-between;gap:8px;margin:0}
+html body #app#app#app#app :is(.v187-comp-label,.v187-composition-top > b){margin:0;text-decoration:none!important;overflow-wrap:anywhere}
+html body #app#app#app#app .v187-comp-track{inline-size:100%;margin:0}
+html body #app#app#app#app .v187-composition-foot svg{width:14px;height:14px}
+html body #app#app#app#app .vBanks-return-percent{inline-size:max-content!important;justify-self:end;text-align:center}
+html body #app#app#app#app .v371-return-values{grid-auto-rows:1fr;align-items:stretch}
+html body #app#app#app#app .v371-return-tile{
+ display:grid!important;grid-template-columns:minmax(0,1fr) auto;align-content:start;
+ align-items:center;gap:4px 8px;text-align:start!important;border-radius:var(--vx-r-sm);
+}
+html body #app#app#app#app .v371-return-tile > small{grid-column:1;grid-row:1;min-inline-size:0}
+html body #app#app#app#app .v371-return-tile > :is(svg,.v371-rt-ico){
+ grid-column:2;grid-row:1;position:static!important;align-self:center;justify-self:end;margin:0!important;
+}
+html body #app#app#app#app .v371-return-tile > strong{
+ grid-column:1/-1;grid-row:2;min-inline-size:0;font-variant-numeric:tabular-nums;
+ white-space:normal!important;overflow-wrap:anywhere;
+}
+html body #app#app#app#app .v985-purple .v985-minis-3{grid-template-columns:minmax(0,1fr)!important;gap:6px}
+html body #app#app#app#app .v985-purple .v985-mini{
+ display:grid!important;grid-template-columns:24px minmax(0,1fr) auto;align-items:center;justify-items:start;
+ gap:8px;padding:6px 12px!important;inline-size:100%!important;max-inline-size:none!important;
+ justify-self:stretch;min-height:var(--vx-h-control)!important;block-size:var(--vx-h-control)!important;
+ aspect-ratio:auto!important;border-radius:var(--vx-r-pill)!important;
+ text-align:start!important;min-inline-size:0;
+}
+html body #app#app#app#app .v985-purple .v985-mini .v985-mini-ico{display:grid;place-items:center;margin:0}
+html body #app#app#app#app .v985-purple .v985-mini strong{display:block!important;min-height:0;color:var(--vx-text)!important;font-size:12px!important;line-height:1.2;white-space:normal;letter-spacing:normal}
+html body #app#app#app#app .v985-purple .v985-mini small{display:block;color:var(--vx-text-2)!important;font-variant-numeric:tabular-nums}
+html body #app#app#app#app #v145-payment-center .v252-hero{border:0!important;border-radius:var(--vx-r-lg);box-shadow:var(--vx-shadow-1)}
+html body #app#app#app#app #v145-payment-center .v252-hero::before{content:none}
+html body #app#app#app#app #v145-payment-center .v252-hero :is(.v245-pay-summary,.v145-payment-kpi,.v252-capacity,.v145-debt-indicator,.v283-hero-payments,.v295-types-inside-hero,.v286-pay-tile){
+ border:0!important;box-shadow:none!important;background:transparent!important;
+}
+@media(min-width:791px){
+ html body #app#app#app#app :is(.vexp-cat > summary,.vexp-cathead){
+  display:grid;gap:var(--vx-pad-sm);grid-template-columns:36px minmax(0,1fr) minmax(28px,.65fr) minmax(104px,auto) 62px 18px!important;
+ }
+ html body #app#app#app#app .vexp-cathead > span:nth-child(2){text-align:start}
+ html body #app#app#app#app .vexp-cathead > span:nth-child(n+4){text-align:end}
+}
+@media(max-width:790px){
+ html body #app#app#app#app .vexp-cat > summary{column-gap:8px;row-gap:4px}
+}
+html body #app#app#app#app .vexp-cat > summary > strong{white-space:normal}
+html body #app#app#app#app .vexp-subs{background:transparent;border:0;box-shadow:none}
+
+html body #app#app#app#app :is(.v360-pressure-calendar .v942-next30-summary,.v881-panorama .v421-meter-grid > .v421-meter){
+ border:0!important;box-shadow:none!important;background:transparent!important;
+}
+
+/* Las ondas de los KPI se recortan dentro de su superficie. */
+#app #page .vinc-kpi .vinc-wave{inset-inline-end:0;inset-block-end:0}
+
+@media(max-width:430px){
+ html body #app#app#app#app .v985-grid > .v985-purple{grid-column:1/-1}
+}
+
+html body #app#app#app#app .v708-legend-row{grid-template-columns:auto minmax(0,1fr) auto}
+
+/* Entrada de vista en escritorio. La pantalla responde desde el primer cuadro. */
+:root{--vx-view-duration:160ms}
+@media(min-width:791px) and (prefers-reduced-motion:no-preference){
+ .vive-page-enter{animation:vive-page-enter var(--vx-view-duration) ease-out}
+ @keyframes vive-page-enter{from{opacity:.88}to{opacity:1}}
+}

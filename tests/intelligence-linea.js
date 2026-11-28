@@ -2,12 +2,12 @@
    subtítulos estáticos retirados, rotación sin desplazamientos, todas las páginas con Intelligence, móvil y PC, claro y Black.
    Ejecutar: node tests/intelligence-linea.js */
 const assert=require('node:assert/strict');
-const {chromium}=require('playwright');
+const {chromium,webkit}=require('playwright');
 const open=require('./harness.js');
 const PAGES=['overview','wallet','banks','mobilehub','income','personal','budget','payments','patrimony','recurring','loans','advanced','score','annual','flow','projection','transactions'];
 let ok=0;const t=(c,m)=>{assert.ok(c,m);ok++;console.log('✓',m)};
 (async()=>{
- const b=await chromium.launch();const errs=[];
+ const b=await (process.env.INTELLIGENCE_BROWSER==='webkit'?webkit:chromium).launch();const errs=[];
  for(const [w,h,mob,theme] of [[1440,900,0,'light'],[1440,900,0,'black'],[390,844,1,'light'],[390,844,1,'black']]){
   if(mob)process.env.TOUCH='1';else delete process.env.TOUCH;process.env.THEME=theme;
   const {p,ctx}=await open(b,w,h);p.on('pageerror',e=>errs.push(e.message));
@@ -25,7 +25,12 @@ let ok=0;const t=(c,m)=>{assert.ok(c,m);ok++;console.log('✓',m)};
      subs:[...document.querySelectorAll('.vi-sub-off')].length,subVisible:[...document.querySelectorAll('.top-sub')].some(s=>getComputedStyle(s).display!=='none'&&s.getBoundingClientRect().height>0),
      extra:more?Number(more.textContent.replace('+','')):0,label:e.getAttribute('aria-label'),w:r.width,top:r.top,vis:r.height>0&&r.width>0};
    });
-   if(!m)continue;withLine++;
+   if(!m){
+    const active=await p.evaluate(()=>window.__viveIntel.active());
+    assert.ok(!active.global&&!active.findings.length||active.scope.page==='mobilehub',pg+': sin línea solo si no hay hallazgos del contexto');
+    continue;
+   }
+   withLine++;
    const tag=`[${w}px ${theme}] ${pg}`;
    assert.ok(m.vis,tag+': la línea es visible');
    assert.ok(m.h>=43.5,tag+': área táctil ≥ 44 px ('+m.h+')');
@@ -35,7 +40,7 @@ let ok=0;const t=(c,m)=>{assert.ok(c,m);ok++;console.log('✓',m)};
    assert.ok(!m.subVisible,tag+': subtítulo descriptivo retirado');
    assert.ok(/^VIVE Intelligence: /.test(m.label),tag+': etiqueta accesible');
   }
-  t(withLine>=12,`[${w}px ${theme}] la línea aparece en ${withLine} páginas (≥12)`);
+  t(withLine>0,`[${w}px ${theme}] la línea aparece en ${withLine} páginas con hallazgos propios`);
   /* Toda la línea abre la hoja con la experiencia actual */
   await p.evaluate(g=>window.__T.go(g),'overview');await p.waitForTimeout(1200);
   await p.click('.vi-strip');await p.waitForTimeout(500);

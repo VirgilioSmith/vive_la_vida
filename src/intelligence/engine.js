@@ -574,7 +574,148 @@
   return {findings:shown,all:reconciled,errors,meta:{version:VERSION,rules:RULES.length,evaluated:RULES.length,generated:raw.length,shown:shown.length,today:ctx.today,quality:ctx.q}};
  }
 
- const api={VERSION,analyze,rules:RULES.map(r=>({id:r.id,engine:r.engine})),PRIORITY,KIND,
+ /* The input belongs to the active view. Unknown views and missing data produce no findings. */
+ const total=(rows,key)=>rows.reduce((sum,row)=>sum+num(row[key]),0);
+ const signed=v=>(v<0?'−':'')+fmt(v,2);
+ const native=(v,c)=>(c==='USD'?'US$':'RD$')+num(v).toLocaleString('es-DO',{minimumFractionDigits:2,maximumFractionDigits:2});
+ function contextual(scope,data,state){
+  const findings=[];
+  const period=scope.period||scope.today;
+  const ctx={today:scope.today,ym:period};
+  const add=(rule,title,explanation,evidence,options={})=>{
+   findings.push(make(ctx,{rule:'active.'+rule,key:scope.subject||scope.module,engine:'financial',
+    priority:'info',confidence:1,modules:[scope.module],title,explanation,evidence,...options}));
+  };
+  if(data.cards?.length){
+   const cards=data.cards;
+   const debt=total(cards,'debt'),limit=total(cards,'limit');
+   if(limit>0){
+    const usage=100*debt/limit;
+    const name=scope.name||'Tu crédito';
+    add('credit',name+' usa '+fmtP(usage,1)+' del límite',
+     usage>100?'La deuda registrada supera el límite disponible. Revisar el saldo y los cargos te permite identificar el exceso.':
+      'La diferencia entre el límite y el saldo es '+signed(limit-debt)+' en RD$ equivalentes.',
+     [['Deuda',fmt(debt,2)],['Límite',fmt(limit,2)]],{engine:'credit',priority:usage>100?'attention':'info',magnitude:debt});
+   }else if(debt>0){
+    add('credit-debt',(scope.name||'Tarjetas')+' · '+fmt(debt,2)+' de deuda',
+     'El saldo proviene de las tarjetas de esta vista.',[['Deuda',fmt(debt,2)]],{engine:'credit'});
+   }
+  }
+  if(data.due?.length){
+   const due=[...data.due].sort((a,b)=>a.days-b.days)[0];
+   const when=due.days<0?'venció hace '+(-due.days)+' d':due.days===0?'vence hoy':'vence en '+due.days+' d';
+   const label={card:'Tarjeta',loan:'Cuota de préstamo',recurring:'Suscripción'}[due.kind];
+   add('due',(label?label+' · ':'')+due.name+' '+when,'Importe del compromiso registrado para esa fecha.',
+    [['Importe',native(due.amount,due.currency)],['Fecha',due.date]],
+    {engine:'risk',priority:due.days<0?'critical':'attention',essential:due.days<0});
+  }
+  if(data.position){
+   const {funds,invested,debt,net}=data.position;
+   add('position',(scope.name||'Tus cuentas y productos bancarios')+' · '+signed(net)+' netos',
+    'Saldo de cuentas más capital en certificados, menos deuda registrada en tarjetas y préstamos.',
+    [['Cuentas',signed(funds)],['Certificados',signed(invested)],['Deuda',signed(debt)]]);
+  }
+  for(const product of data.products||[]){
+   add(product.rule,product.title,product.detail,product.evidence,product.options);
+  }
+  if(data.movements?.length){
+   const rows=data.movements;
+   const income=data.ledgerTotals?.income??total(rows,'income'),expense=data.ledgerTotals?.expense??total(rows,'expense');
+   if(income||expense){
+    const title=income&&expense?'Balance del flujo visible: '+signed(income-expense):
+     income?'Ingresos registrados: '+fmt(income,2):'Gasto neto registrado: '+signed(expense);
+    add('flow',title,'Ingresos y gastos reconocidos en los movimientos visibles, con sus cargos y devoluciones.',
+     [['Ingresos',fmt(income,2)],['Gasto neto',signed(expense)]]);
+   }
+   const categories=new Map();
+   for(const row of rows)if(row.category&&row.expense)categories.set(row.category,(categories.get(row.category)||0)+row.expense);
+   const breakdown=data.ledgerTotals?Object.entries(data.ledgerTotals.expenseBy):[...categories];
+   const top=breakdown.sort((a,b)=>b[1]-a[1])[0];
+   if(breakdown.length>1&&expense>0&&top[1]>0&&top[1]<=expense){
+    add('category',top[0]+' concentra '+fmtP(100*top[1]/expense,1)+' del gasto',
+     'Es la categoría con mayor gasto neto entre los movimientos visibles.',
+     [[top[0],fmt(top[1],2)],['Gasto neto',fmt(expense,2)]],{engine:'pattern'});
+   }
+   const expenses=rows.filter(r=>r.expense>0);
+   if(expenses.length>=8){
+    const largest=expenses.reduce((a,b)=>a.expense>b.expense?a:b);
+    const base=median(expenses.filter(r=>r!==largest).map(r=>r.expense));
+    if(base>0&&largest.expense>=3*base)add('unusual',largest.label+' supera el importe habitual',
+     'Este gasto fue al menos tres veces la mediana de los demás gastos visibles. El importe por sí solo no indica un error.',
+     [['Gasto mayor',fmt(largest.expense,2)],['Mediana de los demás',fmt(base,2)],['Fecha',largest.date]],
+     {engine:'pattern',kind:'interpretation',confidence:.7,priority:'attention',magnitude:largest.expense});
+   }
+  }
+  if(data.series?.length){
+   const series=data.series;
+   const income=total(series,'income'),expense=total(series,'expense');
+   const spendOnly=data.seriesLabel==='Gasto del período';
+   if(income||expense)add('period-total',data.seriesLabel+': '+signed(spendOnly?expense:income-expense),
+    spendOnly?'Egresos contabilizados en los meses visibles.':'Ingresos menos egresos contabilizados en los meses visibles.',
+    spendOnly?[['Egresos',signed(expense)]]:[['Ingresos',signed(income)],['Egresos',signed(expense)]]);
+   const complete=series.filter(x=>x.complete);
+   const last=complete.at(-1),prior=complete.slice(-4,-1);
+   if(last&&last.expense>0&&prior.length===3&&prior.every(x=>x.expense>0)){
+    const baseline=median(prior.map(x=>x.expense));
+    const change=last.expense-baseline;
+    if(Math.abs(change)>=.2*baseline)add('period-change',
+     'El gasto de '+last.period+' fue '+fmtP(Math.abs(100*change/baseline),1)+(change>0?' mayor':' menor'),
+     'Compara el último mes cerrado con la mediana de los tres meses cerrados anteriores de la vista.',
+     [['Último mes',signed(last.expense)],['Mediana de los tres anteriores',signed(baseline)]],
+     {engine:'pattern',kind:'interpretation',confidence:.75});
+   }
+  }
+  if(data.subscriptions?.length){
+   const monthly=total(data.subscriptions,'monthly');
+   if(monthly>0)add('subscription-cost',fmt(monthly,2)+' al mes en suscripciones',
+    'Es el equivalente mensual de las tarifas y frecuencias registradas en esta vista.',
+    [['Servicios activos',String(data.subscriptions.length)],['Equivalente mensual',fmt(monthly,2)]]);
+   if(data.subscriptions.length>=3&&monthly>0){
+    const top=data.subscriptions.reduce((a,b)=>a.monthly>b.monthly?a:b);
+    if(top.monthly>=monthly*.5)add('subscription-share',top.name+' concentra '+fmtP(100*top.monthly/monthly)+' del costo',
+     'Es el mayor costo recurrente de la selección. Revisar primero ese servicio permite evaluar el mayor ahorro potencial.',
+     [['Servicio al mes',fmt(top.monthly,2)],['Total mensual',fmt(monthly,2)]],{engine:'opportunity',priority:'opportunity'});
+   }
+  }
+  if(data.charges?.length){
+   const ordered=[...data.charges].sort((a,b)=>b.date.localeCompare(a.date));
+   const previous=new Map(),compared=new Set();
+   for(const charge of ordered){
+    const key=JSON.stringify([charge.service,charge.currency]);
+    const latest=previous.get(key);
+    if(!latest){previous.set(key,charge);continue}
+    if(latest.date<=charge.date||compared.has(key))continue;
+    compared.add(key);
+    if(charge.amount>0&&latest.amount-charge.amount>=.01){
+     add('subscription-change',latest.name+' registró un cargo mayor',
+      'El último cobro visible supera al anterior en la misma moneda. Si no esperabas el cambio, revisa la factura antes de ajustar el costo previsto.',
+      [[latest.date,native(latest.amount,latest.currency)],[charge.date,native(charge.amount,charge.currency)]],
+      {engine:'pattern',priority:'attention',magnitude:latest.amount-charge.amount});
+     break;
+    }
+   }
+   if(data.compareCharges){
+    const sums=new Map();
+    for(const charge of ordered)sums.set(charge.currency,(sums.get(charge.currency)||0)+charge.amount);
+    const evidence=[...sums].map(([ccy,amount])=>['Cobros en '+ccy,native(amount,ccy)]);
+    add('subscription-paid',ordered.length+' cobros de suscripción registrados',
+     'Total de cobros confirmados en el período visible, por moneda.',evidence);
+   }
+  }
+  return Priority.select(findings,Learning.normalize(state),scope.today,{max:4});
+ }
+
+ function present(findings,discovery=null){
+  const discoveries=[...(discovery?.discoveries||[]).filter(h=>!h.repeat),...(discovery?.digest||[])]
+   .filter((h,i,all)=>all.findIndex(x=>x.title===h.title)===i);
+  const evidence=findings.filter(f=>!/^ctx\.(empty|thin-history)$/.test(f.rule));
+  const summaries=discoveries.map(h=>({title:h.title,priority:h.valence==='risk'?'attention':h.valence==='positive'?'recognition':'info'}));
+  const items=[...(summaries.length?[summaries[0]]:[]),...evidence,...summaries]
+   .filter((f,i,all)=>all.findIndex(x=>x.title===f.title)===i);
+  return {findings:evidence,discoveries,items};
+ }
+
+ const api={VERSION,analyze,contextual,present,rules:RULES.map(r=>({id:r.id,engine:r.engine})),PRIORITY,KIND,
   engines:{context:Context,decision:Decision,learning:Learning,priority:Priority,narrative:Narrative},
   _util:{median,stdev,avg,pct,fmt,diffDays,addDays}};
  if(typeof module==='object'&&module.exports)module.exports=api;else root.ViveIntelligence=api;
