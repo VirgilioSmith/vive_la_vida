@@ -534,9 +534,9 @@
    vis.sort((a,b)=>PRIORITY[a.priority].rank-PRIORITY[b.priority].rank||b.score-a.score);
    const out=[];let rec=0;const perEngineInfo={};
    for(const f of vis){
-    if(f.priority==='recognition'){if(rec>=1)continue;rec++}
-    if(f.priority==='info'){perEngineInfo[f.engine]=(perEngineInfo[f.engine]||0)+1;if(perEngineInfo[f.engine]>2)continue}
-    out.push(f);if(out.length>=o.max)break;
+    if(!o.exhaustive&&f.priority==='recognition'){if(rec>=1)continue;rec++}
+    if(!o.exhaustive&&f.priority==='info'){perEngineInfo[f.engine]=(perEngineInfo[f.engine]||0)+1;if(perEngineInfo[f.engine]>2)continue}
+    out.push(f);if(!o.exhaustive&&out.length>=o.max)break;
    }
    return out;
   }
@@ -602,12 +602,13 @@
    }
   }
   if(data.due?.length){
-   const due=[...data.due].sort((a,b)=>a.days-b.days)[0];
+   for(const due of [...data.due].sort((a,b)=>a.days-b.days)){
    const when=due.days<0?'venció hace '+(-due.days)+' d':due.days===0?'vence hoy':'vence en '+due.days+' d';
    const label={card:'Tarjeta',loan:'Cuota de préstamo',recurring:'Suscripción'}[due.kind];
    add('due',(label?label+' · ':'')+due.name+' '+when,'Importe del compromiso registrado para esa fecha.',
     [['Importe',native(due.amount,due.currency)],['Fecha',due.date]],
-    {engine:'risk',priority:due.days<0?'critical':'attention',essential:due.days<0});
+    {key:JSON.stringify([scope.subject||scope.module,due.id||due.name,due.kind,due.date,due.currency,due.amount]),engine:'risk',priority:due.days<0?'critical':'attention',essential:due.days<0,fingerprint:JSON.stringify([due.date,due.amount,due.currency])});
+   }
   }
   if(data.position){
    const {funds,invested,debt,net}=data.position;
@@ -690,8 +691,7 @@
      add('subscription-change',latest.name+' registró un cargo mayor',
       'El último cobro visible supera al anterior en la misma moneda. Si no esperabas el cambio, revisa la factura antes de ajustar el costo previsto.',
       [[latest.date,native(latest.amount,latest.currency)],[charge.date,native(charge.amount,charge.currency)]],
-      {engine:'pattern',priority:'attention',magnitude:latest.amount-charge.amount});
-     break;
+      {key:JSON.stringify([scope.subject||scope.module,latest.service,latest.currency]),engine:'pattern',priority:'attention',magnitude:latest.amount-charge.amount,fingerprint:JSON.stringify([latest.date,latest.amount,charge.date,charge.amount])});
     }
    }
    if(data.compareCharges){
@@ -702,7 +702,8 @@
      'Total de cobros confirmados en el período visible, por moneda.',evidence);
    }
   }
-  return Priority.select(findings,Learning.normalize(state),scope.today,{max:4});
+  // La hoja contextual debe conservar todos los hallazgos válidos y distintos.
+  return Priority.select(Decision.reconcile(findings),Learning.normalize(state),scope.today,{exhaustive:true});
  }
 
  function present(findings,discovery=null){
