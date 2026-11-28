@@ -212,7 +212,7 @@ function loanDetail(l){
      <div class="vbd-top-actions"><button type="button" class="vbd-btn is-primary" data-act="payLoan" data-id="${l.id}" ${dis}><span>Registrar cuota</span></button><button type="button" class="vbd-btn" data-act="extraLoan" data-id="${l.id}" ${dis}><span>Abono extraordinario</span></button>
       <details class="vbd-menu"><summary aria-label="Más acciones">···</summary><div><button type="button" data-act="editLoan" data-id="${l.id}">Editar ficha</button><button type="button" data-act="productArchive" data-kind="loan" data-id="${l.id}">${l.archived?'Reactivar':'Cancelar'}</button></div></details></div></div>
     <div class="vbd-loan-hero">
-     <article class="vbd-face"><span class="vbd-kicker">${sanitize(bankOf(l))} · ${sanitize(l.currency)}<em class="vbd-chip${late?' is-late':a.settled?' is-done':''}">${status}</em></span><h2 data-vi-heading>${sanitize(l.name)}</h2><p>Capital original ${money(l.principal,l.currency,2)} · ${num(l.rate).toFixed(2)}% anual · ${v49LoanPeriodCount(l)} ${v49LoanPeriodsPerMonth(l)===2?'quincenas':'cuotas mensuales'}${l.originationDate?' · desde '+prettyDate(l.originationDate):''}</p>
+     <article class="vbd-face"><span class="vbd-kicker">${sanitize(bankOf(l))} · ${sanitize(l.currency)}<em class="vbd-chip${late?' is-late':a.settled?' is-done':''}">${status}</em></span><h2>${sanitize(l.name)}</h2><p>Capital original ${money(l.principal,l.currency,2)} · ${num(l.rate).toFixed(2)}% anual · ${v49LoanPeriodCount(l)} ${v49LoanPeriodsPerMonth(l)===2?'quincenas':'cuotas mensuales'}${l.originationDate?' · desde '+prettyDate(l.originationDate):''}</p>
       <div class="vbd-loan-bal"><div class="vbd-ring" role="progressbar" aria-label="Capital amortizado" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct.toFixed(1)}" style="--p:${pct.toFixed(2)}"><div><b>${pct.toFixed(1)}%</b><small>pagado</small></div></div><div class="vbd-amt"><small>SALDO PENDIENTE</small><strong>${money(a.balance,l.currency,2)}</strong><span>Capital reducido ${money(a.paidPrincipal,l.currency)}</span></div></div></article>
      <div class="vbd-statgrid">${stat('PRÓXIMO VENCIMIENTO',next,a.settled?'':whenTxt(a.next))}${stat('CUOTA CONTRACTUAL',money(loanStatus(l).installment,l.currency,2))}${stat('CUOTAS',a.periods+' <i>/ '+v49LoanPeriodCount(l)+'</i>','registradas / pactadas')}${stat('INTERESES Y CARGOS A LA FECHA',money(a.interest+a.insurance+a.fees+a.estimatedHistoricInterest+a.estimatedHistoricInsurance+a.estimatedHistoricFees,l.currency,2),'Confirmados '+money(a.interest,l.currency,2))}${stat('INTERESES FUTUROS ESTIMADOS',money(l.archived?0:b.baseline.interest,l.currency,2))}${stat('ABONOS EXTRAORDINARIOS',money(a.extras,l.currency,2),'Reducen capital')}</div></div>
     <nav class="vbd-tabs" role="tablist" aria-label="Detalle de préstamo">${tabs.map(([key,title])=>`<button type="button" role="tab" aria-selected="${key===tab}" class="loan-tab vbd-tab ${key===tab?'on':''}" data-act="loanTab" data-id="${key}">${title}</button>`).join('')}</nav>
@@ -951,7 +951,7 @@ function v1127Target(key){
  const act={card:'payCard',loan:'payLoan',recurring:'payRecurring',personal:'payPersonal'}[m[1]];
  return act?{act,id:m[2],ccy:m[3]||''}:null;
 }
-document.addEventListener('click',e=>{const r=e.target.closest?.('[data-v1127-pay]');if(!r)return;const t=v1127Target(r.dataset.v1127Pay);if(!t)return;e.preventDefault();e.stopPropagation();v361ClosePressureDay();v1121Go(t.act,t.id,t.ccy)},true);
+document.addEventListener('click',e=>{const r=e.target.closest?.('[data-v1127-pay]');if(!r)return;const t=v1127Target(r.dataset.v1127Pay);if(!t)return;e.preventDefault();e.stopPropagation();document.getElementById('v361-pressure-day-dialog')?.remove();document.body.classList.remove('v361-pressure-open');v1121Go(t.act,t.id,t.ccy)},true);
 /* V1126 · Radar: tocar un tramo (0–7, 8–15, 16–30 días) abre el desglose de sus vencimientos, igual que el calendario. */
 function v1126OpenDueRange(i){
  const limits=[7,15,30],labels=['0–7 días','8–15 días','16–30 días'];
@@ -962,10 +962,7 @@ function v1126OpenDueRange(i){
  const rows=events.map(e=>{const pay=v1127Target(e.key);return `<article class="v361-pressure-item${pay?' v1127-payable':''}" ${pay?`data-v1127-pay="${sanitize(e.key)}" role="button" tabindex="0"`:''}><div><strong>${sanitize(e.name||'Compromiso')}</strong><span>${sanitize(prettyDate(e.date))}${pay?' · Toca para pagar':''}</span></div><b>${v318Money(num(e.amount))}</b></article>`}).join('');
  const dialog=document.createElement('div');dialog.id='v361-pressure-day-dialog';dialog.className='v361-pressure-overlay';
  dialog.innerHTML=`<div class="v361-pressure-backdrop" data-v361-pressure-close="1"></div><section role="dialog" aria-modal="true" aria-labelledby="v361-pressure-title" class="v361-pressure-sheet"><header><div><small>RADAR DE VENCIMIENTOS · ${labels[i]}</small><h2 id="v361-pressure-title">${labels[i]}</h2></div><button type="button" data-v361-pressure-close="1" aria-label="Cerrar desglose">×</button></header><div class="v361-pressure-main"><span>Compromisos previstos</span><strong>${v318Money(total)}</strong><small>${events.length} ${events.length===1?'compromiso':'compromisos'} en este tramo</small></div><div class="v361-pressure-list">${rows||'<p class="v360-pressure-empty">No hay obligaciones en este tramo.</p>'}</div><footer><button type="button" data-v361-pressure-close="1">Cerrar</button></footer></section>`;
- document.body.appendChild(dialog);
- vIntelOverlay(dialog,'pressure','radar:'+from+':'+end,
-  vIntelCommitmentData(events,total,'para este tramo','Salidas previstas en el tramo visible del radar.'),from+' → '+end);
- document.body.classList.add('v361-pressure-open');dialog.querySelector('.v361-pressure-sheet header button')?.focus();
+ document.body.appendChild(dialog);document.body.classList.add('v361-pressure-open');dialog.querySelector('.v361-pressure-sheet header button')?.focus();
 }
 document.addEventListener('click',e=>{const c=e.target.closest?.('[data-v1126-bucket]');if(!c)return;e.preventDefault();e.stopPropagation();v361PressureLastFocus=c;v1126OpenDueRange(Number(c.dataset.v1126Bucket))},true);
 document.addEventListener('keydown',e=>{const c=e.target.closest?.('[data-v1126-bucket]');if(c&&(e.key==='Enter'||e.key===' ')){e.preventDefault();v1126OpenDueRange(Number(c.dataset.v1126Bucket))}});
@@ -1747,7 +1744,6 @@ function vWalletPcRefresh(el){
  const template=document.createElement('template');
  template.innerHTML=vWalletPc();
  root.replaceWith(template.content);
- window.ViveIntelUI?.mount();
  const options=[...document.querySelectorAll(`.${selector} [data-act="${el.dataset.act}"]`)];
  const preferred=options.find(option=>(option.dataset.id||'')===(el.dataset.id||''));
  (preferred||document.querySelector('.vWalletPc-product-list [aria-pressed="true"]'))?.focus({preventScroll:true});
@@ -2959,20 +2955,6 @@ function v176CardInsight(cardList=db.cards,currency,pendingOnly=false){
  const totalBilled=list.reduce((n,x)=>n+fx(x.s.billed,x.ccy),0);
  const totalDebt=list.reduce((n,x)=>n+fx(x.s.debt,x.ccy),0);
  el.innerHTML=`<div class="modal-layer" data-backdrop="true"><section class="modal wide v176-card-insight-modal" role="dialog" aria-modal="true" aria-label="Composición del portafolio de tarjetas"><div class="modal-head"><div><h2>Tu crédito, por producto</h2><p>Saldo total y facturado con fecha de corte, sin duplicar deuda.</p></div><button type="button" class="close" data-act="closeModal">×</button></div><div class="v176-credit-total"><span><small>DEUDA TOTAL</small><b>${money(totalDebt)}</b></span><span><small>ESTADOS FACTURADOS PENDIENTES</small><b>${money(totalBilled)}</b></span></div><div class="v176-credit-rows">${list.map(({c,ccy,s})=>`<button type="button" class="v176-credit-row" data-act="${cardList===db.cards?'goCard':'v68WalletGlobalAction'}" ${cardList===db.cards?'':'data-mode="card-cut"'} data-id="${sanitize(c.id)}"><span><strong>${sanitize(c.name)}</strong><small>${sanitize(ccy)} · corte ${prettyDate(s.cut)} · vencimiento ${prettyDate(s.nextDue||s.due||s.cut)}</small></span><span><b>${money(s.debt,ccy,2)}</b><small>Facturado ${money(s.billed,ccy,2)}</small></span>${icon('arrow')}</button>`).join('')||'<p>Sin saldos de tarjeta registrados.</p>'}</div><p class="form-note">El importe facturado es parte de la deuda total, no una deuda adicional. Las anualidades y el cashback se consultan por separado en Beneficios.</p></section></div>`;
- const amounts=new Map();
- for(const {ccy,s} of list){
-  const value=amounts.get(ccy)||{debt:0,billed:0};
-  value.debt+=num(s.debt);value.billed+=num(s.billed);amounts.set(ccy,value);
- }
- const evidence=[...amounts].flatMap(([ccy,value])=>[
-  ['Facturado · '+ccy,money(value.billed,ccy,2)],['Deuda · '+ccy,money(value.debt,ccy,2)]
- ]);
- vIntelOverlay(el.querySelector('.v176-card-insight-modal'),'cards',
-  JSON.stringify(['cuts',currency,pendingOnly,cardList.map(c=>c.id)]),
-  evidence.length?{products:[{rule:'card-cuts',title:'Cortes de las tarjetas visibles',
-   detail:'Lo facturado forma parte de la deuda. Los importes se mantienen separados por moneda.',
-   evidence,options:{engine:'credit'}}]}:{},null,currency);
-
 }
 document.addEventListener('click',e=>{if(e.target.closest?.('[data-v176-card-insight]')){e.preventDefault();v176CardInsight()}},true);
 document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.closest?.('[data-v176-card-insight]')){e.preventDefault();v176CardInsight()}},true);
@@ -5065,11 +5047,6 @@ function v187OpenWealthDetail(kind){
  const main=({net:snap.net,assets:snap.assets,liabilities:snap.liabilities,liquidity:snap.liquid,certificates:snap.certificates,receivable:snap.receivable,cards:snap.cards,loans:snap.loans,payable:snap.payable})[kind];
  const rows=v187WealthRows(cut,kind),body=rows.map(x=>`<button type="button" class="v187-detail-line" data-act="v187WealthGo" data-id="${sanitize(x.route)}"><span><strong>${sanitize(x.name)}</strong><small>${sanitize(x.detail)}${x.original?` · ${sanitize(x.original)}`:''}</small></span><b>${money(x.amount,'DOP',2)}</b>${icon('arrow')}</button>`).join('');
  document.getElementById('modal-root').innerHTML=`<div class="v187-modal-overlay"><section class="v187-detail-dialog" role="dialog" aria-modal="true" aria-labelledby="v187DetailTitle"><header><div><span>DESGLOSE PATRIMONIAL · ${sanitize(cut)}</span><h2 id="v187DetailTitle">${sanitize(title)}</h2><p>Saldo reconstruido al ${prettyDate(cut)}, expresado en RD$ equivalentes.</p></div><button type="button" data-act="closeModal" aria-label="Cerrar detalle" class="v187-modal-close">×</button></header><div class="v187-detail-big">${money(main,'DOP',2)}</div><div class="v187-detail-list">${body||'<p class="v187-detail-empty">No hay productos registrados en este desglose para el corte elegido.</p>'}</div><p class="v187-history-caveat">Abre un producto para ver su módulo actual. Los valores aquí reflejan el corte elegido; los del módulo pueden corresponder a otro período.</p></section></div>`;
- vIntelOverlay(document.querySelector('.v187-detail-dialog'),'patrimony',kind+'|'+cut,
-  rows.length&&num(db.settings?.fx)>0?{products:[{rule:'wealth-component',title:title+' · '+money(main,'DOP',2),
-   detail:'Valor registrado para este componente en el corte seleccionado.',
-   evidence:[['Fecha de corte',cut],['Productos',String(rows.length)]],
-   options:{kind:snap.estimatedLoan?'interpretation':'fact',confidence:snap.estimatedLoan?.75:1}}]}:{},cut);
  document.querySelector('.v187-modal-close')?.focus({preventScroll:true});
 }
 
@@ -7292,7 +7269,7 @@ for(let mm=1;mm<=12;mm++){
 d.budgetVersions=[{id:uuid(),category:'Alimentación',subcategory:'',effectiveMonth:`${demoReferenceYear}-01`,amount:10800},{id:uuid(),category:'Vivienda',subcategory:'',effectiveMonth:`${demoReferenceYear}-01`,amount:20000}];
 return migrateData(d)}
 function toast(message){let el=document.getElementById('toast-root');el.innerHTML=`<div class="toast">${sanitize(message)}</div>`;clearTimeout(toast.timer);toast.timer=setTimeout(()=>{el.innerHTML=''},3300);window.v192HapticSuccess?.(message,true)}
-function closeModal(){const visibleIntel=document.querySelector('#modal-root [data-vi-context]');const v843Return=document.querySelector('#modal-root .v235-register-dialog')?window.v843RegistrarReturnFocus:null;window.v843RegistrarReturnFocus=null;v360LastUiDraft=null;document.getElementById('v54-delete-layer')?.remove();document.getElementById('modal-root').innerHTML='';if(visibleIntel)window.ViveIntelUI?.mount();if(v843Return instanceof HTMLElement&&v843Return.isConnected)queueMicrotask(()=>v843Return.focus({preventScroll:true}));if(f33Active){try{const x=JSON.parse(localStorage.getItem(v360ResumeKey())||'null');if(x){x.draft=null;localStorage.setItem(v360ResumeKey(),JSON.stringify(x))}}catch(_){}}}
+function closeModal(){const v843Return=document.querySelector('#modal-root .v235-register-dialog')?window.v843RegistrarReturnFocus:null;window.v843RegistrarReturnFocus=null;v360LastUiDraft=null;document.getElementById('v54-delete-layer')?.remove();document.getElementById('modal-root').innerHTML='';if(v843Return instanceof HTMLElement&&v843Return.isConnected)queueMicrotask(()=>v843Return.focus({preventScroll:true}));if(f33Active){try{const x=JSON.parse(localStorage.getItem(v360ResumeKey())||'null');if(x){x.draft=null;localStorage.setItem(v360ResumeKey(),JSON.stringify(x))}}catch(_){}}}
 function isHidden(x){return !!(x?.archived||bank(x?.bankId)?.archived)}
 function manageProduct(kind,id,cmd){let collection={bank:'banks',account:'accounts',card:'cards',loan:'loans',certificate:'certificates'}[kind];if(!collection)return;
 let list=db[collection],p=list.find(x=>x.id===id);if(!p)return;
@@ -7410,7 +7387,7 @@ function render(){
  const v238FocusKeys=['data-act','data-id','data-view','data-mode','data-ccy','data-v42-filter','data-v206-tab','data-v56','data-v145-filter','data-v145-pay-filter','data-v58','data-v26-tab','data-v176-pay-view','data-v42-entity','data-v71-search-pick'];
  const v238Target=v238BeforeFocus instanceof HTMLElement && v238BeforeFocus.matches('button,[role="tab"],[role="button"]') && v238OldMain?.contains(v238BeforeFocus)
   ?v238FocusKeys.filter(key=>v238BeforeFocus.hasAttribute(key)).map(key=>[key,v238BeforeFocus.getAttribute(key)]) : [];
- v99Invalidate(false);
+ v99Invalidate();
  if(!['light','black'].includes(db.settings.theme))db.settings.theme='black';
  db.settings.visualDesign='claridad';
  document.body.classList.toggle('theme-dark',['dark','black'].includes(db.settings.theme));
@@ -7549,7 +7526,6 @@ function vWalletMobileSelectInPlace(rail,id,align){
   const tail='.v1244-cutpanel,.v371-card-return,.v1301-distribution,.v266-wallet-note';
   [...wallet.children].filter(el=>el.matches(tail)).forEach(el=>el.remove());
   [...fresh.children].filter(el=>el.matches(tail)).forEach(el=>wallet.appendChild(el));
-  window.ViveIntelUI?.mount();
  }
  rail.querySelectorAll('.v68-wallet-face[data-id]').forEach(el=>{
   const selected=el.dataset.id===id;
@@ -11226,7 +11202,7 @@ document.addEventListener('click',event=>{const el=event.target.closest?.('[data
 
 /* V55 · Ingresos recurrentes: navegación anidada, nómina y joseo.
    Lectura sin duplicaciones: cobros contabilizados frente a programación estimada. */
-let v55DetailHtml=null,v55IntelIncome=null;
+let v55DetailHtml=null;
 (function(){
  Object.assign(ICONS,{
   'briefcase':'<rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v3M3 12h18"/>',
@@ -11302,25 +11278,6 @@ let v55DetailHtml=null,v55IntelIncome=null;
   }
   return {sources,movements,current,formal,informal,timeline,sumAmount,monthlyExpected,formalExpected,informalExpected,years};
  }
- const visibleModel=()=>v99Memo('income-recurring:'+ui.v55RecurringRange+':'+ym(),model);
- function visibleSources(m,kind){
-  const schedules=m.sources.filter(s=>!s._manual&&(s.kind==='formal')===(kind==='formal'));
-  const manual=m.sources.find(s=>s.id==='__v55_'+kind);
-  const options=m.movements.some(row=>row.sourceId===manual.id)?[...schedules,manual]:schedules;
-  const id=kind==='formal'?ui.v55FormalId:ui.v55InformalId;
-  return {schedules,options,selected:options.find(s=>s.id===id)||options[0]};
- }
- v55IntelIncome=kind=>{
-  const m=visibleModel(),selected=kind==='general'?null:visibleSources(m,kind).selected;
-  const source=selected?{id:selected.id,name:selected.name}:null;
-  const range=ui.v55RecurringRange;
-  const period=range==='all'?null:range==='year'?ym().slice(0,4):ym();
-  return {source,range,period,rows:()=>{
-   const names=new Map(m.sources.map(s=>[s.id,s.name]));
-   return m.current.filter(row=>kind==='general'||row.sourceId===source?.id)
-    .map(row=>({...row,name:names.get(row.sourceId)}));
-  }};
- };
  const tag=(label,tone='')=>`<span class="v55-tag ${tone}">${txt(label)}</span>`;
  const metric=(iconName,label,value,sub,tone='')=>`<div class="v55-metric ${tone}"><div class="v55-metric-top"><span class="v55-metric-icon">${icon(iconName)}</span><span>${txt(label)}</span></div><strong>${value}</strong><small>${sub}</small></div>`;
  const empty=(title,text,button='')=>`<div class="v55-empty"><span class="v55-empty-symbol">${icon('wallet')}</span><strong>${txt(title)}</strong><p>${txt(text)}</p>${button}</div>`;
@@ -11350,7 +11307,7 @@ let v55DetailHtml=null,v55IntelIncome=null;
   if(!entries.length)return [];
   return entries;
  }
- function formal(m){const {options:opts,selected:chosen}=visibleSources(m,'formal');const actual=m.formal,all=m.movements.filter(x=>m.sources.find(s=>s.id===x.sourceId)?.kind==='formal'),acc=m.sumAmount(all),total=m.sumAmount(actual);
+ function formal(m){const schedules=m.sources.filter(s=>s.kind==='formal'&&!s._manual),manual=m.sources.find(s=>s.id==='__v55_formal'),opts=[...schedules,...(sourceTotals(m,manual).arr.length?[manual]:[])];const chosen=opts.find(s=>s.id===ui.v55FormalId)||opts[0];const actual=m.formal,all=m.movements.filter(x=>m.sources.find(s=>s.id===x.sourceId)?.kind==='formal'),acc=m.sumAmount(all),total=m.sumAmount(actual);
   if(!chosen)return `<div class="v55-section-lead"><span class="v55-overline">TRABAJO FORMAL</span><h2>Nómina y crecimiento salarial</h2><p>La parte corporativa de tus ingresos, con AFP, SFS, ISR y evolución de aumentos.</p></div>${empty('Registra tu primer trabajo formal','Crea una fuente y selecciona trabajo formal para obtener el desglose automático de nómina.',addButton('Registrar trabajo formal'))}`;
   const s=chosen,sDetails=sourceTotals(m,s),hasSchedule=!s._manual,ref=today();let monthly=null,period=null;
   if(hasSchedule){try{monthly=v40Payroll({...s,frequency:'monthly'},ref);period=v40Payroll(s,ref);}catch(e){}}
@@ -11367,16 +11324,16 @@ let v55DetailHtml=null,v55IntelIncome=null;
   <section class="v55-metrics v55-metrics-secondary">${metric('layers','Neto acumulado · este empleo',cash(sDetails.total),'Todo el historial contabilizado')}${metric('receipt','Bruto histórico en recibos',cash(grossPaid),'Recibos con desglose guardado')}${metric('shield','Descuentos históricos',cash(deduct),'Retenidos antes de depositar')}${metric('calendar','Neto del período',cash(sDetails.currentAmount),txt(periodDescription()))}</section>
   <div class="v55-two"><section class="v55-panel"><div class="v55-panel-head"><div><span class="v55-overline">DINERO RECIBIDO</span><h3>Histórico de depósitos del empleo</h3><p>Montos netos confirmados por mes · ${ym().slice(0,4)}</p></div></div>${lineChart(Array.from({length:12},(_,k)=>{const mm=ym().slice(0,4)+'-'+String(k+1).padStart(2,'0');const pm=(+ym().slice(0,4)-1)+'-'+String(k+1).padStart(2,'0');return {label:monthNames[k],total:m.sumAmount(sDetails.arr.filter(x=>x.t.date.startsWith(mm))),previous:m.sumAmount(sDetails.arr.filter(x=>x.t.date.startsWith(pm)))}}))}<div class="v55-legends"><span><i class="v55-leg formal"></i>${ym().slice(0,4)}</span><span><i class="v55-leg prior"></i>${+ym().slice(0,4)-1}</span></div></section><section class="v55-panel"><div class="v55-panel-head"><div><span class="v55-overline">HISTORIAL DE NÓMINA</span><h3>Últimos depósitos</h3><p>Contabilizados sin duplicar AFP, SFS ni ISR en gastos</p></div></div>${txList(sDetails.arr,7)}</section></div>`;
  }
- function informal(m){const {schedules:ss,options,selected}=visibleSources(m,'informal');const all=m.movements.filter(x=>m.sources.find(s=>s.id===x.sourceId)?.kind!=='formal');const actual=m.informal,amount=m.sumAmount(actual);const categories={};for(const x of actual){const name=x.t.category||'Ingresos independientes';categories[name]=(categories[name]||0)+x.amount;}const parts=Object.entries(categories).sort((a,b)=>b[1]-a[1]);
+ function informal(m){const ss=m.sources.filter(s=>s.kind!=='formal'&&!s._manual),manual=m.sources.find(s=>s.id==='__v55_informal'),extra=sourceTotals(m,manual);const options=[...ss,...(extra.arr.length?[manual]:[])],selected=options.find(s=>s.id===ui.v55InformalId)||options[0];const all=m.movements.filter(x=>m.sources.find(s=>s.id===x.sourceId)?.kind!=='formal');const actual=m.informal,amount=m.sumAmount(actual);const categories={};for(const x of actual){const name=x.t.category||'Ingresos independientes';categories[name]=(categories[name]||0)+x.amount;}const parts=Object.entries(categories).sort((a,b)=>b[1]-a[1]);
   return `<section class="v55-joseo-hero"><span class="v55-joseo-icon">${icon('trending-up')}</span><div><span class="v55-overline">TU NEGOCIO, TUS VENTAS, TU JOSEO</span><h2>Ingresos que tú produces.</h2><p>Ventas, actividades independientes, servicios y cualquier otra fuente recurrente. Separado completamente de la nómina.</p></div>${addButton('Nueva actividad')}</section>
   <section class="v55-metrics">${metric('wallet','Joseo ingresado · período',cash(amount),'Cobros reconocidos: '+txt(periodDescription()),'amber')}${metric('layers','Joseo acumulado histórico',cash(m.sumAmount(all)),'Ingresos reales desde el inicio')}${metric('calendar','Neto previsto / mes',cash(m.informalExpected),'Fuentes informales activas, sin cobros manuales','amber')}${metric('store','Actividades programadas',String(ss.filter(s=>s.active!==false).length),'Fuentes independientes activas')}</section>
   <div class="v55-two"><section class="v55-panel"><div class="v55-panel-head"><div><span class="v55-overline">MIS ACTIVIDADES</span><h3>Trabajos, emprendimientos y ventas</h3><p>Selecciona un negocio para consultar su detalle</p></div></div><div class="v55-informal-list">${options.length?options.map(s=>{const d=sourceTotals(m,s);return `<button class="v55-informal-card ${selected?.id===s.id?'active':''}" data-v55-informal="${txt(s.id)}"><span class="v55-informal-icon">${icon('store')}</span><span><strong>${txt(s.name)}</strong><small>${s._manual?'Ventas y cobros sin programación':v45FreqName(s.frequency)+' · '+(s.active===false?'Pausado':'Activo')}</small></span><b>${cash(d.currentAmount)}</b>${icon('chevron-right')}</button>`}).join(''):empty('Aún sin ingresos independientes','Registra una actividad informal recurrente o un ingreso de ventas.',addButton('Agregar actividad'))}</div></section>
   <section class="v55-panel"><div class="v55-panel-head"><div><span class="v55-overline">¿QUÉ GENERA EL JOSEO?</span><h3>Composición de ingresos independientes</h3><p>Clasificación por categoría del movimiento</p></div></div>${parts.length?parts.map(([cat,v])=>`<div class="v55-cat"><div><b>${txt(cat)}</b><strong>${cash(v)}</strong></div>${fullBar(v,amount,'informal')}<small>${amount?(v/amount*100).toFixed(1):0}% del total informal</small></div>`).join(''):empty('Todavía no hay cobros este período','Las ventas y servicios aparecerán cuando se registren.')}</section></div>
   ${selected?`<section class="v55-panel v55-informal-detail"><div class="v55-panel-head"><div><span class="v55-overline">DESGLOSE DE ACTIVIDAD</span><h3>${txt(selected.name)}</h3><p>${selected._manual?'Ingresos registrados sin programación; no son una mensualidad garantizada.':'Importes por frecuencia y depósitos confirmados.'}</p></div>${selected._manual?tag('SIN PROGRAMAR','amber'):`<div class="v940-source-actions"><button class="btn sm soft" data-v40-action="editIncome" data-id="${txt(selected.id)}">${icon('pencil')} Editar fuente</button><button class="btn sm ghost" data-v40-action="v940Advance" data-id="${txt(selected.id)}">Registrar cobro anticipado</button><button class="btn sm ghost" data-v40-action="v940Additional" data-id="${txt(selected.id)}">+ Ingreso adicional</button></div>`}</div>${(()=>{const data=sourceTotals(m,selected);let p=null;if(!selected._manual)try{p=v40Payroll({...selected,frequency:'monthly'},today())}catch(e){}return `<div class="v55-informal-stats"><div><small>INGRESADO EN EL PERÍODO</small><b>${cash(data.currentAmount)}</b></div><div><small>ACUMULADO DE ESTA FUENTE</small><b>${cash(data.total)}</b></div><div><small>BRUTO PREVISTO / MES</small><b>${p?cash(p.gross,selected.currency,2):'No aplica'}</b></div><div><small>NETO PREVISTO / MES</small><b>${p?cash(p.net,selected.currency,2):'No aplica'}</b></div></div>${!selected._manual?`<div class="v55-informal-info"><span>Cuenta receptora: <b>${txt(account(selected.accountId)?.name||'Sin cuenta vinculada')}</b></span><span>Próximo cobro: <b>${prettyDate(selected.nextDue)}</b></span><span>Registro: <b>${selected.postingMode==='auto'?'Automático al sincronizar':'Confirmación manual'}</b></span></div>`:''}<div class="v55-two"><div><h4>Cobros por mes</h4>${lineChart(Array.from({length:12},(_,k)=>{const mm=ym().slice(0,4)+'-'+String(k+1).padStart(2,'0');const pm=(+ym().slice(0,4)-1)+'-'+String(k+1).padStart(2,'0');return {label:monthNames[k],total:m.sumAmount(data.arr.filter(x=>x.t.date.startsWith(mm))),previous:m.sumAmount(data.arr.filter(x=>x.t.date.startsWith(pm)))}}))}</div><div><h4>Últimos cobros de esta actividad</h4>${txList(data.arr,6)}</div></div>`;})()}</section>`:''}`;
  }
- v55DetailHtml=kind=>{ui.v55RecurringRange=ui.expenseRange==='year'?'year':ui.expenseRange==='all'?'all':'month';const m=visibleModel();return kind==='formal'?formal(m):informal(m)};
+ v55DetailHtml=kind=>{const m=model();ui.v55RecurringRange=ui.expenseRange==='year'?'year':ui.expenseRange==='all'?'all':'month';return kind==='formal'?formal(m):informal(m)};
  function v55RecurringWorkspace(){
-  const m=visibleModel(),tab=['general','formal','informal'].includes(ui.v55RecurringTab)?ui.v55RecurringTab:'general';
+  const m=model(),tab=['general','formal','informal'].includes(ui.v55RecurringTab)?ui.v55RecurringTab:'general';
   const tabs=[['general','Visión general','layout-dashboard'],['formal','Trabajo formal','briefcase'],['informal','Trabajo informal · Joseo','trending-up']];
   return `<div class="v55-shell"><header class="v55-hero"><div class="v55-hero-left"><div class="v55-eyebrow">INGRESOS <span>›</span> INGRESOS RECURRENTES</div><h1>Ingresos</h1></div><div class="v55-hero-right">${tag('PANEL DE INGRESOS','blue')}${addButton('Agregar fuente')}<button type="button" class="btn ghost" data-v40-action="v940Advance">Registrar cobro anticipado</button></div></header>
   <nav class="v55-subnav" aria-label="Módulos dentro de ingresos recurrentes">${tabs.map(([id,label,ico])=>`<button type="button" class="v55-subtab ${tab===id?'active':''}" aria-current="${tab===id?'page':'false'}" data-v55-tab="${id}">${icon(ico)}<span>${label}</span></button>`).join('')}</nav>
@@ -12209,7 +12166,7 @@ document.addEventListener('keydown',event=>{
    No realiza solicitudes a Supabase. La red se utiliza en f33LoadUser/f33Flush,
    no para cada tarjeta, gráfico ni porcentaje. */
 let v99ModelCache=Object.create(null);
-function v99Invalidate(dataChanged=true){v99ModelCache=Object.create(null);if(dataChanged)window.__viveIntelRev=(window.__viveIntelRev|0)+1}
+function v99Invalidate(){v99ModelCache=Object.create(null);window.__viveIntelRev=(window.__viveIntelRev|0)+1}
 function v99Memo(key,compute){if(Object.prototype.hasOwnProperty.call(v99ModelCache,key))return v99ModelCache[key];return v99ModelCache[key]=compute()}
 
 /* V115: índice local de movimientos para saldos por cuenta y tarjeta.
@@ -14416,7 +14373,6 @@ document.addEventListener('focusout',e=>{
   const fragment=document.createDocumentFragment();
   replacement.forEach(el=>fragment.appendChild(el));
   current.appendChild(fragment);
-  window.ViveIntelUI?.mount();
   const active=rail.querySelector('.v68-wallet-face.selected[data-id]');
   const label=active?.getAttribute('aria-label')||active?.textContent?.trim().slice(0,70)||'Tarjeta seleccionada';
   const status=host.querySelector('.v158-wallet-selection-status');
@@ -16376,7 +16332,7 @@ function v360PressurePage(){
 }
 /* V361: la selección abre el detalle en una vista superpuesta, sin reducir el calendario. */
 let v361PressureLastFocus=null;
-function v361ClosePressureDay(){const el=document.getElementById('v361-pressure-day-dialog');if(el){el.remove();window.ViveIntelUI?.mount()}document.body.classList.remove('v361-pressure-open');v361PressureLastFocus?.focus?.();v361PressureLastFocus=null;}
+function v361ClosePressureDay(){const el=document.getElementById('v361-pressure-day-dialog');if(el)el.remove();document.body.classList.remove('v361-pressure-open');v361PressureLastFocus?.focus?.();v361PressureLastFocus=null;}
 function v361OpenPressureDay(date){
  if(!/^\d{4}-\d{2}-\d{2}$/.test(String(date||'')))return;
  document.getElementById('v361-pressure-day-dialog')?.remove();
@@ -16384,14 +16340,11 @@ function v361OpenPressureDay(date){
  const total=events.reduce((sum,e)=>sum+num(e.amount),0);
  const rows=events.map(e=>`<article class="v361-pressure-item"><div><strong>${sanitize(e.name||'Compromiso')}</strong><span>${sanitize(({expense:'Pago programado',income:'Ingreso programado',card:'Pago de tarjeta',loan:'Cuota de préstamo',subscription:'Suscripción',service:'Servicio'})[String(e.kind||e.type||'').toLowerCase()]||e.kind||'Obligación')}</span></div><b>${v318Money(num(e.amount))}</b></article>`).join('');
  const dialog=document.createElement('div');dialog.id='v361-pressure-day-dialog';dialog.className='v361-pressure-overlay';dialog.innerHTML=`<div class="v361-pressure-backdrop" data-v361-pressure-close="1"></div><section role="dialog" aria-modal="true" aria-labelledby="v361-pressure-title" class="v361-pressure-sheet"><header><div><small>PRESIÓN FINANCIERA · DETALLE DEL DÍA</small><h2 id="v361-pressure-title">${prettyDate(date)}</h2></div><button type="button" data-v361-pressure-close="1" aria-label="Cerrar detalle del día">×</button></header><div class="v361-pressure-main"><span>Compromisos previstos</span><strong>${v318Money(total)}</strong><small>${events.length} ${events.length===1?'compromiso':'compromisos'} en esta fecha</small></div><div class="v361-pressure-list">${rows||'<p class="v360-pressure-empty">No hay obligaciones registradas para esta fecha.</p>'}</div><footer><button type="button" data-v361-pressure-close="1">Volver al calendario</button></footer></section>`;
- document.body.appendChild(dialog);
- vIntelOverlay(dialog,'pressure','day:'+date,
-  vIntelCommitmentData(events,total,'para este día','Salidas del calendario de compromisos para la fecha seleccionada.'),date);
- document.body.classList.add('v361-pressure-open');dialog.querySelector('.v361-pressure-sheet header button')?.focus();
+ document.body.appendChild(dialog);document.body.classList.add('v361-pressure-open');dialog.querySelector('.v361-pressure-sheet header button')?.focus();
 }
 document.addEventListener('click',e=>{
  const close=e.target.closest('[data-v361-pressure-close]');if(close){e.preventDefault();v361ClosePressureDay();return}
- const monthBtn=e.target.closest('[data-v362-month]');if(monthBtn){e.preventDefault();v362PressureMonthOffset=Math.max(0,Math.min(11,v362PressureMonthOffset+Number(monthBtn.dataset.v362Month)));const parent=document.querySelector('.v360-pressure-page');if(parent){const holder=document.createElement('div');holder.innerHTML=v360PressurePage();parent.replaceWith(holder.firstElementChild);window.ViveIntelUI?.mount();document.querySelector('.v362-pressure-month-nav [data-v362-month="'+monthBtn.dataset.v362Month+'"]')?.focus({preventScroll:true})}return;}
+ const monthBtn=e.target.closest('[data-v362-month]');if(monthBtn){e.preventDefault();v362PressureMonthOffset=Math.max(0,Math.min(11,v362PressureMonthOffset+Number(monthBtn.dataset.v362Month)));const parent=document.querySelector('.v360-pressure-page');if(parent){const holder=document.createElement('div');holder.innerHTML=v360PressurePage();parent.replaceWith(holder.firstElementChild);document.querySelector('.v362-pressure-month-nav [data-v362-month="'+monthBtn.dataset.v362Month+'"]')?.focus({preventScroll:true})}return;}
  const b=e.target.closest('[data-v360-pressure-day]');if(!b)return;
  e.preventDefault();v361PressureLastFocus=b;v361OpenPressureDay(b.dataset.v360PressureDay);
 });
@@ -17800,7 +17753,6 @@ window.__f360RecurringVisualAdapter={
  wrapRenderer(wrapper){if(typeof wrapper==='function')recurringForm=wrapper(recurringForm);}
 };
 
-let vIntelMobileMovements;
 /* V708 · Movimientos premium. Capa de presentación sobre la base real de transacciones. */
 (function(){
   'use strict';
@@ -17865,14 +17817,6 @@ let vIntelMobileMovements;
     return rows;
   }
   function base(){return all().filter(periodPass);}
-  vIntelMobileMovements={
-    active:()=>isMobileViewport()||(state.view==='detail'&&!!state.selected),
-    context:()=>({view:state.view,selected:state.selected,query:state.query,flow:state.flow,category:state.category,
-     otherCategories:state.otherCategories,product:state.product,period:state.period,month:state.month,productType:state.productType}),
-    rows:()=>state.view==='detail'?all().filter(t=>String(t.id)===String(state.selected)):
-      state.view==='list'?filtered():state.view==='categories'?v731ExpenseRows():state.view==='products'?
-      v708ProductMovements():base()
-  };
   function totals(data){let plus=0,minus=0;for(const t of data){const d=direction(t),v=amountDOP(t);if(d>0)plus+=v;else if(d<0)minus+=v;}return {plus,minus,net:plus-minus,count:data.length};}
   function header(title='Movimientos',subtitle='Consulta, filtra y gestiona tus transacciones.',back=false){return `<header class="v708-head"><div class="v708-heading">${back?`<button type="button" class="v708-back" data-v708="back" aria-label="Volver">${icon('arrow')}</button>`:''}<div><h1>${safe(title)}</h1><p>${safe(subtitle)}</p></div></div><button class="v708-head-icon" type="button" data-v708="calendar" aria-label="Seleccionar período" title="Período">${icon('calendar')}</button></header>`}
   function tabs(){return `<nav class="v708-tabstrip" aria-label="Vistas de movimientos">${SHOW_TABS.map(([id,label,ic])=>`<button type="button" class="v708-tab ${state.view===id?'active':''}" data-v708="view" data-value="${id}" aria-pressed="${state.view===id}">${icon(ic)}<span>${safe(label)}</span></button>`).join('')}</nav>`;}
@@ -17974,8 +17918,7 @@ let vIntelMobileMovements;
   const v731Sum=arr=>arr.reduce((acc,t)=>acc+amountDOP(t),0);
   const v731Pct=(amount,total)=>total>0?(amount/total*100).toLocaleString('es-DO',{maximumFractionDigits:1,minimumFractionDigits:1})+'%':'0%';
   function v731Close(){
-    const dialog=document.getElementById('v731-breakdown');
-    if(dialog){dialog.remove();window.ViveIntelUI?.mount()}
+    document.getElementById('v731-breakdown')?.remove();
     document.body.classList.remove('v731-open');
     const prev=v731LastFocus;v731LastFocus=null;
     if(prev?.isConnected)prev.focus({preventScroll:true});
@@ -18027,7 +17970,6 @@ let vIntelMobileMovements;
         </div></section>`;
     document.getElementById('v731-breakdown')?.remove();
     document.body.append(dialog);document.body.classList.add('v731-open');
-    vIntelOverlay(dialog,'register',JSON.stringify([group,category,subcategory,state.period,month()]),vIntelMovementData(current),state.period==='month'?month():null);
     dialog.querySelector('[data-v731-close]')?.focus({preventScroll:true});
     dialog.addEventListener('click',event=>{
       const el=event.target.closest('[data-v731-close],[data-v731-back],[data-v731-category],[data-v731-subcategory],[data-v731-tx]');if(!el)return;
@@ -18074,7 +18016,7 @@ let vIntelMobileMovements;
     if(reference)lines.push(['Referencia',safe(String(reference))]);
     const editable=typeof TRANSACTION_EDITABLE!=='undefined'&&(TRANSACTION_EDITABLE.has(t.type)||['personal_issue','personal_settlement'].includes(t.type));
     return `<div class="v708-detail">
-      <div class="v708-detail-hero"><div class="v708-detail-bar"><button type="button" data-v708="back" aria-label="Volver al historial">${icon('arrow')}</button><span>${apple?'Apple Pay':'Movimiento'}</span><button type="button" data-v708="more" aria-label="Más opciones">${icon('settings')}</button></div><div class="v708-detail-merchant" data-vi-heading><span class="v708-detail-logo">${iconMark(t)}</span><strong>${safe(v922MovementHeading(t))}</strong><small>${safe(source)}</small></div><b class="v708-detail-value ${positive?'plus':''}">${safe(typedAmount(t))}</b><div class="v708-detail-when">${safe(friendlyDate(t.date))}<span class="v708-status">${pending?'Sin clasificar':t.reviewed?'Conciliado':'Registrado'}</span></div></div>
+      <div class="v708-detail-hero"><div class="v708-detail-bar"><button type="button" data-v708="back" aria-label="Volver al historial">${icon('arrow')}</button><span>${apple?'Apple Pay':'Movimiento'}</span><button type="button" data-v708="more" aria-label="Más opciones">${icon('settings')}</button></div><div class="v708-detail-merchant"><span class="v708-detail-logo">${iconMark(t)}</span><strong>${safe(v922MovementHeading(t))}</strong><small>${safe(source)}</small></div><b class="v708-detail-value ${positive?'plus':''}">${safe(typedAmount(t))}</b><div class="v708-detail-when">${safe(friendlyDate(t.date))}<span class="v708-status">${pending?'Sin clasificar':t.reviewed?'Conciliado':'Registrado'}</span></div></div>
       <div class="v708-detail-actions">${editable?`<button type="button" data-v708="edit" data-id="${safe(t.id)}">${icon('edit')}<span>Editar</span></button>`:''}<button type="button" class="v709-delete-action" data-act="deleteTransaction" data-id="${safe(t.id)}" title="Eliminar este movimiento definitivamente">${icon('trash')}<span>Eliminar</span></button><button type="button" data-v708="categorize" data-id="${safe(t.id)}">${icon('grid')}<span>Categoría</span></button><button type="button" data-v708="review" data-id="${safe(t.id)}">${icon('check')}<span>${t.reviewed?'Reabrir':'Conciliar'}</span></button><button type="button" data-v708="more" data-id="${safe(t.id)}">${icon('settings')}<span>Más</span></button></div>
       <section class="v708-detail-lines">${lines.map(([label,value])=>`<div><span>${label}</span><strong>${value}</strong>${icon('arrow')}</div>`).join('')}</section>
       ${pending?`<button type="button" class="v708-classify big" data-v7-apple-id="${safe(t.id)}">Clasificar compra de Apple Pay ${icon('arrow')}</button>`:''}
@@ -18171,7 +18113,6 @@ let vIntelMobileMovements;
     const data=filtered();const header=root.querySelector('.v708-list-top');if(header)header.querySelector('strong').textContent=`${data.length} resultado${data.length===1?'':'s'}`;
     const oldGroups=[...root.querySelectorAll('.v708-date-group,.v708-empty,.v708-more')];oldGroups.forEach(el=>el.remove());
     const last=root.querySelector('.v708-list-top');if(last)last.insertAdjacentHTML('afterend',rows(data,{max:state.limit}));
-    window.ViveIntelUI?.mount();
   },true);
   document.addEventListener('change',e=>{
     const id=e.target?.id;if(!id||!id.startsWith('v708-filter-'))return;
@@ -19775,8 +19716,7 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
  const local=s=>{const p=ymd(s);return p?new Date(p.y,p.m-1,p.d):null};
  const WD=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'],MS=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
  
- const sourceName=vIntelRecurringSource;
- const searchText=vIntelRecurringSearch;
+ const sourceName=r=>{const [k,id]=String(r.source||'').split(':');const x=k==='card'?card(id):k==='account'?account(id):null;return x?x.name:'Sin fuente'};
  const svc=id=>(db.recurring||[]).find(r=>String(r.id)===String(id));
  const charges=()=>(db.transactions||[]).filter(t=>t&&t.recurringId&&['expense','card_charge'].includes(t.type)&&t.date).map(t=>{if(t.reviewed!==true)t.reviewed=true;return t}).slice().sort((a,b)=>String(b.date).localeCompare(String(a.date))||String(b.created||'').localeCompare(String(a.created||'')));
  const expected=t=>{const s=svc(t.recurringId);const e=t.scheduleSnapshot&&Number.isFinite(Number(t.scheduleSnapshot.amount))?Number(t.scheduleSnapshot.amount):(s?num(s.amount):num(t.amount));return rnd(e)};
@@ -19788,7 +19728,7 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
  /* ---------- Cartera ---------- */
   function serviceItem(r,pausedFlag){
   const open=S().open===String(r.id);
-  const q=searchText(r);
+  const q=(r.name+' '+catOf(r)+' '+sourceName(r)).toLowerCase();
   const mo=monthlyDop(r),an=mo*12,own=(r.currency||'DOP')==='DOP'&&r.frequency==='monthly';
   return `<details class="v911-svc" data-v911-svc="${esc(r.id)}" data-q="${esc(q)}"${open?' open':''}><summary class="v911-row"><span class="v911-logo" data-hue="${(String(catOf(r)).split('').reduce((n,c)=>n+c.charCodeAt(0),0))%6}">${ico(r)}</span><span class="v911-row-info"><strong>${esc(r.name)}</strong><small>${pausedFlag?'En pausa · ':''}${esc(freq(r))}${own?'':' · '+esc(money(r.amount,r.currency||'DOP',2))}</small></span><span class="v911-amt"><b>${rd(mo,2)}<i>/mes</i></b><small>${rd(an,0)} /año</small></span>${chev}</summary>
    <div class="v911-det"><div><span>Precio</span><b>${money(r.amount,r.currency||'DOP',2)} · ${esc(freq(r))}</b></div><div><span>Categoría</span><b>${esc(catOf(r))}</b></div><div><span>Próximo cargo</span><b>${pausedFlag?'Pausado':esc(prettyDate(r.nextDue))}</b></div><div><span>Fuente</span><b>${esc(sourceName(r))}</b></div>
@@ -19867,19 +19807,17 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
     document.addEventListener('click',e=>{const t=e.target.closest?.('[data-v1170-cat]');if(!t)return;e.preventDefault();ui.v1170open=ui.v1170open===t.dataset.v1170Cat?'':t.dataset.v1170Cat;render();requestAnimationFrame(()=>document.querySelector('.v1170-detail')?.scrollIntoView({block:'nearest',behavior:'smooth'}))});
 
  document.addEventListener('click',e=>{
-  const summary=e.target.closest?.('details.v911-svc > summary');
-  if(summary){const service=summary.parentElement;S().open=service.open?'':service.dataset.v911Svc;window.ViveIntelUI?.mount();return;}
   const t=e.target.closest?.('[data-v911-tab],[data-v911-open],[data-v911-review]');
   if(!t||!t.closest('.v911'))return;const st=S();
   if(t.dataset.v911Tab){st.tab=t.dataset.v911Tab;if(st.tab==='historial')st.review=''}
   else if(t.dataset.v911Open){st.tab='cartera';st.open=t.dataset.v911Open;const r=svc(t.dataset.v911Open);if(r){const k=catOf(r);if(!st.grp.includes(k))st.grp.push(k)}}
   else if(t.dataset.v911Review)st.review=t.dataset.v911Review;
   e.preventDefault();render();
-  if(st.open&&st.tab==='cartera')requestAnimationFrame(()=>{document.querySelector(`[data-v911-svc="${CSS.escape(st.open)}"]`)?.scrollIntoView({block:'center'})});
+  if(st.open&&st.tab==='cartera')requestAnimationFrame(()=>{document.querySelector(`[data-v911-svc="${CSS.escape(st.open)}"]`)?.scrollIntoView({block:'center'});st.open=''});
  },true);
  /* Grupos desplegables: se recuerda cuáles están abiertos (el evento toggle no burbujea). */
  document.addEventListener('toggle',e=>{const d=e.target;if(!d?.matches?.('details.v911-grp'))return;const st=S(),k=d.dataset.v911Grp;st.grp=d.open?[...new Set([...st.grp,k])]:st.grp.filter(x=>x!==k)},true);
- document.addEventListener('input',e=>{if(e.target?.id==='v911-search'){S().query=e.target.value;filter(e.target.value);window.ViveIntelUI?.mount()}});
+ document.addEventListener('input',e=>{if(e.target?.id==='v911-search'){S().query=e.target.value;filter(e.target.value)}});
 })();
 
 /* V919 · Presupuesto simplificado y estratégico (móvil y web, una sola vista): «Definir presupuesto» + ejecución por categoría + cumplimiento mensual.
@@ -20104,7 +20042,7 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
  function detalle(c,bankView=false){
   const tier=CARD_TIER_NAMES[cardTierKey(c)]||'Tarjeta';
   return `<div class="v1190 v1190-card"><button type="button" class="v1190-back" data-act="${bankView?'banksPcCloseCard':'closeCardDetails'}">${G('<path d="M19 12H5m6-6-6 6 6 6"/>')}<span>${bankView?'Volver a '+esc(bankOf(c)):(isMobileViewport()||ui.vWalletPcOpenedCard)?'Volver a Wallet':'Tarjetas'}</span></button>
-   <section class="v1190-hero"><div><span class="v1190-kick">${esc(bankOf(c))}</span><h2 data-vi-heading>${esc(c.name)}</h2><p>${esc(tier)} · •••• ${esc(c.last4||'—')}</p></div><div class="v1290-actions"><button type="button" class="v1190-primary" data-act="payCard" data-id="${esc(c.id)}">${G('<rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 11h18"/>')}<span>Registrar pago</span></button><button type="button" class="v1290-secondary" data-act="annualFee" data-id="${esc(c.id)}">Anualidad y seguros</button></div></section>
+   <section class="v1190-hero"><div><span class="v1190-kick">${esc(bankOf(c))}</span><h2>${esc(c.name)}</h2><p>${esc(tier)} · •••• ${esc(c.last4||'—')}</p></div><div class="v1290-actions"><button type="button" class="v1190-primary" data-act="payCard" data-id="${esc(c.id)}">${G('<rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 11h18"/>')}<span>Registrar pago</span></button><button type="button" class="v1290-secondary" data-act="annualFee" data-id="${esc(c.id)}">Anualidad y seguros</button></div></section>
    <div class="v1190-grid">${bloque(c,'DOP')}${bloque(c,'USD')}</div>
    ${v1290AnnualLedger(c)}
    ${bankView?'':beneficios(c)}${cierres(c)}${admin(c)}</div>`;
@@ -20115,7 +20053,6 @@ const G=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
 })();
 
 /* V1191 · Cuenta → «Ver evolución»: un único gráfico interactivo del saldo (cierres mensuales reales calculados de tus registros). */
-let vIntelAccountCloses;
 (()=>{
  const esc=v=>sanitize(String(v??''));
  const MS=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
@@ -20128,7 +20065,6 @@ let vIntelAccountCloses;
   while(y<cy||(y===cy&&m<=cm)){const last=new Date(y,m,0);const d=(y===cy&&m===cm)?t0:dateStr(last);ends.push({d,lab:MS[m-1]+' '+String(y).slice(2),v:getAccountBalance(a,d)});m++;if(m>12){m=1;y++}}
   const r=St().range;return r==='all'?ends:ends.slice(-r);
  }
- vIntelAccountCloses=a=>v99Memo('v1191:closes:'+a.id+':'+St().range+':'+today(),()=>serie(a));
  function grafico(a,pts){
   const W=760,H=300,L=58,R=18,T=18,B=34,cw=W-L-R,ch=H-T-B;
   const vals=pts.map(x=>x.v),mx=Math.max(...vals,0),mn=Math.min(...vals,0),span=Math.max(1,mx-mn);
@@ -20144,10 +20080,10 @@ let vIntelAccountCloses;
   return `<svg class="v1191-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Evolución del saldo" data-pts="${data}" data-cur="${esc(a.currency)}"><defs><linearGradient id="v1191a" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--ac)" stop-opacity=".28"/><stop offset="1" stop-color="var(--ac)" stop-opacity="0"/></linearGradient></defs>${grid}<path d="${area}" fill="url(#v1191a)"/><path d="${line}" class="v1191-line"/>${xl}<line class="v1191-cur" x1="0" x2="0" y1="${T}" y2="${T+ch}"/><circle class="v1191-dot" r="5.5" cx="${X(pts.length-1).toFixed(1)}" cy="${Y(pts.at(-1).v).toFixed(1)}"/>${hit}</svg>`;
  }
  function vista(a){
-  const pts=vIntelAccountCloses(a),r=St().range,last=pts.at(-1),prev=pts.length>1?pts.at(-2):null;
+  const pts=serie(a),r=St().range,last=pts.at(-1),prev=pts.length>1?pts.at(-2):null;
   const btn=(k,l)=>`<button type="button" class="${r===k?'is-on':''}" data-v1191-range="${k}">${l}</button>`;
   const cur=a.currency;
-  return `<div class="v1191"><header class="v1191-head"><button type="button" class="v1191-back" data-act="closeAccountDetails" aria-label="Volver a cuentas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><div><h2 data-vi-heading>${esc(a.name)}</h2><small>${esc(cur)}${a.kind==='cash'?' · Efectivo':''}</small></div><div class="v1191-ranges" role="group" aria-label="Período">${btn(6,'6M')}${btn(12,'12M')}${btn('all','Todo')}</div></header>
+  return `<div class="v1191"><header class="v1191-head"><button type="button" class="v1191-back" data-act="closeAccountDetails" aria-label="Volver a cuentas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><div><h2>${esc(a.name)}</h2><small>${esc(cur)}${a.kind==='cash'?' · Efectivo':''}</small></div><div class="v1191-ranges" role="group" aria-label="Período">${btn(6,'6M')}${btn(12,'12M')}${btn('all','Todo')}</div></header>
    <div class="v1191-read" aria-live="polite"><small id="v1191-d">${esc(prettyDate(last.d))}</small><strong id="v1191-v">${money(last.v,cur,2)}</strong><em id="v1191-c">${prev?(last.v-prev.v>=0?'+':'−')+money(Math.abs(last.v-prev.v),cur,2)+' frente al cierre anterior':'Primer cierre registrado'}</em></div>
    ${pts.length>1?grafico(a,pts):`<p class="v1191-empty">Todavía no hay suficientes cierres para trazar la evolución.</p>`}</div>`;
  }
@@ -20368,14 +20304,7 @@ window.__viveCore=Object.freeze({loan,account,loanAccounting,xconvert,isTaxableB
 /* VIVE INTELLIGENCE · puente de SOLO LECTURA. Convierte los datos ya cargados en un snapshot normalizado (RD$ equivalente,
    con su origen). Reutiliza los cálculos existentes (monthlyTotals, cardStatus, upcoming, capacidad…): no consulta Supabase,
    no escribe nada y se evalúa bajo demanda, con caché invalidada por eventos (v99Invalidate). */
-const vIntelSnapshots={source:null,revision:null,date:null,value:null};
 function vIntelSnapshot(){
- const date=today(),revision=window.__viveIntelRev;
- if(vIntelSnapshots.source!==db||vIntelSnapshots.revision!==revision||vIntelSnapshots.date!==date)
-  Object.assign(vIntelSnapshots,{source:db,revision,date,value:vIntelBuildSnapshot()});
- return vIntelSnapshots.value;
-}
-function vIntelBuildSnapshot(){
  const t=today(),ym=t.slice(0,7),[Y,M]=ym.split('-').map(Number),F=Number(db.settings?.fx)||0;
  const dim=new Date(Y,M,0).getDate(),dom=Number(t.slice(8,10));
  const cvt=(v,c)=>c==='USD'?num(v)*F:num(v);
@@ -20462,417 +20391,14 @@ function vIntelBuildSnapshot(){
   if(snap.ledger.length>=6000)break;}
  return snap;
 }
-/* Adapters read the same selections and records as the rendered views. */
-/* A temporary detail view can provide its own data and heading through the same engine. */
-const vIntelOverlays=new WeakMap();
-function vIntelOverlay(root,module,key,data,period,currency){
- if(!root)return;
- root.dataset.viContext='';
- vIntelOverlays.set(root,{page:ui.page,module,key,data,period,currency,level:'detail'});
- window.ViveIntelUI?.mount();
-}
-function vIntelCommitmentData(events,total,period,detail){
- if(!events.length)return {};
- return {products:[{rule:'commitments',title:money(total)+' previstos '+period,detail,
-  evidence:[['Compromisos',String(events.length)],...events.slice(0,3).map(e=>[e.name||'Compromiso',money(e.amount)])],
-  options:{engine:'prediction',kind:'projection',confidence:.75}}]};
-}
-function vIntelMovementData(rows,includeFuture=false){
- const end=today();
- const posted=rows.filter(x=>!x.deleted&&x.postingStatus!=='pending'&&x.pendingStatus!=='pending'&&(includeFuture||x.date<=end));
- if(posted.some(x=>!(num(x.fxRateSnapshot)>0||num(db.settings?.fx)>0)&&(x.currency==='USD'||
-  (num(x.paymentTax)||num(x.paymentFee)||num(x.transferFee))&&(x.paymentFeeCurrency||account(x.accountId)?.currency)==='USD')))return {};
- return {movements:posted.map(x=>{
-  const value=num(txDop(x));
-  return {id:x.id,income:x.type==='income'?value:0,expense:x.type==='card_refund'?-value:['expense','card_charge'].includes(x.type)?value:0,
-   category:x.category||'',label:transactionTitle(x),date:x.date,card:x.type==='card_charge'||x.type==='card_refund'};
- })};
-}
-function vIntelMovementAnalysis(scope,movements){
- const month=scope.period;
- const thru=scope.thru||(/^\d{4}-\d{2}$/.test(month||'')?periodEnd(+month.slice(0,4),+month.slice(5,7)):scope.today);
- const closed=thru<scope.today;
- const end=closed?addDays(thru,1):scope.today;
- const start=addDays(end,-365);
- const ledger=movements.filter(r=>r.date>=start&&r.date<end&&(r.expense||r.income)).map(r=>({
-  d:r.date,a:r.expense||r.income,k:r.expense?'x':'i',c:r.category,l:r.label,p:r.card?'c':'a'
- }));
- if(ledger.length<12)return null;
- const observedFrom=ledger.reduce((first,r)=>r.d<first?r.d:first,ledger[0].d);
- const months=new Map();
- for(const r of ledger){
-  const ym=r.d.slice(0,7);
-  if(ym<observedFrom.slice(0,7)||ym===observedFrom.slice(0,7)&&!observedFrom.endsWith('-01')||ym>=end.slice(0,7))continue;
-  if(!months.has(ym))months.set(ym,{ym,income:0,expense:0,txCount:0,expenseBy:Object.create(null)});
-  const m=months.get(ym);
-  m.txCount++;
-  if(r.k==='i')m.income+=r.a;
-  else{m.expense+=r.a;if(r.c)m.expenseBy[r.c]=(m.expenseBy[r.c]||0)+r.a}
- }
- const ordered=[...months.values()].sort((a,b)=>a.ym.localeCompare(b.ym));
- const lastGap=ordered.reduce((gap,row,i)=>i&&row.ym!==plusMonths(ordered[i-1].ym+'-01',1).slice(0,7)?i:gap,0);
- return {snapshot:{today:end,ledger,months:ordered.slice(lastGap)},closed,fullFlow:scope.fullFlow};
-}
-// La identidad persistida separa selecciones sin guardar el texto de sus filtros.
-function vIntelScopeIdentity(scope){
- let a=0x811c9dc5,b=0x9e3779b9;
- for(let i=0;i<scope.key.length;i++){
-  const ch=scope.key.charCodeAt(i);
-  a=Math.imul(a^ch,0x01000193);b=Math.imul(b^ch,0x5bd1e995);
- }
- return scope.module+'-'+(a>>>0).toString(36)+'-'+(b>>>0).toString(36);
-}
-function vIntelContext(){
- const page=ui.page,t=today(),mobile=isMobileViewport();
- const overlay=document.querySelector('[data-vi-context]');
- const active=overlay&&vIntelOverlays.get(overlay);
- if(active?.page===page)return {...active,key:JSON.stringify([page,active.key]),subject:active.key,overlay,today:t};
- const scope={page,module:page,today:t,level:'view'};
- const benefitsPeriod=()=>String(ui.v144BenefitYear||nowYear())+(ui.v144BenefitMonth&&ui.v144BenefitMonth!=='all'?'-'+ui.v144BenefitMonth:'');
- const state=(...parts)=>Object.assign(scope,{key:JSON.stringify([page,mobile,...parts])});
- if(page==='overview')return {...state(),global:true,level:'global'};
- if(page==='banks'){
-  const detail=ui.vBanksProductDetail;
-  const kind=detail?.kind||ui.vBanksDesktopSection||ui.vBanksPcProduct||'all';
-  const loanState=detail?.kind==='loans'?[loanWorkspace.tab,loanWorkspace.plan,loanWorkspace.period,loanWorkspace.sim[detail.id]]:null;
-  return {...state(ui.bankId,kind,detail?.id,loanState,detail?.kind==='accounts'?ui.v1191?.range:null,ui.showHidden,v61InstitutionProfile,v42InstitutionFilter,ui.vBanksPcBenefits,ui.vWalletPcCard,ui.vWalletPcConsumption,ui.bankHistory,ui.bankHistoryRange,ui.v144BenefitsCard,ui.v144BenefitYear,ui.v144BenefitMonth),
-   module:kind,kind,period:ui.vBanksPcBenefits||kind==='benefits'?benefitsPeriod():null,view:loanState?.[0]||kind,level:detail?.id?'entity':ui.bankId?'institution':'view',entity:detail?.id,subject:detail?.id||ui.bankId,benefits:ui.vBanksPcBenefits||kind==='benefits'};
- }
- if(page==='wallet'||page==='cards'||page==='score'||page==='benefits'){
-  const id=page!=='wallet'?null:ui.walletCardDetail?ui.cardId:mobile?ui.v68WalletId:null;
-  return {...state(id,ui.vWalletPcCard,ui.vWalletPcConsumption,ui.cardDetailTab,ui.vWalletPcBenefits,ui.showHidden,ui.v144BenefitsCard,ui.v144BenefitYear,ui.v144BenefitMonth),
-   module:page==='score'?'score':'cards',period:page==='cards'||page==='benefits'||ui.vWalletPcBenefits?benefitsPeriod():null,view:ui.vWalletPcBenefits||page==='benefits'?'benefits':id&&id!==V68_GLOBAL_ID?'cycle':'overview',level:id&&id!==V68_GLOBAL_ID?'entity':'view',entity:id===V68_GLOBAL_ID?null:id,subject:id===V68_GLOBAL_ID?null:id,benefits:page==='benefits'||page==='cards'||page==='wallet'&&ui.vWalletPcBenefits};
- }
- if(page==='register'||page==='transactions'){
-  if(vIntelMobileMovements?.active()){
-   const ctx=vIntelMobileMovements.context(),{view,selected,product,period,month}=ctx;
-   return {...state(ctx),module:'register',view,entity:view==='detail'?selected:product==='all'?null:product,
-    period:view==='detail'?null:period==='month'?(month||t.slice(0,7)):period==='30'?'Últimos 30 días':null,
-    fullFlow:product==='all'&&view==='list'&&ctx.flow==='all'&&ctx.category==='all'&&!ctx.query,movements:vIntelMobileMovements.rows};
-  }
-  const period=ui.ledgerMonth||ui.month;
-  const monthEnd=/^\d{4}-\d{2}$/.test(period||'')?periodEnd(+period.slice(0,4),+period.slice(5,7)):null;
-  const thru=ui.txPeriod==='range'?ui.ledgerTo:ui.txPeriod==='month'?monthEnd:null;
-  return {...state(ui.movementTab,ui.bankScope,ui.transType,ui.search,ui.reviewFilter,ui.txPeriod,ui.ledgerMonth||ui.month,ui.v361Category,ui.ledgerCurrency,ui.ledgerProducts,ui.ledgerFrom,ui.ledgerTo),
-   module:'register',ledger:!mobile,thru,currency:ui.ledgerCurrency==='all'?null:ui.ledgerCurrency,
-   fullFlow:ui.transType==='all'&&ui.bankScope==='all'&&ui.v361Category==='all'&&ui.reviewFilter==='all'&&!ui.search&&!ui.ledgerProducts?.length&&(!ui.ledgerCurrency||ui.ledgerCurrency==='all'),
-   period:ui.txPeriod==='month'?period:ui.txPeriod==='range'?[ui.ledgerFrom,ui.ledgerTo].filter(Boolean).join(' → '):null,movements:ui.movementTab==='all'?vLedgerVisibleTransactions:null};
- }
- if(page==='recurring'){
-  const sub=ui.v911||{};
-  const entity=sub.tab!=='historial'||!mobile?sub.open:null;
-  const view=mobile?sub.tab||'cartera':ui.v1170open?'category':'month';
-  return {...state(view,entity,sub.query,sub.review,ui.v1170open,ui.month),
-   entity,view,query:mobile?sub.query:'',review:view==='historial'?sub.review:'',
-   category:!mobile?ui.v1170open:'',period:!mobile&&view==='month'?ui.month:null,subject:entity||(!mobile&&ui.v1170open)||null};
- }
- if(page==='income'&&(ui.incDetail||ui.innerViews?.income==='recurring')){
-  const view=ui.incDetail||ui.v55RecurringTab||'general';
-  const income=v55IntelIncome?.(view),entity=income?.source?.id;
-  return {...state(view,entity,income?.range,income?.period),view,entity,subject:entity,income,period:income?.period,
-   level:entity?'entity':'view'};
- }
- if(['budget','patrimony','payments','vision','income','expenses','flow','annual','advanced','analytics','kpis','projection','pressure'].includes(page)){
-  const monthly=['budget','patrimony','payments','vision'].includes(page)||['income','expenses','flow'].includes(page)&&ui.expenseRange==='month';
-  const view=page==='expenses'?ui.vExpKind||'all':null;
-  return {...state(ui.month,ui.year,ui.incDetail,ui.v55RecurringTab,ui.expenseRange,ui.innerViews?.[page],ui.forecastScenario,v362PressureMonthOffset,view),view,
-   period:monthly?ui.month:['annual','advanced','analytics','kpis'].includes(page)?String(ui.year):null};
- }
- if(page==='personal')
-  return {...state(ui.v56LoanId,ui.v56ContactId,ui.innerViews?.personal),entity:ui.v56LoanId,subject:ui.v56LoanId||ui.v56ContactId};
- return state();
-}
-function vIntelRecurringSource(r){
- const [kind,id]=String(r.source||'').split(':');
- return (kind==='card'?card(id):kind==='account'?account(id):null)?.name||'Sin fuente';
-}
-function vIntelRecurringSearch(r){
- return (r.name+' '+(String(r.category||'').trim()||'Sin categoría')+' '+vIntelRecurringSource(r)).toLowerCase();
-}
-function vIntelContextData(scope){
- const {page,kind,entity,today:t}=scope;
- const confirmed=x=>!x.deleted&&x.postingStatus!=='pending'&&x.pendingStatus!=='pending';
- const hasFx=num(db.settings?.fx)>0;
- const usable=(currency,amount)=>currency!=='USD'||hasFx||!num(amount);
- const product=(rule,title,detail,evidence,options)=>({rule,title,detail,evidence,options});
- const due=(types,ids)=>upcoming().filter(u=>types.includes(u.kind)&&ids.has(u.ref)&&u.amount>0&&u.date&&diffDays(u.date,t)<=7)
-  .map(u=>({...u,id:u.id||u.ref,days:diffDays(u.date,t)}));
- const accountData=(a,balance)=>({id:a.id,name:a.name,kind:a.kind,balanceDop:fx(balance,a.currency)});
- const bankScope=page==='banks'?vBanksScope():null;
- if(bankScope&&ui.bankId&&!bankScope.selected)return {};
- if(scope.benefits||page==='benefits'){
-  const visible=bankScope?.active.cards||v68WalletCards();
-  const selected=ui.v144BenefitsCard;
-  const rows=visible.filter(c=>!c.archived&&(!selected||selected==='all'||c.id===selected));
-  const values=rows.map(c=>v144CardStats(c));
-  if(!values.every(s=>[...s.rewards,...s.paid].every(x=>usable(x.currency,x.amount)||num(x.fxRateSnapshot)>0)))return {};
-  const received=values.reduce((sum,x)=>sum+x.realizedCashback+x.realizedOther,0);
-  const paid=values.reduce((sum,x)=>sum+x.paidAmount,0);
-  return received||paid?{benefit:{received,cost:paid},products:[product('benefits','Resultado de beneficios: '+money(received-paid),
-   'Beneficios acreditados menos costos efectivamente pagados para la selección y el período visibles.',
-   [['Acreditados',money(received)],['Pagados',money(paid)]])]}:{};
- }
- if(page==='wallet'||page==='score'||kind==='cards'){
-  const visible=bankScope?bankScope.active.cards:v68WalletCards();
-  const cards=(entity?visible.filter(c=>c.id===entity):page!=='score'&&!isMobileViewport()&&ui.vWalletPcCard?vWalletPcSelectedCards(visible):visible)
-   .filter(c=>!c.archived&&!/debit|débito|debito/i.test([c.type,c.cardType,c.kind].join(' ')));
-  scope.name=cards.length===1?cards[0].name:'';
-  if(!scope.subject&&page!=='score'&&ui.vWalletPcCard)scope.subject=ui.vWalletPcCard;
-  if(!entity&&page!=='score'&&ui.vWalletPcConsumption&&!isMobileViewport()){
-   const chosen=cards.find(c=>c.id===ui.vWalletPcConsumption);
-   if(!chosen)return {};
-   const total=v1301WalletConsumption([chosen]).totals;
-   const evidence=['DOP','USD'].filter(c=>total[c]).map(c=>['Consumo neto · '+c,money(total[c],c)]);
-   return evidence.length?{products:[product('card-spend',chosen.name+' · '+evidence.map(([,v])=>v).join(' / '),
-    'Compras menos devoluciones contabilizadas para la tarjeta visible, por moneda.',evidence)]}:{};
-  }
-  const values=cards.flatMap(c=>['DOP','USD'].map(currency=>{
-   const st=cardStatus(c,currency);
-   return {id:c.id,name:c.name,currency,debt:num(st.debt),limit:num(st.limit),available:Math.max(0,num(st.availableWithOverdraft)),billed:num(st.billed),nextCut:st.nextCut,due:st.dueMap};
-  }));
-  const selected=entity&&cards[0];
-  const products=[];
-  const spending=v1301WalletConsumption(cards);
-  if(selected&&scope.view!=='benefits'){
-  const month=t.slice(0,7),totals=spending.months.get(month);
-   if(totals){
-    const evidence=['DOP','USD'].filter(c=>totals[c]).map(c=>['Consumo neto · '+c,money(totals[c],c,2)]);
-    if(evidence.length)products.push(product('card-month','Consumo de '+selected.name+' este mes',
-     'Compras menos devoluciones de esta tarjeta, por moneda.',evidence,{engine:'pattern',period:month}));
-   }
-   const stats=v144CardStats(selected,false);
-   if((stats.gross||stats.paidAmount)&&[...stats.rewards,...stats.paid].every(x=>usable(x.currency,x.amount)||num(x.fxRateSnapshot)>0))
-    products.push(product('card-benefit','Beneficios netos de '+selected.name+': '+money(stats.net),
-     'Total histórico acreditado menos costos pagados para esta tarjeta.',
-     [['Acreditados',money(stats.gross)],['Costos pagados',money(stats.paidAmount)]],{engine:'opportunity'}));
-  }
-  const closedMonth=t.slice(0,7),previous=plusMonths(closedMonth+'-01',-1).slice(0,7),earlier=plusMonths(previous+'-01',-1).slice(0,7);
-  const recent=spending.months.get(previous),past=spending.months.get(earlier);
-  if(recent&&past&&!recent.missingFx&&!past.missingFx&&past.equivalent>0){
-   const change=(recent.equivalent-past.equivalent)/past.equivalent;
-   if(Math.abs(change)>=.2)products.push(product('card-spend-change','El consumo con tarjeta '+(change>0?'subió':'bajó')+' '+Math.round(Math.abs(change)*100)+' %',
-    'Compara compras menos devoluciones de dos meses cerrados para las tarjetas visibles. Los pagos y costos financieros quedan fuera del consumo.',
-    [[earlier,money(past.equivalent,'DOP',2)],[previous,money(recent.equivalent,'DOP',2)]],{engine:'pattern',period:previous,priority:change<0?'recognition':'info'}));
-  }
-  const cycle=selected?values.filter(v=>v.debt||v.limit||v.billed):[];
-  const unrestricted=values.every(v=>usable(v.currency,v.debt)&&usable(v.currency,v.limit));
-  const ids=new Set(cards.map(c=>c.id));
-  const advances=db.transactions.filter(x=>ids.has(x.cardId)&&x.type==='card_advance'&&confirmed(x)&&x.date<=t&&x.date>=addDays(t,-90));
-  return {products,cycle,cards:unrestricted?
-   values.map(v=>({id:v.id,name:v.name,currency:v.currency,debt:fx(v.debt,v.currency),limit:fx(v.limit,v.currency)})):[],
-   cashAdvance90:advances.every(x=>usable(x.currency,x.amount)||num(x.fxRateSnapshot)>0)?advances.reduce((n,x)=>n+txDop(x),0):null,
-   due:page==='score'?[]:values.flatMap(c=>Object.entries(c.due||{}).filter(([date,amount])=>amount>0&&diffDays(date,t)<=7)
-    .map(([date,amount])=>({id:c.id,name:c.name,currency:c.currency,date,amount,days:diffDays(date,t),kind:'card'})))};
- }
- if(bankScope){
-  const groups=bankScope.active;
-  scope.name=bankScope.selected?.name;
-  if(ui.bankHistory){
-   if(!bankScope.selected||bankScope.selected.id!==ui.bankHistory)return {};
-   if(!hasFx&&[...groups.accounts,...groups.cards].some(p=>p.currency==='USD'||num(p.limitUSD)>0))return {};
-   const flows=v1264BankFlows(bankScope.selected).slice(-(ui.bankHistoryRange||12));
-   const net=flows.reduce((n,r)=>n+r.in-r.out,0);
-   return flows.length?{products:[product('bank-history',bankScope.selected.name+' · flujo de '+money(net),
-    'Entradas menos salidas registradas durante el historial visible de esta institución.',
-    [['Desde',flows[0].k],['Hasta',flows.at(-1).k]])]}:{};
-  }
-  if(kind==='all'&&V_BANKS_GROUPS.some(([k])=>groups[k].length)){
-   const convertible=V_BANKS_GROUPS.every(([k])=>groups[k].every(p=>p.currency!=='USD'||hasFx))&&
-    groups.cards.every(c=>hasFx||(!num(cardStatus(c,'USD').debt)&&!num(c.limitUSD)));
-   return {position:convertible?vBanksPosition(groups):null,accounts:groups.accounts.filter(a=>usable(a.currency,getAccountBalance(a))).map(a=>accountData(a,getAccountBalance(a)))};
-  }
-  const rows=groups[kind]?.filter(p=>!p.archived&&(!entity||p.id===entity))||[];
-  if(!rows.length)return {};
-  if(kind==='accounts'&&entity&&!isMobileViewport()&&vIntelAccountCloses){
-   const a=rows[0],closes=vIntelAccountCloses(a),last=closes.at(-1),first=closes[0];
-   if(!last)return {};
-   const products=[product('account-balance',a.name+' · '+money(last.v,a.currency,2),
-    'Es el saldo al último corte mostrado en la evolución de esta cuenta.',[[last.d,money(last.v,a.currency,2)]])];
-   const change=last.v-first.v;
-   if(closes.length>1&&Math.abs(change)>=.01)products.push(product('account-evolution','El saldo '+(change>0?'subió ':'bajó ')+money(Math.abs(change),a.currency,2),
-    'Compara el primer y último saldo del rango seleccionado. Un cambio de saldo puede incluir transferencias propias.',
-    [[first.d,money(first.v,a.currency,2)],[last.d,money(last.v,a.currency,2)]],{engine:'pattern'}));
-   return {products,accounts:usable(a.currency,last.v)?[accountData(a,last.v)]:[]};
-  }
-  if(kind==='loans'&&entity){
-   const l=rows[0],mode=scope.view||'vision',currency=l.currency||'DOP';
-   const a=loanAccounting(l);
-   const loanData={mode,currency,payments:a.rows.filter(row=>row.txId).length,recordedPrincipal:a.recordedPrincipal,interest:a.interest};
-   if(mode==='amort'||mode==='simulate'){
-    const bundle=loanDetailBundle(l);
-    if(mode==='amort'){
-     const plan=loanWorkspace.plan,forecast=plan==='original'?bundle.original:plan==='strategy'?bundle.scenario:bundle.baseline;
-     loanData.plan={end:forecast.end,interest:forecast.interest,rows:forecast.rows.length,label:plan==='original'?'Original':plan==='strategy'?'Con estrategia':'Real + proyectado'};
-    }else if(!bundle.scenario.error){
-     loanData.simulation={saving:bundle.projectedInterestSavings,baseline:bundle.baseline.interest,scenario:bundle.scenario.interest};
-    }
-   }
-   if(mode!=='vision')return {loan:loanData};
-  }
-  if(kind==='accounts'||kind==='certificates'||kind==='loans'){
-   const amounts=rows.map(p=>{
-    const loan=kind==='loans'?loanStatus(p):null;
-    return {p,loan,value:loan?loan.balance:kind==='accounts'?getAccountBalance(p):certificateCapital(p)};
-   });
-   const label={accounts:'Saldo de cuentas',loans:'Saldo de préstamos pendiente',certificates:'Capital en certificados'}[kind];
-   const name=rows.length===1?rows[0].name:label;
-   const totals=new Map();
-   for(const {p,value} of amounts){const c=p.currency||'DOP';totals.set(c,(totals.get(c)||0)+num(value))}
-   const evidence=[...totals].map(([c,v])=>[label+' · '+c,money(v,c,2)]);
-   const title=name+' · '+evidence.map(([,v])=>v).join(' / ');
-   return {products:[product(kind,title,'Saldos de los productos visibles, agrupados por moneda.',evidence)],
-    due:kind==='loans'?due(['loan'],new Set(rows.map(p=>p.id))):[],
-    accounts:kind==='accounts'&&amounts.every(({p,value})=>usable(p.currency,value))?amounts.map(({p,value})=>accountData(p,value)):[],
-    loans:kind==='loans'?amounts.map(({p,value,loan})=>({id:p.id,name:p.name,balance:value,installment:loan.installment,currency:p.currency||'DOP',remaining:loan.remaining})):[],
-    certificates:kind==='certificates'?amounts.filter(({p})=>p.maturityDate).map(({p,value})=>({id:p.id,name:p.name,capital:value,currency:p.currency||'DOP',date:p.maturityDate,days:diffDays(p.maturityDate,t)})):[]};
-  }
- }
- if(scope.movements){
-  const rows=scope.movements(),data=vIntelMovementData(rows,scope.ledger);
-  if(!data.movements)return {};
-  return {...data,ledgerTotals:scope.ledger?vLedgerTotals(rows):null,analysis:vIntelMovementAnalysis(scope,data.movements)};
- }
- if(page==='recurring'){
-  const name=r=>r.name||'Suscripción';
-  const active=v339ActiveRecurring();
-  const services=(db.recurring||[]).filter(r=>!r.archived&&(!entity||r.id===entity)&&
-   (!scope.category||(scope.category==='En pausa'?r.active===false:r.active!==false&&(String(r.category||'').trim()||'Sin categoría')===scope.category))&&
-   (!scope.query||vIntelRecurringSearch(r).includes(scope.query.trim().toLowerCase())));
-  const byId=new Map(services.map(r=>[r.id,r]));
-  const visible=active.filter(r=>byId.has(r.id));
-  const charges=(db.transactions||[]).filter(x=>x.recurringId&&confirmed(x)&&x.date&&x.date<=t&&
-   ['expense','card_charge'].includes(x.type)&&((scope.view==='historial'&&!entity&&!scope.query&&!scope.category)||byId.has(x.recurringId))&&
-   (!scope.review||x.id===scope.review)&&(!scope.period||x.date.startsWith(scope.period)))
-   .map(x=>({service:x.recurringId,name:name(byId.get(x.recurringId)||{name:x.note}),amount:num(x.amount),currency:x.currency||'DOP',date:x.date}));
-  const history=scope.view==='historial'||!!scope.period;
-  return {charges,compareCharges:history,subscriptions:!history&&visible.every(r=>usable(r.currency,r.amount))?
-   visible.map(r=>({id:r.id,name:name(r),monthly:v339MonthlyEquivalent(r.amount,r.currency,r.frequency)})):[],
-   due:!history&&visible.length?due(['recurring'],new Set(visible.map(r=>r.id))):[]};
- }
- if(['patrimony','payments','vision'].includes(page)){
-  const rows=[...db.accounts,...db.cards,...db.loans,...db.certificates,...(db.personalLoans||[])];
-  const value=rows.length&&rows.every(r=>usable(r.currency,1))&&
-   db.cards.every(c=>hasFx||(!num(c.limitUSD)&&!num(cardStatus(c,'USD').debt)))&&v134WealthMonth(scope.period).snapshot;
-  if(!value)return {};
-  const previous=v134WealthMonth(plusMonths((scope.period||t.slice(0,7))+'-01',-1).slice(0,7)).snapshot;
-  return {wealth:{current:value,previous},products:[product('wealth','Patrimonio neto de '+money(value.net),'Activos menos pasivos al cierre visible.',
-   [['Fecha de corte',value.date],['Activos',money(value.assets)],['Pasivos',money(value.liabilities)]],{kind:value.estimatedLoan?'interpretation':'fact',confidence:value.estimatedLoan?.75:1})]};
- }
- if(page==='budget'){
-  const b=v290BudgetSnapshot(scope.period);
-  if(!b||b.allocated<=0)return {};
-  const exception=b.spent>b.allocated;
-  const current=scope.period===t.slice(0,7);
-  const daysLeft=Number(periodEnd(+t.slice(0,4),+t.slice(5,7)).slice(8))-Number(t.slice(8));
-  const left=b.allocated-b.spent;
-  const advice=current&&left>0&&daysLeft>0?' Quedan '+money(left/daysLeft)+' por día si distribuyes el margen de forma uniforme.':'';
-  return {products:[product('budget',exception?'Superaste el presupuesto en '+money(-left):'Has usado '+Math.round(b.percent)+' % del presupuesto',
-   'Compara el gasto contabilizado con lo asignado en el período visible.'+advice,
-   [['Asignado',money(b.allocated)],['Gasto',money(b.spent)]],{priority:exception?'attention':'info'})]};
- }
- if(page==='personal'){
-  const view=ui.innerViews?.personal;
-  if(!entity&&!ui.v56ContactId&&['contacts','activity'].includes(view))return {};
-  const direction=view==='receivable'?'lent':view==='payable'?'borrowed':null;
-  const rows=(db.personalLoans||[]).filter(l=>!l.archived&&(!entity||l.id===entity)&&
-   (!ui.v56ContactId||l.contactId===ui.v56ContactId)&&(!direction||entity||ui.v56ContactId||l.direction===direction));
-  const sums=new Map();
-  for(const l of rows){
-   const balance=personalBalance(l);
-   if(balance<=0)continue;
-   const currency=l.currency||'DOP',label=l.direction==='lent'?'Por cobrar':'Por pagar';
-   const key=label+' · '+currency,entry=sums.get(key)||{label,currency,balance:0};
-   entry.balance+=balance;sums.set(key,entry);
-  }
-  const values=[...sums.values()];
-  if(values.length)return {products:[product('personal',values.map(x=>x.label+' '+money(x.balance,x.currency)).join(' · '),
-   'Saldo pendiente de los acuerdos visibles, separado por dirección y moneda.',[...sums].map(([key,x])=>[key,money(x.balance,x.currency)]))]};
- }
- if(page==='income'){
-  if(scope.income){
-   const rows=scope.income.rows().filter(row=>confirmed(row.t));
-   if(!rows.length||rows.some(({t:x})=>!usable(x.currency,x.amount)&&!(num(x.fxRateSnapshot)>0)))return {};
-   const amounts=new Map();
-   for(const {name,amount} of rows)amounts.set(name,(amounts.get(name)||0)+amount);
-   const value=rnd([...amounts.values()].reduce((sum,amount)=>sum+amount,0));
-   const label=scope.income.source?.name||'Ingresos recurrentes';
-   return value>0?{products:[product('income',label+' · '+money(value,'DOP',2),
-    'Cobros confirmados de las fuentes y el período visibles.',[...amounts].map(([name,amount])=>[name,money(amount,'DOP',2)]))]}:{};
-  }
-  const months=new Set(vExpScope().months);
-  const rows=db.transactions.filter(x=>confirmed(x)&&x.date<=t&&months.has(x.date?.slice(0,7))&&
-   ['income','card_reward','bank_reward','personal_settlement'].includes(x.type));
-  if(!rows.length||rows.some(x=>!usable(x.currency,x.amount)))return {};
-  const amounts=new Map();
-  for(const x of rows){const kind=vIncClass(x);amounts.set(kind,(amounts.get(kind)||0)+vIncAmount(x))}
-  const value=[...amounts.values()].reduce((a,b)=>a+b,0);
-  return value>0?{products:[product('income','Ingresos reconocidos · '+money(value),
-   'Acreditaciones confirmadas del período y origen visibles.',[...amounts].map(([k,v])=>[V_INC_NAMES[k],money(v)]))]}:{};
- }
- if(page==='flow'||page==='expenses'||['annual','advanced','analytics','kpis'].includes(page)){
-  const economic=page==='flow'||page==='expenses';
-  const spendOnly=page==='expenses',kind=spendOnly?scope.view:'all';
-  const seriesLabel=spendOnly?(kind==='fixed'?'Gastos fijos':kind==='var'?'Gastos variables':'Gasto del período'):'Resultado del período';
-  const months=economic?vExpScope().months:Array.from({length:12},(_,i)=>String(ui.year)+'-'+String(i+1).padStart(2,'0'));
-  const dates=new Set(months.filter(m=>m<=t.slice(0,7)));
-  if(!dates.size||(!hasFx&&db.transactions.some(x=>x.currency==='USD'&&dates.has(x.date?.slice(0,7)))))return {};
-  return {series:[...dates].map(m=>{
-   const base=economic?null:monthlyTotals(+m.slice(0,4),+m.slice(5,7));
-   const month=economic?vExpMonth(m):null;
-   const fixed=kind==='fixed'||kind==='var'?Object.entries(month.by).reduce((sum,[category,amount])=>sum+vExpFixedPart(month,category,amount),0):0;
-   const expense=kind==='fixed'?rnd(fixed):kind==='var'?rnd(month.total-fixed):month?.total??base.expense;
-   return {period:m,complete:m<t.slice(0,7),income:spendOnly?0:economic?vFlowIncomeMonth(m):base.income,expense};
-  }),seriesLabel,spendOnly};
- }
- if(page==='pressure'){
-  const now=dateObj(t),date=new Date(now.getFullYear(),now.getMonth()+v362PressureMonthOffset,1);
-  const month=dateStr(date).slice(0,7);
-  const rows=v318Context().year.events.filter(e=>e.type==='expense'&&e.amount>0&&e.date.startsWith(month));
-  if(!rows.length)return {};
-  const value=rows.reduce((sum,e)=>sum+Number(e.amount),0);
-  return {products:[product('commitments',money(value)+' de salidas previstas',
-   'Proyección del calendario de compromisos para el mes visible. El total puede cambiar al confirmar los pagos.',
-   [['Mes',month],['Salidas previstas',String(rows.length)]],{engine:'prediction',kind:'projection',confidence:.75})]};
- }
- if(page==='projection'){
-  const basis=v14ForecastBasis();
-  if(basis.sampleCount<3||(!hasFx&&db.transactions.some(x=>x.currency==='USD')))return {};
-  const scenario=['conservative','optimistic'].includes(ui.forecastScenario)?ui.forecastScenario:'base';
-  const people=personalTotals();
-  const net=totalLiquid()+totalCertificates()+people.receivable-totalCardDebt()-totalLoanDebt()-people.payable;
-  const value=rnd(net+v14MonthlyScenario(basis,scenario)*12);
-  const label={conservative:'conservador',optimistic:'optimista',base:'base'}[scenario];
-  return {products:[product('projection',money(value)+' de patrimonio proyectado a 12 meses',
-   'Escenario '+label+' de la vista. Aplica la diferencia mensual de ingresos y gastos a la posición actual durante 12 meses.',
-   [['Meses con datos',String(basis.sampleCount)],['Patrimonio actual',money(net)]],
-   {engine:'prediction',kind:'projection',confidence:.65})]};
- }
- return {};
-}
-const vIntelActiveCache={source:null,overlay:null,key:'',presentation:null};
-function vIntelActive(){
- const scope=vIntelContext(),prefs=db.settings?.intelligence;
- const engine=window.ViveIntelligence;
- if(privacyMode)return {scope,...engine.present([]),revision:'private'};
- scope.identity=vIntelScopeIdentity(scope);
- const mem=db.settings?.intelligenceMem;
- const key=JSON.stringify([scope.key,scope.today,window.__viveIntelRev,prefs||null,mem?.audit,mem?.fb,mem?.prefs]);
- if(db!==vIntelActiveCache.source||key!==vIntelActiveCache.key||scope.overlay!==vIntelActiveCache.overlay){
-  const presentation=scope.global?engine.present(vIntelRun().findings,vIntelDiscover()):
-   engine.contextualView(scope,scope.data||vIntelContextData(scope),prefs,mem);
-  Object.assign(vIntelActiveCache,{source:db,overlay:scope.overlay,key,presentation});
- }
- return {scope,...vIntelActiveCache.presentation,global:scope.global===true,revision:key};
-}
-
-const vIntelCache={source:null,key:'',res:null};
+const vIntelCache={rev:-1,key:'',res:null};
 function vIntelRun(){
  const key=(window.__viveIntelRev|0)+'|'+today()+'|'+JSON.stringify((db.settings||{}).intelligence||null);
- if(vIntelCache.source===db&&vIntelCache.res&&vIntelCache.key===key)return vIntelCache.res;
+ if(vIntelCache.res&&vIntelCache.key===key)return vIntelCache.res;
  const t0=performance.now();
- const snap=vIntelSnapshot();const res=window.ViveIntelligence.analyze(snap,(db.settings||{}).intelligence,{exhaustive:true});
+ const snap=vIntelSnapshot();const res=window.ViveIntelligence.analyze(snap,(db.settings||{}).intelligence);
  res.meta.ms=Math.round(performance.now()-t0);res.snapshot=snap;
- Object.assign(vIntelCache,{source:db,key,res});return res;
+ vIntelCache.key=key;vIntelCache.res=res;return res;
 }
 function vIntelFeedback(finding,action){
  const L=window.ViveIntelligence.engines.learning;
@@ -20881,32 +20407,28 @@ function vIntelFeedback(finding,action){
 }
 function vIntelSetPref(key,val){const st=window.ViveIntelligence.engines.learning.normalize(db.settings.intelligence);st.prefs[key]=!!val;db.settings.intelligence=st;persist()}
 /* ---- Descubrimiento adaptativo: caché + memoria persistente (≤ 1 escritura pequeña por día) ---- */
-const vDiscCache={source:null,key:'',res:null};
+const vDiscCache={key:'',res:null};
 function vIntelMem(){return window.ViveDiscovery.Memory.norm((db.settings||{}).intelligenceMem)}
 function vIntelDiscover(){
  if(!window.ViveDiscovery)return null;
  const mem=vIntelMem();const key=(window.__viveIntelRev|0)+'|'+today()+'|'+JSON.stringify(mem.audit)+'|'+Object.keys(mem.exc).length+'|'+mem.fb.length+'|'+JSON.stringify(mem.prefs)+'|'+JSON.stringify(mem.w);
- if(vDiscCache.source===db&&vDiscCache.res&&vDiscCache.key===key)return vDiscCache.res;
- const snap=vIntelSnapshot();const res=window.ViveDiscovery.discover(snap,mem,{exhaustive:true});res.snapshot=snap;
- Object.assign(vDiscCache,{source:db,key,res});
+ if(vDiscCache.res&&vDiscCache.key===key)return vDiscCache.res;
+ const snap=vIntelSnapshot();const res=window.ViveDiscovery.discover(snap,mem);res.snapshot=snap;
+ vDiscCache.key=key;vDiscCache.res=res;
  // persistencia: solo si cambió el conocimiento Y no se guardó hoy (≤ 1 escritura/día); nunca durante la lectura de otras pantallas
  try{const prev=JSON.stringify((db.settings||{}).intelligenceMem||null);const next=JSON.stringify(res.mem);
   if(prev!==next&&(!(db.settings||{}).intelligenceMem||(db.settings.intelligenceMem.audit||{}).last!==today()||!mem.audit.runs)){
-   const source=db;
-   (window.requestIdleCallback||(f=>setTimeout(f,400)))(()=>{try{
-    if(db!==source||privacyMode||ui.page!=='overview'||JSON.stringify(db.settings.intelligenceMem||null)!==prev)return;
-    db.settings.intelligenceMem=res.mem;persist();
-   }catch(_){}});}}catch(_){}
+   (window.requestIdleCallback||(f=>setTimeout(f,400)))(()=>{try{db.settings.intelligenceMem=res.mem;persist()}catch(_){}});}}catch(_){}
  return res;
 }
 function vIntelDiscFeedback(h,action){
- const D=window.ViveDiscovery;db.settings.intelligenceMem=D.feedback(vIntelMem(),h,action,today());persist();vDiscCache.res=null;vIntelActiveCache.source=null;
+ const D=window.ViveDiscovery;db.settings.intelligenceMem=D.feedback(vIntelMem(),h,action,today());persist();vDiscCache.res=null;
 }
 function vIntelMemOp(op,arg){
  const D=window.ViveDiscovery;let m=vIntelMem();
  if(op==='forget')m=D.Memory.forget(m,arg);else if(op==='forgetAll')m=D.Memory.forgetAll();else if(op==='setOff'){m.prefs.off=m.prefs.off||{};if(arg.v)m.prefs.off[arg.k]=true;else delete m.prefs.off[arg.k]}
  else if(op==='export')return D.Memory.exportJSON(m);
- db.settings.intelligenceMem=m;persist();vDiscCache.res=null;vIntelActiveCache.source=null;return true;
+ db.settings.intelligenceMem=m;persist();vDiscCache.res=null;return true;
 }
 function vIntelStrategic(){return window.ViveDiscovery.strategic(vIntelSnapshot(),vIntelMem())}
 function vIntelAnswer(id,v){const s=vIntelStrategic();db.settings.intelligenceMem=s.answer(id,v);persist();vDiscCache.res=null}
@@ -20914,26 +20436,23 @@ function vIntelSimulate(sc){return window.ViveDiscovery.simulate(vIntelSnapshot(
 /* Hallazgos seleccionados para el Centro Estratégico (solo los más relevantes; sin felicitaciones si hay críticos) */
 function vIntelForMomentos(){
  try{if(!window.ViveDiscovery||!window.ViveIntelligence)return [];
-  if(privacyMode||ui.page!=='overview')return [];
-  const revision=(window.__viveIntelRev|0)+'|'+today()+'|';
-  const d=vDiscCache.source===db&&vDiscCache.key.startsWith(revision)?vDiscCache.res:null;
-  if(!d)return [];
-  const crit=vIntelCache.source===db&&vIntelCache.key.startsWith(revision)&&vIntelCache.res?.findings.some(f=>f.priority==='critical'||f.priority==='attention');
+  const d=vDiscCache.res||null;if(!d)return [];const crit=vIntelCache.res&&vIntelCache.res.findings.some(f=>f.priority==='critical'||f.priority==='attention');
   return d.discoveries.filter(h=>!h.repeat&&!(crit&&h.valence==='positive')).slice(0,2).map(h=>({id:h.key,kicker:h.kicker,text:h.summary,valence:h.valence,go:(h.action&&h.action.target)||'overview',label:(h.action&&h.action.label)||'Ver más'}));
  }catch(_){return []}
 }
-window.__viveIntel=Object.freeze({active:vIntelActive,run:vIntelRun,discover:vIntelDiscover,discFeedback:vIntelDiscFeedback,memOp:vIntelMemOp,simulate:vIntelSimulate,strategic:vIntelStrategic,audit:()=>{const d=vIntelDiscover();return d&&{audit:d.audit,strategy:d.strategy&&d.strategy.benchmark,governance:d.strategy&&d.strategy.governance}},answer:vIntelAnswer,forMomentos:vIntelForMomentos,memory:vIntelMem,invalidate:()=>v99Invalidate(),feedback:vIntelFeedback,setPref:vIntelSetPref,snapshot:vIntelSnapshot,prefs:()=>window.ViveIntelligence.engines.learning.normalize(db.settings.intelligence).prefs,
+window.__viveIntel=Object.freeze({run:vIntelRun,discover:vIntelDiscover,discFeedback:vIntelDiscFeedback,memOp:vIntelMemOp,simulate:vIntelSimulate,strategic:vIntelStrategic,audit:()=>{const d=vIntelDiscover();return d&&{audit:d.audit,strategy:d.strategy&&d.strategy.benchmark,governance:d.strategy&&d.strategy.governance}},answer:vIntelAnswer,forMomentos:vIntelForMomentos,memory:vIntelMem,invalidate:()=>v99Invalidate(),feedback:vIntelFeedback,setPref:vIntelSetPref,snapshot:vIntelSnapshot,prefs:()=>window.ViveIntelligence.engines.learning.normalize(db.settings.intelligence).prefs,
  go:id=>{const b=document.createElement('button');b.type='button';b.dataset.act='navigate';b.dataset.id=id;b.hidden=true;document.body.append(b);b.click();b.remove()},
  render:()=>render(),entity:()=>{try{const d=ui.vBanksProductDetail;if(ui.page==='banks'&&d&&d.id)return {kind:d.kind,id:d.id};if((ui.page==='cards'||ui.page==='wallet'&&ui.walletCardDetail)&&ui.cardId)return {kind:'cards',id:ui.cardId};if(ui.page==='wallet'&&ui.vWalletPcCard&&ui.vWalletPcCard!=='all'&&ui.vWalletPcOpenedCard)return {kind:'cards',id:ui.vWalletPcCard};if(ui.page==='personal'&&(ui.v56LoanId||ui.v56ContactId))return {kind:'personal',id:ui.v56LoanId||ui.v56ContactId,contact:!!ui.v56ContactId&&!ui.v56LoanId}}catch(_){}return null},page:()=>{if(ui.page==='banks'){const t=ui.vBanksPcProduct;if(t==='accounts'||t==='loans'||t==='certificates'||t==='cards')return t}return ui.page},toast:m=>toast(m)});
 /* Carga bajo demanda: motor, interfaz y estilos se descargan una sola vez, en reposo, la primera vez que se muestra una página con Intelligence. */
-let vIntelLoading=null,vIntelLoadPending=false;
+const vIntelPages=new Set(['overview','mobilehub','mobilesearch','register','expenses','categories','income','banks','accounts','wallet','cards','loans','patrimony','certificates','recurring','payments','pressure','budget','personal','benefits','kpis','advanced','analytics','annual','flow','projection','vision','score','transactions']);
+let vIntelLoading=null;
 function vIntelEnsure(){
  if(window.ViveIntelligence&&window.ViveIntelUI)return Promise.resolve();
  if(vIntelLoading)return vIntelLoading;
  vIntelLoading=new Promise(done=>{
-  try{const css=document.createElement('link');css.rel='stylesheet';css.href='./src/intelligence/intelligence.css?v=17';document.head.appendChild(css)}catch(_){}
+  try{const css=document.createElement('link');css.rel='stylesheet';css.href='./src/intelligence/intelligence.css?v=18';document.head.appendChild(css)}catch(_){}
   const load=src=>new Promise((ok,ko)=>{const el=document.createElement('script');el.src=src;el.onload=ok;el.onerror=ko;document.head.appendChild(el)});
-  load('./src/intelligence/engine.js?v=9').then(()=>load('./src/intelligence/stats.js?v=2')).then(()=>load('./src/intelligence/strategy.js?v=6')).then(()=>load('./src/intelligence/discovery.js?v=10')).then(()=>load('./src/intelligence/ui.js?v=36')).then(()=>done()).catch(()=>done());
+  load('./src/intelligence/engine.js?v=10').then(()=>load('./src/intelligence/stats.js?v=2')).then(()=>load('./src/intelligence/strategy.js?v=6')).then(()=>load('./src/intelligence/discovery.js?v=11')).then(()=>load('./src/intelligence/ui.js?v=33')).then(()=>done()).catch(()=>done());
  });
  return vIntelLoading;
 }
@@ -20964,10 +20483,7 @@ render=function(...args){
  const out=vIntelOldRender.apply(this,args);
  try{
   if(window.ViveIntelUI)window.ViveIntelUI.mount();
-  else if(!vIntelLoading&&!vIntelLoadPending){
-   vIntelLoadPending=true;
-   (window.requestIdleCallback||(f=>setTimeout(f,60)))(()=>{vIntelLoadPending=false;vIntelEnsure().then(()=>window.ViveIntelUI?.mount())});
-  }
+  else if(vIntelPages.has(ui.page))(window.requestIdleCallback||(f=>setTimeout(f,60)))(()=>vIntelEnsure().then(()=>window.ViveIntelUI&&window.ViveIntelUI.mount()));
  }catch(_){}
  return out;
 };

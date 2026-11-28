@@ -45,8 +45,6 @@ async function verifyFilters(p){
  const csv=fs.readFileSync(await result.path(),'utf8');
  assert.match(csv,/Compra filtrable/);
  assert.doesNotMatch(csv,/Transferencia filtrable|Ingreso filtrable|Gasto fuera del mes/);
- const intelligence=await p.evaluate(()=>window.__viveIntel.active().findings.map(f=>f.title));
- assert.ok(intelligence.some(title=>title.includes('250')));
  const shell=await p.locator('#app > .shell').elementHandle();
  await p.evaluate(()=>{window.__viveIntel.go('banks');window.__viveIntel.go('register')});
  assert.equal(await p.evaluate(el=>el===document.querySelector('#app > .shell'),shell),true);
@@ -62,7 +60,7 @@ async function verifyFilters(p){
  await p.locator('#searchTx').fill('Sin coincidencias');
  assert.equal(await amount('count'),'0');
  assert.equal(await p.evaluate(el=>el===document.activeElement,input),true);
- console.log('Filtros, navegación, resumen, gráfico, CSV e Intelligence alineados');
+ console.log('Filtros, navegación, resumen, gráfico y CSV alineados');
 }
 (async()=>{
  const browser=await (process.env.MOVEMENTS_BROWSER==='webkit'?webkit:chromium).launch();

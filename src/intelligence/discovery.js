@@ -83,7 +83,7 @@
  /* ==========================================================================
     CARACTERÍSTICAS — se calculan UNA vez por ejecución y las reutilizan todos los motores
     ========================================================================== */
- function buildFeatures(snap,mem,options){
+ function buildFeatures(snap,mem){
   const t0=Date.now();const today=snap.today,end=addDays(today,-1);           // solo días completos
   const led=(snap.ledger||[]).filter(e=>e&&e.d<=end);
   const excl=new Set(mem.excludeDates||[]);
@@ -105,7 +105,7 @@
   const smallT=Math.min(500,S.quantile(amounts,.25)||0);
   for(const e of led){if(e.k==='x'&&e.a>0&&e.a<=smallT){const w=weeks.find(w=>e.d>=w.start&&e.d<=addDays(w.start,6));if(w)w.small++}}
   const incomes=led.filter(e=>e.k==='i'&&e.a>0);const medInc=S.median(incomes.map(e=>e.a));
-  const paydays=options?.allowPayday===false?[]:[...new Set(incomes.filter(e=>e.a>=Math.max(1000,medInc*.5)).map(e=>e.d))].sort();
+  const paydays=[...new Set(incomes.filter(e=>e.a>=Math.max(1000,medInc*.5)).map(e=>e.d))].sort();
   // ventanas múltiples (24 h … histórico)
   const windows={};for(const w of [1,3,7,15,30,60,90,180,365]){const sl=days.slice(-w);windows[w]={days:sl.length,spend:S.sum(sl.map(r=>r.x)),count:S.sum(sl.map(r=>r.n)),income:S.sum(sl.map(r=>r.i)),spendDays:sl.filter(r=>r.x>0).length}}
   const nz=days.filter(r=>r.x>0&&!r.ex).map(r=>r.x);
@@ -165,7 +165,7 @@
   return out;
  };
  /* --- Anomaly: z robusto + Isolation Forest (consenso) con contexto --- */
- Engines.anomaly=(F,snap,mem,options)=>{
+ Engines.anomaly=(F,snap,mem)=>{
   const out=[];const d=F.days;if(F.profile.historyDays<45)return out;
   const base=d.filter(r=>r.x>0&&!r.ex);if(base.length<20)return out;
   const X=base.map(r=>[r.x,r.n,r.max,r.wd]);const sc=S.isolationForest(X,{seed:13});const iso=new Map(base.map((r,i)=>[r.d,sc[i]]));
@@ -189,7 +189,7 @@
     why:kind==='possible-data-error'?'Un duplicado distorsiona tus saldos y tus indicadores.':'Entender si fue una excepción o el inicio de un cambio evita sacar conclusiones equivocadas.',ifContinues:'Si no se repite, no cambia tu patrón; si se repite, se evaluará como cambio de comportamiento.',
     alternatives:kind==='possible-data-error'?['Revisar y eliminar el duplicado','Es correcto (dos compras iguales)']:['Marcar como excepción (no altera tu línea base)','Marcar como intencional','Seguir observándolo'],
     action:{label:'Ver movimientos',target:'register'},modules:['register','overview'],urgency:.4,minSeen:1,immediate:kind==='possible-data-error',kind:'fact'}))}
-  return options?.exhaustive?out:out.slice(0,2);
+  return out.slice(0,2);
  };
  /* --- Drift: cambio estructural con CUSUM sobre el gasto semanal y la frecuencia --- */
  Engines.drift=(F,snap,mem)=>{
@@ -338,21 +338,9 @@
  /* Mensajes breves de entrada (Centro Estratégico): coherentes con la valencia y el tipo del hallazgo */
  function kicker(h){if(h.type==='new-normal'||h.type==='fading'||h.type==='not-where-seemed')return 'Algo cambió';if(h.type==='stability-up'||h.type==='quiet-improvement'||h.type==='lower-normal')return 'Vas mejorando';if(h.valence==='risk')return h.engine==='prediction'?'Algo se acerca':'Esto importa';if(h.valence==='positive')return h.type==='improving'?'Vas mejorando':'Estás avanzando';if(h.engine==='prediction')return 'Algo se acerca';if(h.type==='structural-up'||h.type==='structural-down')return 'Algo cambió';if(h.state==='pattern'||h.type==='weekday-peak'||h.type==='post-payday')return 'Patrón descubierto';if(h.engine==='anomaly')return 'Mira esto';return 'Mira esto'}
  const FEEDBACK=['correct','incorrect','exception','intentional','known','not_interested','follow','improve','helped','never'];
- const SCOPED_FEEDBACK_DAYS={incorrect:120,exception:365,intentional:180,known:60,not_interested:45};
- const SCOPED_FEEDBACK=Object.keys(SCOPED_FEEDBACK_DAYS);
  function feedback(memIn,h,action,today){
   const m=Memory.norm(JSON.parse(JSON.stringify(memIn||{})));if(!FEEDBACK.includes(action))return m;
-  const k=h.key,eng=h.engine;
-  if(h.scopeKey&&k.startsWith(h.scopeKey+'::')){
-   if(!SCOPED_FEEDBACK.includes(action))return m;
-   delete m.exc[k];
-   m.exc[k]={why:action,since:today,until:addDays(today,SCOPED_FEEDBACK_DAYS[action]),title:h.title,scopeKey:h.scopeKey};
-   const scoped=Object.entries(m.exc).filter(([,e])=>e.scopeKey);
-   for(const [key,e] of scoped)if(e.until<today)delete m.exc[key];
-   scoped.filter(([key])=>m.exc[key]).slice(0,-32).forEach(([key])=>delete m.exc[key]);
-   return m;
-  }
-  const bump=(d)=>{m.w[eng]=+clamp((m.w[eng]==null?1:m.w[eng])+d,.4,1.6).toFixed(2)};
+  const k=h.key,eng=h.engine;const bump=(d)=>{m.w[eng]=+clamp((m.w[eng]==null?1:m.w[eng])+d,.4,1.6).toFixed(2)};
   m.fb.push({k,engine:eng,a:action,d:today});
   const hy=m.hyp[k]=m.hyp[k]||{state:'hypothesis',first:today,last:today,seen:[today],engine:eng,title:h.title};
   switch(action){
@@ -373,133 +361,50 @@
  /* ==========================================================================
     ORQUESTADOR — silencio inteligente, deduplicación, presupuesto de cómputo
     ========================================================================== */
- const SCOPED_HISTORY_DAYS={
-  'micro-payments':60,'exception-to-habit':120,'positive-anomaly':120,butterfly:180,'liquidity-pressure':90,
-  'card-dependence':90,'card-paydown':90,'card-growth':90,'liquidity-coverage':90,'loan-burden':90,'recurring-weight':90,'score-dti':90
- };
- function scopedEvidence(h,F,snap,source,options){
-  if(h.engine==='lens'&&!options.lenses?.includes(h.lens))return false;
-  if(options.closedPeriod&&['projection','simulation'].includes(h.kind))return false;
-  if(F.profile.historyDays<(SCOPED_HISTORY_DAYS[h.type]||0))return false;
-  if(options.allowIncomeComparison===false&&(['spend-vs-income','paradox-income-freedom','improving','quiet-improvement',
-   'new-normal','savings-rate','best-worst','net-trend'].includes(h.type)||h.key.startsWith('corr.income-')))return false;
-  if(h.type==='paradox-income-freedom')return Number.isFinite(source.position?.liquid)&&Number.isFinite(source.cardDebtDop);
-  if(h.type==='liquidity-pressure')return Number.isFinite(source.position?.liquid)&&Array.isArray(source.upcoming);
-  if(['card-paydown','card-growth'].includes(h.type))return Number.isFinite(source.cardPay90);
-  if(h.type==='score-clean')return Array.isArray(source.upcoming);
-  if(h.type==='improving')return F.windows[30].income>0&&F.windows[60].income>F.windows[30].income;
-  if(h.type==='quiet-improvement'){
-   const months=snap.months.filter(m=>!m.partial&&m.txCount>0).slice(-6);
-   return S.median(months.slice(0,3).map(m=>m.income))>0&&S.median(months.slice(3).map(m=>m.income))>0;
-  }
-  return true;
- }
-
- function scopedReplay(snap,mem,options,stg){
-  const cutoffs=new Map();
-  return (h,ago)=>{
-   if(!cutoffs.has(ago)){
-    const today=addDays(snap.today,-ago);
-    const previous={...snap,today,ledger:snap.ledger.filter(e=>e.d<today),
-     months:snap.months.filter(m=>/^\d{4}-\d{2}$/.test(m.ym)&&m.ym<today.slice(0,7)),
-     position:{series:[]},cardDebtDop:undefined,upcoming:[]};
-    cutoffs.set(ago,{snap:previous,F:buildFeatures(previous,mem,options),byEngine:new Map()});
-   }
-   const previous=cutoffs.get(ago);
-   if(!previous.byEngine.has(h.engine)){
-    let candidates=[];
-    try{candidates=Engines[h.engine](previous.F,previous.snap,mem,options)||[]}catch(_){ /* un motor fallido no aporta evidencia */ }
-    previous.byEngine.set(h.engine,candidates);
-   }
-   const match=previous.byEngine.get(h.engine).find(p=>p.key===h.key&&p.type===h.type&&p.valence===h.valence);
-   if(!match||match.confidence.score<.45||!scopedEvidence(match,previous.F,previous.snap,previous.snap,options))return false;
-   try{return !stg||!stg.science(match,previous.F,previous.snap).refuted}catch(_){return false}
-  };
- }
-
- function redundantDrift(findings){
-  const structural=findings.find(h=>h.type==='structural-up'||h.type==='structural-down');
-  const gradual=findings.find(h=>h.type==='slow-trend');
-  if(structural&&gradual&&structural.valence===gradual.valence)return structural.relevance>=gradual.relevance?gradual:structural;
- }
-
  function discover(snapIn,memIn,opts){
   const snap=cleanSnap(snapIn);
-  const scopeKey=typeof opts?.scopeKey==='string'&&opts.scopeKey;
-  const exhaustive=!!scopeKey||opts?.exhaustive===true;
-  const o={maxSurfaced:exhaustive?Infinity:4,budgetMs:scopeKey?Infinity:150,allowPayday:!scopeKey,only:null,...opts,exhaustive};
-  const t0=Date.now();const mem=scopeKey?Memory.empty():Memory.norm(JSON.parse(JSON.stringify(memIn||{})));const today=snap.today;
-  const feedbackToday=isDate(o.feedbackToday)?o.feedbackToday:today;
-  const prefs=scopeKey?memIn?.prefs:mem.prefs;
-  if(scopeKey){
-   snap.ledger=snap.ledger.filter(e=>e.d<today);
-   const month=today.slice(0,7);
-   snap.months=snap.months.filter(m=>/^\d{4}-(0[1-9]|1[0-2])$/.test(m.ym)&&m.ym<=month)
-    .map(m=>m.ym===month?{...m,partial:true}:m);
-  }
+  const o=Object.assign({maxSurfaced:4,budgetMs:150,only:null},opts||{});
+  const t0=Date.now();const mem=Memory.norm(JSON.parse(JSON.stringify(memIn||{})));const today=snap.today;
   const audit={version:VERSION,ts:today,engines:[],discarded:[],features:null,ms:0};
-  const F=buildFeatures(snap,mem,o);audit.features={days:F.days.length,weeks:F.weeks.length,records:F.profile.records,ms:F.ms,maturity:F.profile.maturity};
+  const F=buildFeatures(snap,mem);audit.features={days:F.days.length,weeks:F.weeks.length,records:F.profile.records,ms:F.ms,maturity:F.profile.maturity};
   const raw=[];
   for(const name of ENGINE_ORDER){
    if(o.only&&!o.only.includes(name))continue;
-   if(scopeKey&&(name==='lens'&&!o.lenses?.length||o.closedPeriod&&name==='prediction'))continue;
    if(Date.now()-t0>o.budgetMs){audit.engines.push({id:name,skipped:'presupuesto de cómputo agotado'});continue}
    const s=Date.now();let produced=0,error=null;
-   try{const r=Engines[name](F,snap,mem,o)||[];for(const h of r){h.engine=name;raw.push(h);produced++}}catch(e){error=String(e&&e.message||e)}
+   try{const r=Engines[name](F,snap,mem)||[];for(const h of r){h.engine=name;raw.push(h);produced++}}catch(e){error=String(e&&e.message||e)}
    audit.engines.push({id:name,ms:Date.now()-s,produced,error,frequency:ENGINE_FREQ[name],records:F.profile.records});
   }
-  const stg=ST();
-  const convergence=signals=>{
-   try{return stg.converge(signals,F,confidence)}catch(e){audit.engines.push({id:'convergence',error:String(e&&e.message||e)});return []}
-  };
-  if(stg&&!o.only&&!scopeKey)raw.push(...convergence(raw));
-  const surfaced=[],internal=[];const lensOut={};const seenKeys=new Set();
-  const replay=scopeKey?scopedReplay(snap,mem,o,stg):null;
-  function consider(h,confirmedDays){
-   if(seenKeys.has(h.key))return;seenKeys.add(h.key);
-   if(scopeKey&&!scopedEvidence(h,F,snap,snapIn||{},o)){audit.discarded.push({key:h.key,reason:'evidencia insuficiente dentro de la selección'});return}
-   if(prefs?.off?.[h.category]){audit.discarded.push({key:h.key,reason:'aprendizaje desactivado para la categoría «'+h.category+'»'});return}
-   const dis=mem.disabled[h.engine+'.'+h.type];if(dis){audit.discarded.push({key:h.key,reason:'tipo desactivado por el usuario'});return}
-   const ex=scopeKey?memIn?.exc?.[scopeKey+'::'+h.key]:mem.exc[h.key];
-   if(ex&&(!scopeKey||ex.scopeKey===scopeKey)&&(!ex.until||ex.until>=feedbackToday)){audit.discarded.push({key:h.key,reason:'descartado por retroalimentación: '+ex.why});return}
+  const stg0=ST();if(stg0&&!o.only){try{for(const c of stg0.converge(raw,F,confidence)){c.engine='shadow';raw.push(c)}}catch(e){audit.engines.push({id:'convergence',error:String(e&&e.message||e)})}}
+  const surfaced=[],internal=[];const lensOut={};const seenKeys=new Set();const stg=ST();
+  for(const h of raw){
+   if(seenKeys.has(h.key))continue;seenKeys.add(h.key);
+   if(mem.prefs&&mem.prefs.off&&mem.prefs.off[h.category]){audit.discarded.push({key:h.key,reason:'aprendizaje desactivado para la categoría «'+h.category+'»'});continue}
+   const dis=mem.disabled[h.engine+'.'+h.type];if(dis){audit.discarded.push({key:h.key,reason:'tipo desactivado por el usuario'});continue}
+   const ex=mem.exc[h.key];if(ex&&(!ex.until||ex.until>=today)){audit.discarded.push({key:h.key,reason:'descartado por retroalimentación: '+ex.why});continue}
    if(stg){try{h.science=stg.science(h,F,snap);h.council=stg.council(h,{mem});}catch(e){audit.engines.push({id:'strategy',error:String(e&&e.message||e)})}
-    if(h.science&&h.science.refuted){internal.push(h);audit.discarded.push({key:h.key,reason:'refutada al ponerla a prueba: '+h.science.reason});return}
-    if(h.council&&h.council.verdict==='descartar'){internal.push(h);audit.discarded.push({key:h.key,reason:'el consejo interno la descartó'});return}
-    const th=(mem.thr||{})[h.engine];if(th&&h.confidence.score<.45+th&&!h.immediate){internal.push(h);audit.discarded.push({key:h.key,reason:'umbral elevado por falsos positivos reportados en este motor'});return}}
-   if(h.engine==='lens'){h.state='discovery';h.relevance=relevance(h,mem);h.kicker='Aquí y ahora';if(h.confidence.score>=.45){(lensOut[h.lens]=lensOut[h.lens]||[]).push(h)}return}
+    if(h.science&&h.science.refuted){internal.push(h);audit.discarded.push({key:h.key,reason:'refutada al ponerla a prueba: '+h.science.reason});continue}
+    if(h.council&&h.council.verdict==='descartar'){internal.push(h);audit.discarded.push({key:h.key,reason:'el consejo interno la descartó'});continue}
+    const th=(mem.thr||{})[h.engine];if(th&&h.confidence.score<.45+th&&!h.immediate){internal.push(h);audit.discarded.push({key:h.key,reason:'umbral elevado por falsos positivos reportados en este motor'});continue}}
+   if(h.engine==='lens'){const exL=mem.exc[h.key];if(exL&&(!exL.until||exL.until>=today)){audit.discarded.push({key:h.key,reason:'descartado por retroalimentación: '+exL.why});continue}if(mem.disabled[h.engine+'.'+h.type])continue;if(mem.prefs&&mem.prefs.off&&mem.prefs.off[h.category])continue;h.state='discovery';h.relevance=relevance(h,mem);h.kicker='Aquí y ahora';if(h.confidence.score>=.45){(lensOut[h.lens]=lensOut[h.lens]||[]).push(h)}continue}
    const prev=mem.hyp[h.key];const seen=prev?[...new Set([...(prev.seen||[]),today])].slice(-8):[today];
-   // En un filtro, la validación usa cortes históricos de la misma selección sin guardar memoria por filtro.
-   if(replay&&!h.immediate&&h.confidence.score>=.45){
-    for(let ago=1;ago<(h.minSeen||2);ago++)if(ago<confirmedDays||replay(h,ago))seen.push(addDays(today,-ago));
-   }
    h.seenDays=seen.length;h.isNew=!prev;
    let known=mem.know[h.key];if(known&&known.status==='desactualizado'){known.status='vigente';delete known.since;h.reappeared=true}
    h.state=known?'pattern':(seen.length>=(h.minSeen||2)||h.immediate)?(h.valence==='risk'?(h.urgency>=.7?'priority':'risk'):h.valence==='positive'?'positive':h.type==='weekday-peak'||h.type==='post-payday'||h.type==='sequence'?'pattern':h.engine==='prediction'?'anticipation':'discovery'):(seen.length>=2?'learning':'hypothesis');
    if(prev&&prev.state==='following')h.state=VISIBLE.has(h.state)?h.state:'following';
-   if(!scopeKey)mem.hyp[h.key]={state:h.state,first:prev?.first||today,last:today,seen,engine:h.engine,title:h.title,type:h.type};
+   mem.hyp[h.key]={state:h.state,first:prev?.first||today,last:today,seen,engine:h.engine,title:h.title,type:h.type};
    h.relevance=relevance(h,mem);h.kicker=kicker(h);
-   if(!VISIBLE.has(h.state)){internal.push(h);audit.discarded.push({key:h.key,reason:`en ${h.state==='hypothesis'?'observación inicial':'aprendizaje'}: ${seen.length}/${h.minSeen||2} evaluaciones en días distintos`});return}
-   if(h.confidence.score<.45&&!h.immediate){internal.push(h);audit.discarded.push({key:h.key,reason:'confianza baja ('+h.confidence.score+')'});return}
-   if(h.relevance<30&&h.state!=='priority'){internal.push(h);audit.discarded.push({key:h.key,reason:'relevancia baja ('+h.relevance+')'});return}
+   if(!VISIBLE.has(h.state)){internal.push(h);audit.discarded.push({key:h.key,reason:`en ${h.state==='hypothesis'?'observación inicial':'aprendizaje'}: ${seen.length}/${h.minSeen||2} evaluaciones en días distintos`});continue}
+   if(h.confidence.score<.45&&!h.immediate){internal.push(h);audit.discarded.push({key:h.key,reason:'confianza baja ('+h.confidence.score+')'});continue}
+   if(h.relevance<30&&h.state!=='priority'){internal.push(h);audit.discarded.push({key:h.key,reason:'relevancia baja ('+h.relevance+')'});continue}
    surfaced.push(h);
   }
-  for(const h of raw)consider(h);
-  if(scopeKey&&stg&&(!o.only||o.only.includes('shadow'))){
-   const stable=surfaced.filter(h=>h.seenDays>=2);
-   const overlap=redundantDrift(stable);
-   for(const h of convergence(stable.filter(h=>h!==overlap))){raw.push(h);consider(h,2)}
-  }
-  surfaced.sort((a,b)=>b.relevance-a.relevance);const engCount={},show=[];const cap=e=>e==='shadow'?2:1;
-  for(const h of surfaced){const c=engCount[h.engine]||0;if(!exhaustive&&(c>=cap(h.engine)||show.some(x=>x.engine===h.engine&&x.type===h.type))){audit.discarded.push({key:h.key,reason:'otro descubrimiento del mismo motor tiene prioridad'});continue}engCount[h.engine]=c+1;show.push(h);if(show.length>=o.maxSurfaced)break}
+  // un descubrimiento por motor como máximo; orden por relevancia; sin saturar
+  surfaced.sort((a,b)=>b.relevance-a.relevance);const engCount={},show=[];const cap=e=>e==='shadow'?2:1;   /* el motor «sombra» reúne lecturas de naturaleza distinta (tendencia, hábito, paradoja…): se admiten dos, de tipos distintos */
+  for(const h of surfaced){const c=engCount[h.engine]||0;if(c>=cap(h.engine)||show.some(x=>x.engine===h.engine&&x.type===h.type)){audit.discarded.push({key:h.key,reason:'otro descubrimiento del mismo motor tiene prioridad'});continue}engCount[h.engine]=c+1;show.push(h);if(show.length>=o.maxSurfaced)break}
   /* Menos repetición: un cambio de nivel (CUSUM) y una tendencia lenta que describen la MISMA deriva se comunican una sola vez (queda la de mayor relevancia) */
-  {const drop=redundantDrift(show);
-   if(drop){show.splice(show.indexOf(drop),1);audit.discarded.push({key:drop.key,reason:'describe la misma deriva que otro descubrimiento más relevante'})}}
-  if(scopeKey){
-   for(const h of raw){h.scopeKey=scopeKey;h.key=scopeKey+'::'+h.key}
-   for(const d of audit.discarded)d.key=scopeKey+'::'+d.key;
-   audit.ms=Date.now()-t0;audit.surfaced=show.length;audit.hypotheses=raw.length;audit.memoryBytes=0;
-   return {discoveries:show,internal,lens:lensOut,digest:[],mem,audit,strategy:null,features:{profile:F.profile,windows:F.windows}};
-  }
+  {const A=show.find(h=>h.type==='structural-up'||h.type==='structural-down'),B=show.find(h=>h.type==='slow-trend');
+   if(A&&B&&A.valence===B.valence){const drop=A.relevance>=B.relevance?B:A;show.splice(show.indexOf(drop),1);audit.discarded.push({key:drop.key,reason:'describe la misma deriva que otro descubrimiento más relevante'})}}
   // estado de los que dejaron de observarse → resueltos
   for(const k of Object.keys(mem.hyp)){const h=mem.hyp[k];if(h.last!==today&&diff(today,h.last)>=14&&!['resolved','discarded','pattern'].includes(h.state))h.state='resolved'}
   // seguimiento de metas de mejora
@@ -576,7 +481,7 @@
  /* API estratégica bajo demanda (no se ejecuta en cada render) */
  function strategic(snapIn,memIn){const snap=cleanSnap(snapIn);const stg=ST();const mem=Memory.norm(JSON.parse(JSON.stringify(memIn||{})));const F=buildFeatures(snap,mem);
   return {horizon:()=>stg.horizon(snap,F),decisionLab:s=>stg.decisionLab(snap,F,s),chain:d=>stg.chain(snap,F,d),graph:()=>stg.graph(snap,F,mem,Object.values(mem.hyp||{})),lifeModel:()=>stg.lifeModel(snap,F),curiosity:()=>stg.curiosity(snap,F,mem,null),answer:(id,v)=>stg.answer(mem,id,v,snap.today),benchmark:()=>stg.benchmark(mem)}}
- const api={cleanSnap,strategic,VERSION,REGISTRY,STATES,VISIBLE:[...VISIBLE],FEEDBACK,SCOPED_FEEDBACK,discover,simulate,explain,reflect,feedback,Memory,buildFeatures,confidence,relevance,WEIGHTS,ENGINE_ORDER,ENGINE_FREQ,
+ const api={cleanSnap,strategic,VERSION,REGISTRY,STATES,VISIBLE:[...VISIBLE],FEEDBACK,discover,simulate,explain,reflect,feedback,Memory,buildFeatures,confidence,relevance,WEIGHTS,ENGINE_ORDER,ENGINE_FREQ,
   engines:Object.keys(Engines),isHoliday,_Engines:Engines};
  if(typeof module==='object'&&module.exports)module.exports=api;else root.ViveDiscovery=api;
 })(typeof window!=='undefined'?window:globalThis);
